@@ -1,0 +1,85 @@
+
+/* ---------------------------------------------------------- Reset html,body */
+
+/*
+   https://css-tricks.com/css-fix-for-100vh-in-mobile-webkit/
+*/
+
+html {
+  /*font-size: 100%;
+  font-family: Open Sans,Arial,Helvetica,Verdana,sans-serif;*/
+  min-width: 100vw;
+}
+
+html {
+  display: block;
+
+  height: 100%;
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+
+  margin: 0;
+  padding: 0;
+
+  text-size-adjust: 100%;
+  -webkit-text-size-adjust: none;
+
+  /*-webkit-overflow-scrolling: touch;*/
+
+  -webkit-locale: "nl-NL";
+
+  background-color: white;
+}
+
+body {
+  display: block;
+  background-color: white;
+  color: black;
+
+  margin: 0;
+  padding: 0;
+
+  /*font-size: var(--cb-spec-font-size-base);*/
+  /*line-height: var(--cb-spec-line-height-body);*/
+
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+
+  /* prevent horizontal scrollbar of vertical scrollbar appears */
+  overflow-x: hidden;
+}
+
+/* ------------------------------------- Reset padding, margin and box-sizing */
+
+*
+{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  touch-action: pan-x pan-y; /* no pinch zoom, but allow scroll  */
+}
+
+ul
+{
+  list-style-position: inside; /* fix: padding: 0 bullets not displayed */
+}
+
+img
+{
+  display: block; /* remove descender (white space below image) */
+}
+
+input
+{
+  /* remove platform native styling */
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+}
+
+a
+{
+  outline: none;
+  color: inherit;
+  /*text-decoration: none;*/
+}

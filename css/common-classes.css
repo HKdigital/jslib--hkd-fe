@@ -1,0 +1,25 @@
+
+/* ----------------------------------------------------------------- Pointers */
+
+.g-cursor-hand {
+  cursor: pointer;
+}
+
+/* --------------------------------------------------------------------- Hide */
+
+.g-hidden {
+  visibility: hidden;
+}
+
+/* ---------------------------------------------------------------- No select */
+
+.g-no-select {
+  user-select: none;
+  -webkit-user-select: none; /* ios safari */
+}
+
+input[type=text].g-no-select, textarea.g-no-select
+{
+  user-select: text !important;
+  cursor: text;
+}

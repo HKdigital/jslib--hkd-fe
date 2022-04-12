@@ -1,0 +1,11 @@
+{
+  "name": "jslib-hk-fe",
+  "description": "Frontend library for javascript projects by HKdigital",
+  "author": "Jens Kleinhout / HKdigital",
+  "license": "ISC",
+  "version": "1.0.0",
+  "dependencies": {
+    "svelte": "^3.35.0"
+  },
+  "type": "module"
+}
