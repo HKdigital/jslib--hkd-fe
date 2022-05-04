@@ -2,28 +2,28 @@
   // -- Imports
 
   import { expectString,
-           expectPositiveNumber } from "$hk/expect.js";
+           expectPositiveNumber } from "@hkd-base/expect.js";
 
-  import { objectGet } from "$hk/object.js";
+  import { objectGet } from "@hkd-base/object.js";
 
-  import { expectValidSurfaceColor } from "$hk-fe/theme.js";
+  import { expectValidSurfaceColor } from "@hkd-fe/theme.js";
 
   import { topPanelReady,
            subTopPanelReady,
            contentPanelReady,
-           bottomPanelReady } from "$hk-fe/stores/layout.js";
+           bottomPanelReady } from "@hkd-fe/stores/layout.js";
 
-  import View from "$hk-fe/components/routing/View.svelte";
+  import View from "@hkd-fe/components/routing/View.svelte";
 
   import {
     currentRouteAndState,
-    getRoute } from "$hk-fe/stores/router.js";
+    getRoute } from "@hkd-fe/stores/router.js";
 
-  import { menuTree } from "$hk-fe/stores/main-menus.js";
+  import { menuTree } from "@hkd-fe/stores/main-menus.js";
 
-  // import { debug } from "$hk/log.js";
+  // import { debug } from "@hkd-base/log.js";
 
-  import Scrollbar from "$hk-fe/components/scrollbar/Scrollbar.svelte";
+  import Scrollbar from "@hkd-fe/components/scrollbar/Scrollbar.svelte";
 
   // -- Exports
 
@@ -71,7 +71,7 @@
   let currentState;
   let currentAccess;
 
-  import { equals } from "$hk/compare.js";
+  import { equals } from "@hkd-base/compare.js";
 
   $: {
     const { route, state, access } = $currentRouteAndState;

@@ -1,16 +1,16 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { DedupValueStore } from "$hk/stores.js";
+import { DedupValueStore } from "@hkd-base/stores.js";
 
 import {
   // backgroundPanelReady,
   // topPanelReady,
   // subTopPanelReady,
   contentPanelReady,
-  /* bottomPanelReady */ } from "$hk-fe/stores/layout.js";
+  /* bottomPanelReady */ } from "@hkd-fe/stores/layout.js";
 
-import { defer } from '$hk/process.js';
+import { defer } from '@hkd-base/process.js';
 
 /* ------------------------------------------------------------------ Exports */
 

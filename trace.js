@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectArray } from "$hk/expect.js";
+import { expectArray } from "@hkd-base/expect.js";
 
-import log from "$hk/log.js";
+import log from "@hkd-base/log.js";
 
 /* ---------------------------------------------------------------- Internals */
 

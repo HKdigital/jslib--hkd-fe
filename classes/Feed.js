@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectString, expectNumber, expectFunction } from "$hk/expect.js";
+import { expectString, expectNumber, expectFunction } from "@hkd-base/expect.js";
 
-import { ValueStore } from "$hk/stores.js";
+import { ValueStore } from "@hkd-base/stores.js";
 
 /* ---------------------------------------------------------------- Internals */
 

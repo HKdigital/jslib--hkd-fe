@@ -1,11 +1,19 @@
 
+/* ------------------------------------------------------------------ Imports */
+
 import { expectString,
          expectNotEmptyString,
-         expectObject } from "$hk/expect.js";
+         expectObject } from "@hkd-base/expect.js";
 
-import { sessionId } from "$hk-fe/stores/session.js";
+import { sessionId } from "@hkd-fe/stores/session.js";
 
-import { getGlobalConfig } from "$hk/global-config.js";
+import { getGlobalConfig } from "@hkd-base/global-config.js";
+
+/* ------------------------------------------------------------------ Exports */
+
+export const CONFIG_LABEL_BACKEND = "backend";
+
+// -----------------------------------------------------------------------------
 
 /**
  * Check if the response status is ok
@@ -46,12 +54,14 @@ export function expectValidHttpStatus( response, url )
  * Build an URL object by using `origin` and `apiPrefix` from the specified
  * config and a custom `uri`.
  *
- * @param {string} configLabel - Label of the global config entry to use
  * @param {string} uri - Custom uri part to append
+ *
+ * @param {string} [configLabel=CONFIG_LABEL_BACKEND]
+ *   Label of the global config entry to use
  *
  * @returns {object} URI object
  */
-export function buildBackendUrl( configLabel, uri )
+export function buildBackendUrl( uri, configLabel )
 {
   expectNotEmptyString( configLabel,
     "Missing or invalid parameter [configLabel]");

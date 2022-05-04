@@ -27,7 +27,7 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { DEBUG, INFO, WARNING, ERROR } from "$hk/enum/log_types.js";
+import { DEBUG, INFO, WARNING, ERROR } from "@hkd-base/enum/log_types.js";
 
 /* ---------------------------------------------------------------- Internals */
 

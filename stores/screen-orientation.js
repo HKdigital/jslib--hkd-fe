@@ -1,9 +1,9 @@
 
 /* --------------------------------------------------- Handle mobile rotation */
 
-import { ValueStore, DedupValueStore } from "$hk/stores.js";
+import { ValueStore, DedupValueStore } from "@hkd-base/stores.js";
 
-import MediaQuery from "$hk-fe/classes/MediaQuery.js";
+import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 
 // export const orientationIsLandscape = new DedupValueStore();
 

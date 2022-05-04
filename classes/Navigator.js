@@ -5,28 +5,29 @@ import {
   expectString,
   expectArray,
   expectObject,
-  expectSet } from "$hk/expect.js";
+  expectSet } from "@hkd-base/expect.js";
 
-import { defer } from "$hk/process.js";
+import { defer } from "@hkd-base/process.js";
 
-import { rethrow } from "$hk/exceptions.js";
+import { rethrow } from "@hkd-base/exceptions.js";
 
-import { equals } from "$hk/compare.js";
+import { equals } from "@hkd-base/compare.js";
 
-import { clone, updateObject } from "$hk/object.js";
+import { clone, updateObject } from "@hkd-base/object.js";
 
-import { generateLocalId } from "$hk/unique.js";
+import { generateLocalId } from "@hkd-base/unique.js";
 
-import { ValueStore, DedupValueStore } from "$hk/stores.js";
+import { ValueStore } from "@hkd-base/stores.js";
 
-import { currentLanguage } from "$hk-fe/stores/language.js";
+import { currentLanguage,
+         LANG_DEFAULT } from "@hkd-base/stores/language.js";
 
 import { sessionData,
-         authenticationBusy } from "$hk-fe/stores/session.js";
+         authenticationBusy } from "@hkd-fe/stores/session.js";
 
-import PathMatcher from "$hk-fe/classes/PathMatcher.js";
+import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
 
-import { debug } from "$hk/log.js";
+// import { debug } from "@hkd-base/log.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -35,7 +36,7 @@ const routesByLangAndLabel$ = Symbol("routesByLangAndLabel");
 
 const offs$ = Symbol("offs");
 
-const sessionStorage$ = Symbol("storage");
+// const sessionStorage$ = Symbol("storage");
 
 const HISTORY_STORAGE_LABEL = "navigator/history";
 
@@ -151,7 +152,7 @@ export default class Navigator
    *
    *    e.g. path="/"
    *
-   *  @property {string} [lang="*"]
+   *  @property {string} [lang=LANG_DEFAULT]
    *
    *  @property {string} [redirectToRoute]
    *
@@ -227,7 +228,7 @@ export default class Navigator
           "(invalid property item.language)" );
       }
       else {
-        language = "*";
+        language = LANG_DEFAULT;
       }
 
       // -- Process property `path`

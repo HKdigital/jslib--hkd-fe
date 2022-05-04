@@ -4,9 +4,9 @@
 import {
   expectString,
   expectDefined,
-  expectArray } from "$hk/expect.js";
+  expectArray } from "@hkd-base/expect.js";
 
-import { clone } from "$hk/object.js";
+import { clone } from "@hkd-base/object.js";
 
 /* ---------------------------------------------------------------- Internals */
 

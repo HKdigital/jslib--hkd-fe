@@ -1,8 +1,8 @@
 /* ------------------------------------------------------------------ Imports */
 
-import { DedupValueStore } from "$hk/stores.js";
+import { DedupValueStore } from "@hkd-base/stores.js";
 
-import { defer } from '$hk/process.js';
+import { defer } from '@hkd-base/process.js';
 
 /* ------------------------------------------------------------------ Exports */
 

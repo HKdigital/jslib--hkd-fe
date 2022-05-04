@@ -1,10 +1,10 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectPositiveNumber, expectFunction } from "$hk/expect.js";
-import { sortByKeyValue } from "$hk/array.js";
+import { expectPositiveNumber, expectFunction } from "@hkd-base/expect.js";
+import { sortByKeyValue } from "@hkd-base/array.js";
 
-import { rethrow } from "$hk/exceptions.js";
+import { rethrow } from "@hkd-base/exceptions.js";
 
 /* ---------------------------------------------------------------- Internals */
 

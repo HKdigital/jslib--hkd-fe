@@ -27,7 +27,7 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import Navigator from "$hk-fe/classes/Navigator.js";
+import Navigator from "@hkd-fe/classes/Navigator.js";
 
 /* ---------------------------------------------------------------- Internals */
 

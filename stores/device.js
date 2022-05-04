@@ -1,11 +1,11 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { DedupValueStore } from "$hk/stores.js";
+import { DedupValueStore } from "@hkd-base/stores.js";
 
-import MediaQuery from "$hk-fe/classes/MediaQuery.js";
+import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 
-// import { getCssVarValue } from "$hk-fe/css.js";
+// import { getCssVarValue } from "@hkd-fe/css.js";
 
 import { BLOCK_MIN_WIDTH } from "$theme/all-constants.js";
 
