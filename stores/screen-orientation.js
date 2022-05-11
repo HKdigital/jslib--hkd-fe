@@ -1,70 +1,11 @@
 
-/* --------------------------------------------------- Handle mobile rotation */
+/* ------------------------------------------------------------------ Imports */
 
 import { ValueStore, DedupValueStore } from "@hkd-base/stores.js";
 
 import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 
-// export const orientationIsLandscape = new DedupValueStore();
-
-// // console.log( "orientationIsLandscape", orientationIsLandscape );
-
-// /**
-//  * Start detection on DOMContentLoaded
-//  * - running code during bootstrap leads to unwanted side effects
-//  */
-// window.addEventListener('DOMContentLoaded', () =>
-// {
-//     const query = "(orientation: portrait)";
-
-//     const mq = new MediaQuery( query );
-
-//     // const htmlClassList = document.documentElement.classList;
-
-//     // off =
-//       mq.listen( ( MediaQueryListEvent ) =>
-//         {
-//           // console.log( {
-//           //     "screenX": window.screenX,
-//           //     "window.orientation?": ("orientation" in window),
-//           //     "window.ontouchstart?": ('ontouchstart' in window),
-//           //     "window.DocumentTouch?": window.DocumentTouch,
-//           //     "navigator.maxTouchPoints": navigator.maxTouchPoints
-//           //   } );
-
-//           // var isTouchCapable = 'ontouchstart' in window ||
-//           //  window.DocumentTouch && document instanceof window.DocumentTouch ||
-//           //  navigator.maxTouchPoints > 0 ||
-//           //  window.navigator.msMaxTouchPoints > 0;
-//           // console.log( { orientation: window.orientation } );
-
-//           if( MediaQueryListEvent.matches )
-//           {
-//             // console.log("portrait",
-//             //   {
-//             //     innerHeight: window.innerHeight,
-//             //     outerHeight: window.outerHeight
-//             //   } );
-
-//             orientationIsLandscape.set( false );
-//           }
-//           else {
-//             // console.log("no portrait",
-//             //   {
-//             //     innerHeight: window.innerHeight,
-//             //     outerHeight: window.outerHeight
-//             //   });
-
-//             // htmlClassList.remove("portrait");
-//             // htmlClassList.add("landscape");
-
-//             // Forces safari in landscape to position stick footer correctly
-//             // window.scrollTo( 0, 0 );
-
-//             orientationIsLandscape.set( true );
-//           }
-//         } );
-// } );
+/* ------------------------------------------------------------------ Exports */
 
 export const orientationIsLandscape = new DedupValueStore();
 export const userChangedOrientation = new ValueStore();
@@ -75,6 +16,13 @@ const looksLikeMobileDevice =
     ( ("orientation" in window) && navigator.maxTouchPoints > 0 );
      /* && window.screenX !== 0 */
 
+/* ---------------------------------------------------------------- Internals */
+
+/**
+ * Update value of store `orientationIsLandscape`
+ * - Set to true if `window.innerWidth > window.innerHeight`,
+ *   false otherwise
+ */
 function updateOrientationIsLandscape()
 {
   const store = orientationIsLandscape;
@@ -95,8 +43,9 @@ function updateOrientationIsLandscape()
     // console.log("userChangedOrientation", { currentValue } );
     userChangedOrientation.set( true );
   }
-
 }
+
+// -----------------------------------------------------------------------------
 
 /**
  * Start detection on DOMContentLoaded
@@ -105,6 +54,8 @@ function updateOrientationIsLandscape()
 window.addEventListener('DOMContentLoaded', () =>
 {
   updateOrientationIsLandscape();
+
+  // -- Use media query to detect if the screen orientation changes
 
   const query = "(orientation: landscape)";
 

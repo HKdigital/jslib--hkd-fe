@@ -1,5 +1,10 @@
 
-export async function getCustomAliases( /*{ resolveCurrentLibPath }*/ )
+export async function getCustomAliases(
+  {
+    resolveCurrentLibPath
+  } )
 {
-  return {};
+  return {
+    "@platform": resolveCurrentLibPath()
+  };
 }

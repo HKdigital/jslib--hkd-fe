@@ -4,67 +4,123 @@
  * It uses the browsers History API, especially `pushState` and `replaceState`
  * to manage a route's state.
  *
- * - The history state is stored by the browser and restores after a page reload
- *
  * How it works:
  *
- * First routes should be configured using the method `configureRoutes`. This
- * way, the Navigator knows about the available routes and how to respond
- * to route changes.
+ * - Internally there is a single FrontendRouter instance that keeps track of
+ *   the available routes and route and state changes.
  *
- * e.g. configureRoutes( ... );
+ * - This file exports methods to use and control the FrontendRouter instance
  *
- * Routes can be changed by modifying the address in the browser's location bar
- * or via a Navigator method.
+ * - The history state is stored by the browser and restores after a page reload
  *
- * e.g. redirectToRoute("/");
+ * - First routes should be configured using the method `configureRoutes`,
+ *   to tell the FrontendRouter instance about the available routes
  *
- * The current state and route can be watched by subscribing to a store supplied
- * by the Navigator.
+ * e.g. configureRoutes( [
+ *   {
+ *     label: "/",
  *
- * e.g. const currentState = getCurrentStateStore();
+ *     layout: {
+ *       component: AppLayout,
+ *       onColor: SURFACE_LIGHT
+ *     },
+ *
+ *     panels:
+ *     {
+ *       backgroundPanel: {
+ *         component: BackgroundPanelHome
+ *       },
+ *
+ *       topPanel: {
+ *         component: TopPanelHome
+ *       },
+ *
+ *       contentPanel: {
+ *         component: ContentPanelHome
+ *       }
+ *     }
+ *   },
+ *   ...
+ * ] );
+ *
+ * Route changes can be triggered:
+ * - Modifying the address in the browser's location bar
+ * - Via methods of the FrontendRouter instance
+ *
+ *   e.g. redirectToRoute("/");
+ *
+ * The current state and route can be watched, so components can react to route
+ * changes.
+ * - The FrontendRouter instance offers methods to get `stores` that will
+ *   contain the route and or state updates
+ *
+ *   (1a) e.g. to receive state updates for the current route:
+ *
+ *   const currentState = getStateStoreForCurrentRoute();
+ *
+ *   -> This store stops updating value swhen the route changes (to prevent
+ *      quicks inside component when the route changes)
+ *
+ *   (1b) e.g. to receive access updates for the current route:
+ *
+ *   const currentAccess = getAccessStoreForCurrentRoute();
+ *
+ *   -> This store stops updating value swhen the route changes (to prevent
+ *      quicks inside component when the route changes)
+ *
+ *   (2) e.g. to receive route, state and access changes
+ *
+ *   You might want to use this for components that are are not destroyed
+ *   when a route changes, e.g. a layout component.
+ *
+ *   routeStateAccessStore.subscribe( ( route, state, access ) => { ... } );
  */
 
 /* ------------------------------------------------------------------ Imports */
 
-import Navigator from "@hkd-fe/classes/Navigator.js";
+import router from "@hkd-fe/classes/FrontendRouter.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-/* ----------------------------------------------------------- Export default */
+/* ------------------------------------------------------------------ Exports */
 
-const nav = new Navigator();
+export const {
+  configureRoutes,
 
-/* Configure navigator */
-export const configureRoutes = nav.configureRoutes.bind( nav );
+  getRouteStore,
 
-/* Current route and state info */
-export const getCurrentStateStore = nav.getCurrentStateStore.bind( nav );
-export const currentRouteAndState = nav.currentRouteAndState;
+  getStateStoreForCurrentRoute,
+  getAccessStoreForCurrentRoute,
 
-/* Methods that change the current state */
-export const redirectTo = nav.redirectTo.bind( nav );
-export const redirectToRoute = nav.redirectToRoute.bind( nav );
+  routeStateAccessStore,
 
-export const goBack = nav.goBack.bind( nav );
-export const canGoBack = nav.canGoBack.bind( nav );
+  redirectTo,
+  redirectToRoute,
 
-export const updateStateData = nav.updateStateData.bind( nav );
+  goHome,
+  goBack,
+  canGoBack,
 
-export const removeSearchParams = nav.removeSearchParams.bind( nav );
+  updateStateData,
+  removeSearchParams,
 
-export const updateReturnStateData = nav.updateReturnStateData.bind( nav );
-export const redirectToReturnState = nav.redirectToReturnState.bind( nav );
+  updateReturnStateData,
+  redirectToReturnState,
 
-/* Less used */
-export const pushState = nav.pushState.bind( nav );
-export const replaceState = nav.replaceState.bind( nav );
+  pushState,
+  replaceState,
 
-export const getStateData = nav.getStateData.bind( nav );
-export const getCurrentPath = nav.getCurrentPath.bind( nav );
+  getStateData,
+  getCurrentPath,
 
-export const routePath = nav.routePath.bind( nav );
-export const getRoute = nav.getRoute.bind( nav );
+  routePath,
+  getRoute,
+
+  gotoRouteMainMenu,
+
+  getLabelHome,
+  getLabelNotFound,
+  getLabelMainMenu } = router;
 
 /* --------------------------------------------- Hot Module Replacement (dev) */
 

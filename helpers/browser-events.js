@@ -2,19 +2,27 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectPositiveNumber, expectFunction } from "@hkd-base/expect.js";
+
 import { sortByKeyValue } from "@hkd-base/array.js";
+import { largestFirst } from "@hkd-base/compare.js";
 
 import { rethrow } from "@hkd-base/exceptions.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-let onLoadFunctions = [];
+const onLoadFunctions = [];
 
+/**
+ * Handler that is executed when the DOM content has been loaded
+ * - Executes functions registered in `onLoadFunctions`
+ * - The onload functions are executed in order of the priority that is set
+ *   when the functions are registered
+ */
 async function dom_content_loaded()
 {
   // -- Sort onLoadFunctions based on property prio
 
-  sortByKeyValue( onLoadFunctions, "priority", { reversed: true } );
+  sortByKeyValue( onLoadFunctions, "priority", largestFirst );
 
   // -- Call all onload functions
 
@@ -43,6 +51,29 @@ window.addEventListener('DOMContentLoaded', dom_content_loaded );
 onBeforeUnload( () =>  {
   window.removeEventListener('DOMContentLoaded', dom_content_loaded );
 } );
+
+// @see https://www.igvita.com/2015/11/20/dont-lose-user-and-app-state-use-page-visibility/
+// visibilityChange
+
+// subscribe to visibility change events
+
+document.addEventListener('visibilitychange', () => {
+
+  switch( document.visibilityState )
+  {
+    case "hidden":
+      console.log("app hidden");
+      // fires when user switches tabs, apps, goes to homescreen, etc.
+
+      break;
+
+    case "visible":
+      // fires when app transitions from prerender, user returns to
+      // the app / tab.
+      console.log("app visible");
+      break;
+  }
+});
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -117,6 +148,5 @@ export function onBeforeUnload( fnOrOffs )
 
   // FIXME >>> quite difficult to get this consistent...
 
-  // window.addEventListener( "beforeunload", unload );
   // window.addEventListener( "beforeunload", unload );
 }

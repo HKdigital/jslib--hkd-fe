@@ -62,7 +62,7 @@ import { UserError } from "@hkd-base/exceptions.js";
 
 import { debug } from "@hkd-base/log.js";
 
-import { onLoad, onBeforeUnload } from "@hkd-fe/process.js";
+import { onLoad, onBeforeUnload } from "@hkd-fe/helpers/browser-events.js";
 
 import { backendJsonGet, backendJsonPost } from "@hkd-fe/http.js";
 

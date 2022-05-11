@@ -31,51 +31,81 @@ import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-const pathMatcher$ = Symbol("pathMatcher");
-const routesByLangAndLabel$ = Symbol("routesByLangAndLabel");
+const pathMatcher$ = Symbol();
+const routesByLangAndLabel$ = Symbol();
 
-const offs$ = Symbol("offs");
+const homeLabel$ = Symbol();
+const notFoundLabel$ = Symbol();
+const mainMenuLabel$ = Symbol();
+
+const offs$ = Symbol();
 
 // const sessionStorage$ = Symbol("storage");
 
-const HISTORY_STORAGE_LABEL = "navigator/history";
+const HISTORY_STORAGE_LABEL = "frontend-router/history";
 
 const MAX_HISTORY_LENGTH = 15;
 
 const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
 
-const NOT_FOUND_ROUTE = "not-found";
-const HOME_ROUTE = "/";
+const DEFAULT_ROUTE_LABEL_HOME = "/";
+const DEFAULT_ROUTE_LABEL_NOT_FOUND = "not-found";
+const DEFAULT_ROUTE_LABEL_MAIN_MENU = "main-menu";
 
-/* ------------------------------------------------------------------ Exports */
+//
+// A single instance of the FrontendRouter class will be assigned to the
+// variable `router`
+//
+let router;
 
-export default class Navigator
+/**
+ * Class that will be instantiated only once and handles the routing magic
+ */
+class FrontendRouter
 {
   /**
-   * Construct a Navigator (frontend router) instance
+   * Construct a FrontendRouter (frontend router) instance
    */
   constructor()
   {
-    this[ offs$ ] = {};
+    if( router )
+    {
+      throw new Error("Variable [router] has already been assigned");
+    }
 
-    // Create path matcher, used to find corresponding routes
+    //
+    // Assign this (the only) instance to variable `router`
+    // - Internally the variable router is used, so methods do not have to be
+    //   bound when exported without the instance context
+    //
+    router = this;
 
-    this[ pathMatcher$ ] = new PathMatcher();
+    router[ offs$ ] = {};
 
-    // Also keep track of routes by language and route label
+    //-- Create path matcher (used to match routes)
 
-    this[ routesByLangAndLabel$ ] = {};
+    router[ pathMatcher$ ] = new PathMatcher();
+
+    //-- Default route labels
+
+    router[ homeLabel$ ] = DEFAULT_ROUTE_LABEL_HOME;
+    router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
+    router[ mainMenuLabel$ ] = DEFAULT_ROUTE_LABEL_MAIN_MENU;
+
+    //-- Routes by language and route label
+
+    router[ routesByLangAndLabel$ ] = {};
 
     if( !sessionStorage.getItem( HISTORY_STORAGE_LABEL ) )
     {
-      // TODO copy state to server and use access code!!!
+      // IDEA: copy state to server and use access code to restore history
 
       let historyJson = localStorage.getItem( HISTORY_STORAGE_LABEL );
 
       if( historyJson )
       {
         let currentPath =
-          this._stripPath(
+          router._stripPath(
             location.href, { includeSearch: false, includeHash: true } );
 
         // Copy state from localStorage
@@ -99,36 +129,38 @@ export default class Navigator
       }
     }
 
-    // Define store that can be used to listen to navigation updates
     //
-    // Set `sane` defaults in case the store is accessed before route and
-    // state have been set
+    // `this[ routeStateAccessStore$ ]` is a store that will updaten on all
+    // navigation and state updates
+    //
+    // `initialData` are `sane` defaults in case the store is accessed
+    // before route and state have been set
     //
 
-    const initialRouteAndState =
+    const initialData =
       {
         route: { layout: null },
-        state: this._getOrCreateCurrentState(),
+        state: router._getOrCreateCurrentState(),
         access: { validated: false }
       };
 
-    this.currentRouteAndState =
-      new ValueStore( initialRouteAndState );
+    const routeStateAccessStore =
+      router.routeStateAccessStore = new ValueStore( initialData );
 
-    this.currentRouteAndState
+    routeStateAccessStore
       .hasSubscribers.subscribe( ( hasSubscribers ) =>
         {
-          if( !this[ pathMatcher$ ] )
+          if( !router[ pathMatcher$ ] )
           {
             throw new Error(`Not configured yet (call configureRoutes first)`);
           }
 
           if( hasSubscribers )
           {
-            this._registerLocationAndSessionListeners();
+            router._registerLocationAndSessionListeners();
           }
           else {
-            this._unregisterLocationAndSessionListeners();
+            router._unregisterLocationAndSessionListeners();
           }
         },
         false );
@@ -139,7 +171,7 @@ export default class Navigator
   /**
    * Configure routes
    * - Process a list of route definitions
-   * - Set or replace the routes this instance knows about
+   * - Sets or replaces all routes the router knows about
    *
    *  --
    *  @typedef {object} Route
@@ -174,12 +206,12 @@ export default class Navigator
    *      backgroundColor: SURFACE_WHITE
    *    }
    *
-   *  @property {object} views
-   *  @property {object} views.<bar-or-panel-name>
+   *  @property {object} panels
+   *  @property {object} panels.<bar-or-panel-name>
    *
    *    e.g.
    *
-   *    views:
+   *    panels:
    *    {
    *      appBar: {
    *        component: TopPanelTitleAndClose,
@@ -202,7 +234,12 @@ export default class Navigator
 
     expectArray( routes, "Missing or invalid configuration [routes]" );
 
-    this[ pathMatcher$ ] = new PathMatcher();
+    router[ pathMatcher$ ] = new PathMatcher();
+
+
+    let homeLabel = null;
+    let notFoundLabel = null;
+    let mainMenuLabel = null;
 
     for( const route of routes )
     {
@@ -216,6 +253,27 @@ export default class Navigator
       expectString( label,
         "Invalid configuration [routes] " +
         "(missing or invalid property item.label)" );
+
+      // -- Process property `isHome`
+
+      if( "isHome" in route )
+      {
+        homeLabel = label;
+      }
+
+      // -- Process property `isNotFound`
+
+      if( "isNotFound" in route )
+      {
+        notFoundLabel = label;
+      }
+
+      // -- Process property `isMainMenu`
+
+      if( "isMainMenu" in route )
+      {
+        mainMenuLabel = label;
+      }
 
       // -- Process property  `language`
 
@@ -233,7 +291,27 @@ export default class Navigator
 
       // -- Process property `path`
 
-      const path = route.path;
+      let path;
+
+      if( "path" in route )
+      {
+        path = route.path;
+      }
+      else {
+        //
+        // No path defined for route: generate path from label
+        //
+        if( "/" !== label.charAt(0) )
+        {
+          // Prepend a slash (to make it a path)
+          path = `/${label}`;
+        }
+        else {
+          path = label;
+        }
+
+        route.path = path;
+      }
 
       expectString( path,
         "Invalid configuration [routes] " +
@@ -244,7 +322,7 @@ export default class Navigator
       if( route.app )
       {
         try {
-          this._normalizeAppParams( route.app );
+          router._normalizeAppParams( route.app );
         }
         catch( e )
         {
@@ -260,7 +338,7 @@ export default class Navigator
       if( route.layout )
       {
         try {
-          this._normalizeLayoutOrViewParams( route.layout );
+          router._normalizeLayoutOrPanelParams( route.layout );
         }
         catch( e )
         {
@@ -271,30 +349,30 @@ export default class Navigator
         route.layout = null;
       }
 
-      // -- Process property `views`
+      // -- Process property `panels`
 
-      if( route.views )
+      if( route.panels )
       {
-        const views = route.views;
+        const panels = route.panels;
 
-        expectObject( views,
-          "Invalid configuration (missing or invalid property [item.views])" );
+        expectObject( panels,
+          "Invalid configuration (missing or invalid property [item.panels])" );
 
-        for( const key in views )
+        for( const key in panels )
         {
-          const view = views[ key ];
+          const panel = panels[ key ];
 
           try {
-            this._normalizeLayoutOrViewParams( view );
+            router._normalizeLayoutOrPanelParams( panel );
           }
           catch( e )
           {
-            rethrow( `Invalid configuration [views[${key}]]`, e );
+            rethrow( `Invalid configuration [panels[${key}]]`, e );
           }
         }
       }
       else {
-        route.views = {};
+        route.panels = {};
       }
 
       // -- Process property `redirectToRoute`
@@ -321,92 +399,167 @@ export default class Navigator
 
       // -- Add route to path matcher
 
-      this[ pathMatcher$ ].add( path, route );
+      router[ pathMatcher$ ].add( path, route );
 
       // -- Add route to routesByLangAndLabel (used by method getRoute)
 
-      this[ routesByLangAndLabel$ ][ `${language}:${label}` ] = route;
+      router[ routesByLangAndLabel$ ][ `${language}:${label}` ] = route;
 
     } // end for
 
+    // -- Set default routes
 
-    if( !this._tryCurrentRouteIsRedirect() )
+    if( homeLabel )
+    {
+      router[ homeLabel$ ] = homeLabel;
+    }
+    else {
+      router[ homeLabel$ ] = DEFAULT_ROUTE_LABEL_HOME;
+    }
+
+    if( notFoundLabel )
+    {
+      router[ notFoundLabel$ ] = notFoundLabel;
+    }
+    else {
+      router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
+    }
+
+    if( mainMenuLabel )
+    {
+      router[ mainMenuLabel$ ] = mainMenuLabel;
+    }
+    else {
+      router[ mainMenuLabel$ ] = DEFAULT_ROUTE_LABEL_MAIN_MENU;
+    }
+
+    // -- Handle redirect if it applies to the current route
+
+    if( !router._tryCurrentRouteIsRedirect() )
     {
       // Force initial update
-      this._updateCurrentRouteAndState();
+      router._updateCurrentRouteAndState();
     }
   }
 
   // -------------------------------------------------------------------- Method
 
   /**
-   * Get a store that outputs the current state
-   * - When the route path changes, the store auto destructs
-   * - When the last subscriber unsubscribes, the store auto destructs
-   *
-   * - When the store is destructed, the store values will no longer be updated
-   *
-   * @returns {object} current state store instance
+   * Get a store that contains route values
+   * - A new value will be set if the route data changes
    */
-  getCurrentStateStore()
+  getRouteStore()
   {
-    const currentRouteAndState = this.currentRouteAndState;
+    //-- Create new `currentRouteStore`
 
-    const currentState = this._getCurrentStateFromStorage();
+    const { route: initialValue } = router.getRouteStateAccess();
 
-    const originalPath =
-      this._stripPath( currentState.path, { includeHash: false } );
+    const currentRouteStore = new ValueStore( initialValue );
 
-    const stateForCurrentRouteStore = new ValueStore( currentState );
+    //-- Create unique entries for storing unsubscribe methods
 
-    const unsubscribe$ =
-      Symbol("unsubscribeStateForCurrentRoute");
+    const unsubscribe$ = Symbol();
+    const unsubscribeHasSubscribers$ = Symbol();
 
-    const unsubscribeHasSubscribers$ =
-      Symbol("unsubscribeStateForCurrentRouteHasSubscribers");
+    //-- Handle store subscribers and data updates
 
-    const destroy = () => {
+    let previousRoute = null;
 
-      // console.log(`*** destroy currentStateStore for [${originalPath}]`);
-
-      if( this[ offs$ ][ unsubscribe$ ] )
-      {
-        this[ offs$ ][ unsubscribe$ ]();
-        delete this[ offs$ ][ unsubscribe$ ];
-      }
-
-      // if( null !== stateForCurrentRouteStore.get() )
-      // {
-      //   // Set null to indicate the store has been destructed
-      //   stateForCurrentRouteStore.set( null );
-      // }
-
-      if( this[ offs$ ][ unsubscribeHasSubscribers$ ] )
-      {
-        // Auto destroy
-        this[ offs$ ][ unsubscribeHasSubscribers$ ]();
-      }
-    };
-
-    // let previousState = currentState;
-    let previousState = null;
-
-    this[ offs$ ][ unsubscribeHasSubscribers$ ] =
-      stateForCurrentRouteStore
+    router[ offs$ ][ unsubscribeHasSubscribers$ ] =
+      currentRouteStore
         .hasSubscribers.subscribe( ( $hasSubscribers ) =>
     {
       // console.log(
-      //   "stateForCurrentRouteStore.hasSubscribers", $hasSubscribers );
+      //   "currentRouteStore.hasSubscribers", $hasSubscribers );
 
       if( $hasSubscribers )
       {
-        this[ offs$ ][ unsubscribe$ ] =
-          currentRouteAndState.subscribe( ( $currentRouteAndState ) =>
+        router[ offs$ ][ unsubscribe$ ] =
+          router.routeStateAccessStore.subscribe( ( routeStateAccess ) =>
           {
-            const currentState = $currentRouteAndState.state;
+            const currentRoute = routeStateAccess.route;
 
-            const currentPath =
-              this._stripPath( currentState.path, { includeHash: false } );
+            // console.log("FIXME: gets fired twice?");
+
+            // console.log("CHECK", currentRoute, previousRoute );
+
+            if( !equals( currentRoute, previousRoute ) )
+            {
+              // @note duplicate access data is skipped
+
+              previousRoute = currentRoute;
+
+              // Set current state
+
+              currentRouteStore
+                .set( { ...currentRoute } );
+            }
+          } );
+      }
+      else {
+        // no more subscribers -> stop store
+        router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
+      }
+    } );
+
+    return currentRouteStore;
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Get a store that outputs the state for the current route only
+   * - When the route path changes, values in the store will no longer be
+   *   updated. This prevents state changes that are meant for other routes
+   *   to propagate in the components of the previous route.
+   *
+   * The store auto destructs when:
+   * - When the route path changes
+   * - When the last subscriber unsubscribes
+   *
+   * When the store has been destructed, values in the store will no longer be
+   * updated.
+   *
+   * @returns {object} current state store instance
+   */
+  getStateStoreForCurrentRoute()
+  {
+    //-- Store original path upon creation of the store
+
+    const originalPath =
+      router.getCurrentPath( { includeSearch: true, includeHash: false } );
+
+    //-- Create new `currentStateStore`
+
+    const { state: initialValue } = router.getRouteStateAccess();
+
+    const currentStateStore = new ValueStore( initialValue );
+
+    //-- Create unique entries for storing unsubscribe methods
+
+    const unsubscribe$ = Symbol();
+    const unsubscribeHasSubscribers$ = Symbol();
+
+    //-- Handle store subscribers and data updates
+
+    let previousState = null;
+
+    router[ offs$ ][ unsubscribeHasSubscribers$ ] =
+      currentStateStore
+        .hasSubscribers.subscribe( ( $hasSubscribers ) =>
+    {
+      // console.log(
+      //   "currentStateStore.hasSubscribers", $hasSubscribers );
+
+      if( $hasSubscribers )
+      {
+        router[ offs$ ][ unsubscribe$ ] =
+          router.routeStateAccessStore
+            .subscribe( ( routeStateAccess ) =>
+          {
+            const currentState = routeStateAccess.state;
+
+            const currentPath = currentState.path;
 
             if( originalPath === currentPath )
             {
@@ -418,32 +571,123 @@ export default class Navigator
 
                 // Set current state
 
-                stateForCurrentRouteStore
+                currentStateStore
                   .set( { data: {}, ...currentState } );
               }
             }
             else {
-              // console.log(
-              //   "*** path changed -> destroy",
-              //   {
-              //     originalPath,
-              //     currentPath
-              //   } );
-
-              // Path changed -> destroy
-              destroy();
+              // Path changed -> stop store
+              router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
             }
           } );
       }
-      else if( this[ offs$ ][ unsubscribe$ ] ) {
-        // subscribed -> destroy
-        // console.log("*** no more subscribers -> destroy");
-        destroy();
+      else {
+        // No more subscribers -> stop store
+        router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
       }
     } );
 
-    return stateForCurrentRouteStore;
+    return currentStateStore;
   }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Get a store that outputs the access data for the current route only
+   * - When the route path changes, values in the store will no longer be
+   *   updated. This prevents access changes that are meant for other routes
+   *   to propagate in the components of the previous route.
+   *
+   * The store auto destructs when:
+   * - When the route path changes
+   * - When the last subscriber unsubscribes
+   *
+   * When the store has been destructed, values in the store will no longer be
+   * updated.
+   *
+   * @returns {object} current state store instance
+   */
+  getAccessStoreForCurrentRoute()
+  {
+    console.log("TODO: TEST");
+
+    //-- Store original path upon creation of the store
+
+    const originalPath =
+      router.getCurrentPath( { includeSearch: true, includeHash: false } );
+
+    //-- Create new `currentAccessStore`
+
+    const { access: initialValue } = router.getRouteStateAccess();
+
+    const currentAccessStore = new ValueStore( initialValue );
+
+    //-- Create unique entries for storing unsubscribe methods
+
+    const unsubscribe$ = Symbol();
+    const unsubscribeHasSubscribers$ = Symbol();
+
+    //-- Handle store subscribers and data updates
+
+    let previousAccess = null;
+
+    router[ offs$ ][ unsubscribeHasSubscribers$ ] =
+      currentAccessStore
+        .hasSubscribers.subscribe( ( $hasSubscribers ) =>
+    {
+      // console.log(
+      //   "currentAccessStore.hasSubscribers", $hasSubscribers );
+
+      if( $hasSubscribers )
+      {
+        router[ offs$ ][ unsubscribe$ ] =
+          router.routeStateAccessStore.subscribe( ( routeStateAccess ) =>
+          {
+            const currentState = routeStateAccess.state;
+            const currentAccess = routeStateAccess.access;
+
+            const currentPath = currentState.path;
+
+            if( originalPath === currentPath )
+            {
+              if( !equals( currentAccess, previousAccess ) )
+              {
+                // @note duplicate access data is skipped
+
+                previousAccess = currentAccess;
+
+                // Set current state
+
+                currentAccessStore
+                  .set( { ...currentAccess } );
+              }
+            }
+            else {
+              // Path changed -> stop store
+              router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
+            }
+          } );
+      }
+      else {
+        // no more subscribers -> stop store
+        router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
+      }
+    } );
+
+    return currentAccessStore;
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Get a store that contains route, state and access values
+   * - A new value will be set if either the route, the state or the access
+   *   data changes
+   */
+  // getRouteStateAccessStore()
+  // {
+  //   return router.routeStateAccessStore;
+  // }
 
   // -------------------------------------------------------------------- Method
 
@@ -463,9 +707,9 @@ export default class Navigator
   {
     expectString( path, "Missing or invalid parameter [path]" );
 
-    let plainPath = this._stripPath( path );
+    let plainPath = router._stripPath( path );
 
-    const route = this[ pathMatcher$ ].matchOne( plainPath );
+    const route = router[ pathMatcher$ ].matchOne( plainPath );
 
     if( !route )
     {
@@ -478,7 +722,7 @@ export default class Navigator
 
     if( route.data.redirectToRoute )
     {
-      this.redirectToRoute( route.data.redirectToRoute );
+      router.redirectToRoute( route.data.redirectToRoute );
       return;
     }
 
@@ -521,10 +765,10 @@ export default class Navigator
 
     if( replaceCurrent )
     {
-      this.replaceState( newState );
+      router.replaceState( newState );
     }
     else {
-      this.pushState( newState );
+      router.pushState( newState );
     }
   }
 
@@ -541,7 +785,7 @@ export default class Navigator
    */
   redirectToRoute( label, options={} )
   {
-    console.log("redirectToRoute", label);
+    // console.log("redirectToRoute", label);
 
     expectString( label, "Missing or invalid parameter [label]" );
 
@@ -551,15 +795,38 @@ export default class Navigator
     {
       expectObject( options, "Missing or invalid parameter [options]" );
 
-      path = this.routePath( label, options.lang );
+      path = router.routePath( label, options.lang );
     }
     else {
-      path = this.routePath( label );
+      path = router.routePath( label );
+    }
+
+    if( !path )
+    {
+      throw new Error(`No path found for route with label [${label}]`);
     }
 
     // console.log(`redirectToRoute [label=${label}], [path=${path}]`, options);
 
-    this.redirectTo( path, options );
+    router.redirectTo( path, options );
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Redirect to the home route
+   */
+  goHome( { replaceCurrent=true }={} )
+  {
+    const homeLabel = this[ homeLabel$ ];
+
+    const { route } = router.routeStateAccessStore.get();
+
+    if( homeLabel !== route.label )
+    {
+      // Not already on home route -> redirect
+      router.redirectToRoute( homeLabel, { replaceCurrent } );
+    }
   }
 
   // -------------------------------------------------------------------- Method
@@ -597,7 +864,7 @@ export default class Navigator
 
     window.history.replaceState( null, '', state.path );
 
-    this._updateCurrentRouteAndState();
+    router._updateCurrentRouteAndState();
   }
 
   // -------------------------------------------------------------------- Method
@@ -645,7 +912,7 @@ export default class Navigator
    */
   updateStateData( updateData, { replaceCurrent=false }={} )
   {
-    const currentState = this._getCurrentStateFromStorage();
+    const currentState = router._getCurrentStateFromSessionStorage();
 
     if( !currentState )
     {
@@ -653,7 +920,7 @@ export default class Navigator
     }
 
     let updatedData =
-      this._cloneAndUpdate( currentState.data, updateData );
+      router._cloneAndUpdate( currentState.data, updateData );
 
     const newState = currentState;
 
@@ -661,10 +928,10 @@ export default class Navigator
 
     if( !replaceCurrent )
     {
-      this.pushState( newState );
+      router.pushState( newState );
     }
     else {
-      this.replaceState( newState );
+      router.replaceState( newState );
     }
   }
 
@@ -676,7 +943,7 @@ export default class Navigator
    */
   removeSearchParams()
   {
-    let state = this._getCurrentStateFromStorage();
+    let state = router._getCurrentStateFromSessionStorage();
 
     if( !state.search )
     {
@@ -684,10 +951,10 @@ export default class Navigator
     }
 
     let path =
-      this._stripPath(
+      router._stripPath(
         location.href, { includeSearch: false, includeHash: true } );
 
-    this.redirectTo( path,
+    router.redirectTo( path,
       {
         stateData: state.data,
         replaceCurrent: true
@@ -707,7 +974,7 @@ export default class Navigator
    */
   updateReturnStateData( updateData )
   {
-    const currentState = this._getCurrentStateFromStorage();
+    const currentState = router._getCurrentStateFromSessionStorage();
 
     if( !currentState )
     {
@@ -730,7 +997,7 @@ export default class Navigator
       const returnState = newState.data.returnState;
 
       let updatedReturnStateData =
-        this._cloneAndUpdate( returnState.data, updateData );
+        router._cloneAndUpdate( returnState.data, updateData );
 
       newState.data.returnState.data = updatedReturnStateData;
     }
@@ -743,7 +1010,7 @@ export default class Navigator
     //   "*** updateReturnStateData: newState",
     //   JSON.stringify( newState, null, 2));
 
-    this.replaceState( newState );
+    router.replaceState( newState );
   }
 
   // -------------------------------------------------------------------- Method
@@ -768,7 +1035,7 @@ export default class Navigator
       goBackFirst = false;
     }
 
-    let currentState = this._getCurrentStateFromStorage();
+    let currentState = router._getCurrentStateFromSessionStorage();
 
     let returnState = currentState.data.returnState;
 
@@ -779,9 +1046,9 @@ export default class Navigator
 
     if( updateData )
     {
-      this.updateReturnStateData( updateData );
+      router.updateReturnStateData( updateData );
 
-      currentState = this._getCurrentStateFromStorage();
+      currentState = router._getCurrentStateFromSessionStorage();
       returnState = currentState.data.returnState;
 
       // console.log("*** redirectToReturnState: updated currentState", currentState );
@@ -792,29 +1059,31 @@ export default class Navigator
       delete returnState.data;
     }
 
-    this._normalizeState( returnState );
+    router._normalizeState( returnState );
 
     // console.log("*** redirectToReturnState", returnState );
 
     // Go back and replace the previous state by the `returnState`
-    this.replaceState( returnState, { goBackFirst } );
+    router.replaceState( returnState, { goBackFirst } );
   }
 
   // -------------------------------------------------------------------- Method
 
   /**
    * Returns the current path
-   * - Gets the path from location.href
+   * - Gets the path from `location.href`
+   *
+   * @param {boolean} [options.includeSearch=true]
+   * @param {boolean} [options.includeHash=true]
    *
    * @returns {string} the current path
    */
-  getCurrentPath()
+  getCurrentPath( options={} )
   {
-    const path =
-      this._stripPath(
-        location.href, { includeSearch: true, includeHash: true } );
+    const { includeSearch=true, includeHash=true } = options;
 
-    return path;
+    return router
+      ._stripPath( location.href, { includeSearch, includeHash } );
   }
 
   // -------------------------------------------------------------------- Method
@@ -827,7 +1096,7 @@ export default class Navigator
    */
   getStateData()
   {
-    const currentState = this._getCurrentStateFromStorage();
+    const currentState = router._getCurrentStateFromSessionStorage();
 
     if( currentState )
     {
@@ -843,12 +1112,40 @@ export default class Navigator
    * Get the path that corresponds to the specified label
    *
    * @param {string} [label] - Label that corresponds to the route
+   *
    * @param {string} [lang=<current>]
    *   Language, if not specified, the current language will be used
+   *
+   * @param {boolean} [options.followRedirect=true]
+   *   If a route contains a `redirectToRoute` instruction, the redirect will
+   *   be followed before a path is returned. Set this option to false to
+   *   prevent that.
    */
-  routePath( label, lang )
+  routePath( label, lang, options={followRedirect:true} )
   {
-    return this.getRoute( label, lang ).path;
+    const route = router.getRoute( label, lang );
+
+    if( !route )
+    {
+      throw new Error(`Route [${label}] has not been defined`);
+    }
+
+    if( !options || options.followRedirect )
+    {
+      if( "redirectToRoute"in route )
+      {
+        return router.routePath( route.redirectToRoute, lang );
+      }
+    }
+
+    let path = route.path;
+
+    if( !path )
+    {
+      throw new Error(`Route [${label}] has no path`);
+    }
+
+    return path;
   }
 
   // -------------------------------------------------------------------- Method
@@ -876,7 +1173,7 @@ export default class Navigator
         "Missing or invalid parameter [label]" );
     }
 
-    const route = this[ routesByLangAndLabel$ ][ `${lang}:${label}` ];
+    const route = router[ routesByLangAndLabel$ ][ `${lang}:${label}` ];
 
     if( !route )
     {
@@ -890,7 +1187,7 @@ export default class Navigator
   // -------------------------------------------------------------------- Method
 
   /**
-   * Get the current route and state
+   * Get the current route, state and access data
    * - If the current route defines access via `allowGuest` or `requireGroup`,
    *   an access property is returned that validates access against credentials
    *   set in session data.
@@ -902,37 +1199,41 @@ export default class Navigator
    *     [access={ allowed: <boolean>, validated: <boolean> }]
    *   }
    */
-  getRouteAndState()
+  getRouteStateAccess()
   {
-    let currentState = this._getCurrentStateFromStorage();
+    //-- State
+
+    let currentState = router._getCurrentStateFromSessionStorage();
 
     if( !currentState )
     {
       //throw new Error("No current state");
-      currentState = this._getOrCreateCurrentState();
+      currentState = router._getOrCreateCurrentState();
     }
+
+    //-- Route
 
     const path = currentState.path;
 
     expectString( path, "Missing or invalid parameter [path]" );
 
-    let plainPath = this._stripPath( path );
+    let plainPath = router._stripPath( path );
 
-    let route = this[ pathMatcher$ ].matchOne( plainPath );
+    let route = router[ pathMatcher$ ].matchOne( plainPath );
 
     if( !route )
     {
       throw new Error(`No route found for path [${plainPath}]`);
     }
 
-    // - Access
+    //-- Access
 
     let access;
 
     const sessionDataValue = sessionData.get();
 
-    // console.log( "Navigator:authenticationBusy", authenticationBusy.get() );
-    // console.log( "Navigator:sessionDataValue", sessionDataValue );
+    // console.log( "FrontendRouter:authenticationBusy", authenticationBusy.get() );
+    // console.log( "FrontendRouter:sessionDataValue", sessionDataValue );
 
     const allowGuest = route.data.allowGuest;
     const requireGroup = route.data.requireGroup;
@@ -1013,9 +1314,9 @@ export default class Navigator
    */
   pushState( state )
   {
-    this._normalizeState( state );
+    router._normalizeState( state );
 
-    if( !this._stateChanged( state ) )
+    if( !router._stateChanged( state ) )
     {
       //throw new Error("Cannot push state (state has not changed)");
       console.error("Cannot push state (state has not changed)");
@@ -1057,7 +1358,7 @@ export default class Navigator
     window.history.pushState( null, '', state.path );
 
     // @note pushState never causes a hashchange event to be fired
-    this._updateCurrentRouteAndState();
+    router._updateCurrentRouteAndState();
   }
 
   // -------------------------------------------------------------------- Method
@@ -1076,11 +1377,11 @@ export default class Navigator
    */
   replaceState( state, options )
   {
-    this._normalizeState( state );
+    router._normalizeState( state );
 
     // debug( "replaceState", state );
 
-    if( !this._stateChanged( state ) )
+    if( !router._stateChanged( state ) )
     {
       // Ignore
       return;
@@ -1125,7 +1426,95 @@ export default class Navigator
 
     window.history.replaceState( null, '', state.path );
 
-    this._updateCurrentRouteAndState();
+    router._updateCurrentRouteAndState();
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Go to the main menu route or navigate back if already on the main menu
+   * route
+   */
+  // toggleMainMenu()
+  // {
+  //   const { route } = router.getRouteStateAccess();
+
+  //   const mainMenuLabel = router.getLabelMainMenu();
+
+  //   if( mainMenuLabel === route.label )
+  //   {
+  //     //
+  //     // Already on main menu route
+  //     // -> navigate back or home if no previous route exists
+  //     //
+  //     router.goBack() || router.goHome();
+  //   }
+  //   else {
+  //     //
+  //     // Redirect to the main menu route
+  //     // - Leaves current route in history (so we can go back)
+  //     //
+  //     router.redirectToRoute( mainMenuLabel );
+  //   }
+  // }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Returns the label that belongs to the current `home` route
+   *
+   * @returns {string} home route label
+   */
+  getLabelHome() {
+    return router[ homeLabel$ ];
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Returns the label that belongs to the current `not found` route
+   *
+   * @returns {string} not found route label
+   */
+  getLabelNotFound() {
+    return router[ notFoundLabel$ ];
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Returns the label that belongs to the current `main menu` route
+   *
+   * @returns {string} main menu route label
+   */
+  getLabelMainMenu() {
+    return router[ mainMenuLabel$ ];
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Go to the `main menu` route
+   *
+   * @returns {boolean}
+   *   true if the route changed, false if already on the main menu route
+   */
+  gotoRouteMainMenu()
+  {
+    const mainMenuLabel = router.getLabelMainMenu();
+
+    const { route } = router.getRouteStateAccess();
+
+    // console.log("gotoRouteMainMenu", route, mainMenuLabel );
+
+    if( mainMenuLabel === route.label )
+    {
+      return false;
+    }
+
+    router.redirectToRoute( mainMenuLabel );
+
+    return true;
   }
 
   /* ------------------------------------------------------- Internal methods */
@@ -1138,20 +1527,26 @@ export default class Navigator
    */
   _tryCurrentRouteIsRedirect()
   {
-    let plainPath = this._stripPath( location.href );
+    let plainPath = router._stripPath( location.href );
 
-    const route = this[ pathMatcher$ ].matchOne( plainPath );
+    const route = router[ pathMatcher$ ].matchOne( plainPath );
 
     if( !route )
     {
-      const notFoundRoute = this[ pathMatcher$ ].matchOne( NOT_FOUND_ROUTE );
+      // Route not found
+
+      const notFoundRoute =
+        router[ pathMatcher$ ].matchOne( router[ notFoundLabel$ ] );
 
       if( notFoundRoute )
       {
-        this.redirectToRoute( NOT_FOUND_ROUTE, { replaceCurrent: true } );
+        router.redirectToRoute(
+          router[ notFoundLabel$ ], { replaceCurrent: true } );
       }
       else {
-        this.redirectToRoute( HOME_ROUTE, { replaceCurrent: true } );
+        // No `not found` route has been defined -> redirect to `home`
+
+        router.redirectToRoute( router[ homeLabel$ ], { replaceCurrent: true } );
       }
 
       return true;
@@ -1167,7 +1562,7 @@ export default class Navigator
           redirectToRoute: route.data.redirectToRoute
         } );
 
-      this.redirectToRoute(
+      router.redirectToRoute(
         route.data.redirectToRoute, { replaceCurrent: true } );
 
       return true;
@@ -1185,34 +1580,34 @@ export default class Navigator
   {
     // -- Catch `navigate back` action from user
 
-    if( !this[ offs$ ].popstate )
+    if( !router[ offs$ ].popstate )
     {
-      window.addEventListener('popstate', this._onHistoryPop.bind(this) );
+      window.addEventListener('popstate', router._onHistoryPop );
 
-      this[ offs$ ].popstate = () =>
+      router[ offs$ ].popstate = () =>
       {
-        window.removeEventListener('popstate', this._onHistoryPop.bind(this) );
-      }
+        window.removeEventListener('popstate', router._onHistoryPop );
+      };
     }
 
     // -- Keep track of current language
 
-    this[ offs$ ].currentLanguage =
-      currentLanguage.subscribe( ( value ) => {
+    router[ offs$ ].currentLanguage =
+      currentLanguage.subscribe( ( /*value*/ ) => {
 
         // debug("currentLanguage=" + value);
 
-        this._updateCurrentRouteAndState();
+        router._updateCurrentRouteAndState();
       } );
 
     // -- Keep track of session data (used to update access property)
 
-    this[ offs$ ].sessionData =
-      sessionData.subscribe( ( sessionDataValue ) => {
+    router[ offs$ ].sessionData =
+      sessionData.subscribe( ( /*sessionDataValue*/ ) => {
 
         // debug("sessionData", sessionDataValue);
 
-        this._updateCurrentRouteAndState();
+        router._updateCurrentRouteAndState();
       } );
   }
 
@@ -1223,9 +1618,9 @@ export default class Navigator
    */
   _unregisterLocationAndSessionListeners()
   {
-    for( const key in this[ offs$ ] )
+    for( const key in router[ offs$ ] )
     {
-      this[ offs$ ][ key ]();
+      router[ offs$ ][ key ]();
     }
   }
 
@@ -1261,41 +1656,42 @@ export default class Navigator
 
         // console.log("_onHistoryPop(): history", history);
 
-        this._updateCurrentRouteAndState();
+        router._updateCurrentRouteAndState();
         return;
       }
     }
 
     // No state found for current url -> create empty state
-    // (let view decide what to do in case of an error)
+    // (let panel decide what to do in case of an error)
 
     if( history && history.length )
     {
       console.log("_onHistoryPop(): state not found -> redirect to latest");
 
       const latest = history[ history.length - 1];
-      this.redirectTo( latest.path, { replaceCurrent: true } );
+      router.redirectTo( latest.path, { replaceCurrent: true } );
     }
     else {
       console.log("_onHistoryPop(): state not found -> redirect to home");
-      this.redirectToRoute( "/" );
+      router.redirectToRoute( this[ homeLabel$ ] );
     }
   }
 
   // -------------------------------------------------------------------- Method
 
   /**
-   * Get the current state from the state history in the storage
+   * Get the current state from the state history in the session storage
+   * - Returns null if no state was found in the session storage
    *
    * @returns {object|null} The current state (cloned) or null if not found
    */
-  _getCurrentStateFromStorage()
+  _getCurrentStateFromSessionStorage()
   {
     // -- Try get latest history item from sessionStorage
 
     const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
 
-    // console.log("_getCurrentStateFromStorage (1)", location.href, historyJson);
+    // console.log("_getCurrentStateFromSessionStorage (1)", location.href, historyJson);
 
     let lastItem;
 
@@ -1315,7 +1711,7 @@ export default class Navigator
     }
 
     const locationPath =
-      this._stripPath(
+      router._stripPath(
         location.href, { includeSearch: true, includeHash: true } );
 
     if( lastItem.path === locationPath )
@@ -1339,7 +1735,7 @@ export default class Navigator
    */
   _getOrCreateCurrentState()
   {
-    const currentState = this._getCurrentStateFromStorage();
+    const currentState = router._getCurrentStateFromSessionStorage();
 
     if( currentState )
     {
@@ -1348,7 +1744,7 @@ export default class Navigator
 
     // -- Create new state
 
-    const state = this._stateFromLocationHref();
+    const state = router._stateFromLocationHref();
 
     let historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
 
@@ -1373,6 +1769,8 @@ export default class Navigator
     historyJson = JSON.stringify(history);
 
     sessionStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
+
+    // TODO: depreceate?
     localStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
 
     window.history.pushState( null, '', state.path );
@@ -1390,7 +1788,7 @@ export default class Navigator
   _stateFromLocationHref()
   {
     const path =
-      this._stripPath(
+      router._stripPath(
         location.href, { includeSearch: true, includeHash: true } );
 
     const state = { path, data: {} };
@@ -1450,7 +1848,7 @@ export default class Navigator
   {
     expectObject( state, "Missing or invalid parameter [state]" );
 
-    let currentState = this._getCurrentStateFromStorage();
+    let currentState = router._getCurrentStateFromSessionStorage();
 
     if( !currentState )
     {
@@ -1491,7 +1889,7 @@ export default class Navigator
 
     expectObject( state, "Missing or invalid value for parameter [state]" );
 
-    this._ensureOnlyAllowedStateProperties( state );
+    router._ensureOnlyAllowedStateProperties( state );
 
     let { path, data } = state;
 
@@ -1508,13 +1906,13 @@ export default class Navigator
       delete state.id;
     }
 
-    let currentState = this._getCurrentStateFromStorage();
+    let currentState = router._getCurrentStateFromSessionStorage();
 
     if( !currentState )
     {
       //throw new Error("Missing [currentState] (not found in storage)");
       console.error("Missing [currentState] (not found in storage)");
-      currentState = this._getOrCreateCurrentState();
+      currentState = router._getOrCreateCurrentState();
     }
 
     if( !path )
@@ -1544,7 +1942,7 @@ export default class Navigator
       const id = state.id;
 
       state.path =
-        `${this._stripPath( state.path, { includeSearch: true } )}#${id}`;
+        `${router._stripPath( state.path, { includeSearch: true } )}#${id}`;
     }
     else {
       delete state.id;
@@ -1555,11 +1953,11 @@ export default class Navigator
 
   /**
    * Normalize a part of a route
-   * - A route part can be the [app], [layout] or a [view] part of the route
+   * - A route part can be the [app], [layout] or a [panel] part of the route
    *
    * @param {object} routePart
    */
-  _normalizeLayoutOrViewParams( routePart )
+  _normalizeLayoutOrPanelParams( routePart )
   {
     expectObject( routePart, "Missing or invalid parameter [routePart]" );
 
@@ -1582,7 +1980,7 @@ export default class Navigator
 
   /**
    * Normalize a part of a route
-   * - A route part can be the [app], [layout] or a [view] part of the route
+   * - A route part can be the [app], [layout] or a [panel] part of the route
    *
    * @param {object} routePart
    */
@@ -1612,20 +2010,16 @@ export default class Navigator
     // console.log(
     //   "CHECK scroll restauration", { restore: history.scrollRestoration } );
 
-    // Update store `currentRouteAndState`
+    // Update store `routeStateAccessStore`
     // - The router is started during bootstrap, using defer gives
     //   components a chance to react upon the initial state
 
     defer( () => {
-      const newRouteAndState = this.getRouteAndState();
+      const newRouteStateAccess = router.getRouteStateAccess();
 
-      // newRouteAndState.t = Date.now() - 1626254670852;
+      const existingValue = router.routeStateAccessStore.get();
 
-      // console.log("_updateCurrentRouteAndState", newRouteAndState);
-
-      const existingValue = this.currentRouteAndState.get();
-
-      if( equals( existingValue, newRouteAndState ) )
+      if( equals( existingValue, newRouteStateAccess ) )
       {
         // Ignore update if state did not change:
         //
@@ -1636,11 +2030,10 @@ export default class Navigator
         return;
       }
 
-      // console.log("_updateCurrentRouteAndState", newRouteAndState);
 
-      this.currentRouteAndState.set( newRouteAndState );
+      router.routeStateAccessStore.set( newRouteStateAccess );
     } );
-  };
+  }
 
   // -------------------------------------------------------------------- Method
 
@@ -1767,4 +2160,37 @@ export default class Navigator
     }
   }
 
-};
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Turn off
+   * - Calls the functions in router[ offs$ ] specified by the parameter
+   *   `unsubscribeKeys`
+   *
+   * @param {...string} unsubscribeKeys
+   */
+  _turnOff( ...unsubscribeKeys )
+  {
+    const offs = router[ offs$ ];
+
+    for( const key in unsubscribeKeys )
+    {
+      if( offs[ key ] )
+      {
+        offs[ key ]();
+        delete offs[ key ];
+      }
+    }
+  }
+
+} // end class
+
+//
+// Instantiate a single instance of the FrontendRouter class
+// - The instance assigns itself to variable `router`
+//
+new FrontendRouter();
+
+/* ------------------------------------------------------------------ Exports */
+
+export default router;

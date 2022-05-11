@@ -214,3 +214,10 @@ function _formattedStack( stack )
 
   return result;
 }
+
+/* ----------------------------------------------------------- Export default */
+
+export default {
+  // write,
+  logEvent
+};

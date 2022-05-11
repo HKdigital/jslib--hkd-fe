@@ -5,6 +5,18 @@
   cursor: pointer;
 }
 
+/* ----------------------------------------------------------- Pointer events */
+
+.g-pointer-events-none
+{
+  pointer-events: none;
+}
+
+.g-pointer-events-auto
+{
+  pointer-events: auto;
+}
+
 /* --------------------------------------------------------------------- Hide */
 
 .g-hidden {
