@@ -83,6 +83,20 @@
       this[ offs$ ] = new Set();
     }
 
+    // ------------------------------------------------------------------ Method
+
+    /**
+     * Check if the document currently matches the media query
+     *
+     * @returns {boolean} true if the media query matches
+     */
+    queryDoesMatch()
+    {
+      return this._mql.matches;
+    }
+
+    // ------------------------------------------------------------------ Method
+
     /**
      * Register a function that will be called if the media query match
      * result changes
@@ -109,6 +123,8 @@
 
       return unsubscribeFn;
     }
+
+    // ------------------------------------------------------------------ Method
 
     /**
      * Unsubscribe all listeners

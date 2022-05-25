@@ -1,5 +1,7 @@
 <script>
 
+/* -------------------------------------------------------------------- About */
+
   //
   // Example usage:
   //
@@ -17,8 +19,14 @@
   // @see https://svelte.recipes/components/icon/
   //
 
+/* ---------------------------------------------------------------- Internals */
+
   let currentSize;
   let currentRotation;
+
+  let style = "";
+
+/* ------------------------------------------------------------------ Exports */
 
   // Path of the Material Symbols icon
   export let path;
@@ -28,7 +36,7 @@
 
   export let cssClasses = "";
 
-  let style = "";
+/* -------------------------------------------------------------------- Logic */
 
   $: {
     if( size !== currentSize || rotate !== currentRotation )
@@ -52,23 +60,34 @@
   }
 </script>
 
-<svg
-  class="c-symbol {cssClasses}"
-  viewBox="0 0 48 48"
-  fill-rule="evenodd"
-  clip-rule="evenodd"
-  style={style}
-  on:click>
-  <path d="{path}"></path>
-</svg>
+<div class="c-symbol {cssClasses}">
+  <svg
+    viewBox="0 0 48 48"
+    fill-rule="evenodd"
+    clip-rule="evenodd"
+    {style}
+    on:click>
+    <path d="{path}"></path>
+  </svg>
+</div>
 
 <style>
   :global(.c-symbol)
   {
+    display: inline-block;
+    height: 1em;
+    width: 1em;
+
     cursor: pointer !important;
-    fill: currentColor;
     overflow: visible;
-    /*background-color: green;*/
-    /*border: solid 1px green;*/
   }
+
+  :global(.c-symbol) > svg
+  {
+    fill: currentColor;
+
+    position: relative;
+    top: 0.25em;
+  }
+
 </style>

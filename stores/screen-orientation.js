@@ -10,6 +10,7 @@ import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 export const orientationIsLandscape = new DedupValueStore();
 export const userChangedOrientation = new ValueStore();
 
+// export const isPortraitOnMobile = new DedupValueStore();
 export const isLandscapeOnMobile = new DedupValueStore();
 
 const looksLikeMobileDevice =
@@ -19,11 +20,11 @@ const looksLikeMobileDevice =
 /* ---------------------------------------------------------------- Internals */
 
 /**
- * Update value of store `orientationIsLandscape`
+ * Update value of store `userChangedOrientation`
  * - Set to true if `window.innerWidth > window.innerHeight`,
  *   false otherwise
  */
-function updateOrientationIsLandscape()
+function updateUserChangedOrientation()
 {
   const store = orientationIsLandscape;
 
@@ -53,7 +54,7 @@ function updateOrientationIsLandscape()
  */
 window.addEventListener('DOMContentLoaded', () =>
 {
-  updateOrientationIsLandscape();
+  updateUserChangedOrientation();
 
   // -- Use media query to detect if the screen orientation changes
 
@@ -74,19 +75,20 @@ window.addEventListener('DOMContentLoaded', () =>
         //     "navigator.maxTouchPoints": navigator.maxTouchPoints
         //   } );
 
-        updateOrientationIsLandscape();
-
         if( !looksLikeMobileDevice )
         {
           isLandscapeOnMobile.set( false );
+          // isPortraitOnMobile.set( false );
           return;
         }
 
         if( MediaQueryListEvent.matches )
         {
+          // isPortraitOnMobile.set( false );
           isLandscapeOnMobile.set( true );
         }
         else {
+          // isPortraitOnMobile.set( true );
           isLandscapeOnMobile.set( false );
         }
       } );

@@ -3,37 +3,28 @@
 
 import MenuTree from "@hkd-fe/classes/MenuTree.js";
 
-import { readable } from "svelte/store";
+import { ValueStore } from "@hkd-base/stores.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-let setMenuTree_;
-
 /* ------------------------------------------------------------------ Exports */
+
+//
+// Store instance that contains the main menu tree
+//
+export let menuTree = new ValueStore();
+
+// -----------------------------------------------------------------------------
 
 /**
  * Configure the main menu tree
+ * - Sets exported variable `menuTree`
  *
  * @param {object} Main menu tree
  */
 export function configureMainMenus( mainMenus )
 {
-  if( !setMenuTree_ )
-  {
-    // init
-    menuTree.subscribe( () => {} )();
-  }
+  const treeData = new MenuTree( mainMenus );
 
-  const tree = new MenuTree( mainMenus );
-
-  setMenuTree_( tree );
+  menuTree.set( treeData );
 }
-
-/* -------------------------------------------------------- Store [mainMenus] */
-
-// Store instance that contains the main menu tree
-
-export let menuTree = readable( null, ( set ) =>
-  {
-    setMenuTree_ = set;
-  } );

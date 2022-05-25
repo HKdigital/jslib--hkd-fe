@@ -9,7 +9,7 @@
   import { menu, close }
     from "@hkd-fe/components/icons/paths/material-symbols-f0w100g200os48.js";
 
-  import Symbol from "@hkd-fe/components/icons/Symbol.svelte";
+  import BlockSymbol from "@hkd-fe/components/icons/BlockSymbol.svelte";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -46,7 +46,6 @@ function preventClickOnEnter( event )
 
 /* ------------------------------------------------------------------ Exports */
 
-export let viewParams;
 export let onColor;
 
 export let disabled = false;
@@ -59,7 +58,7 @@ export let showMenuButton = false;
 </script>
 
 {#if showMenuButton}
-  <Symbol path={menu} on:click={tryDispatchClick} />
+  <BlockSymbol path={menu} on:click={tryDispatchClick} />
 {:else}
-  <Symbol path={close} on:click={tryDispatchClick} />
+  <BlockSymbol path={close} on:click={tryDispatchClick} />
 {/if}

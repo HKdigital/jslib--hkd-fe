@@ -202,7 +202,7 @@ class FrontendRouter
    *    e.g.
    *
    *    layout: {
-   *      component: StandardAppLayout,
+   *      component: AppLayout,
    *      backgroundColor: SURFACE_WHITE
    *    }
    *
