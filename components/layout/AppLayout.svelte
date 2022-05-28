@@ -1,5 +1,35 @@
 <script context="module">
 
+/**
+ * Example data
+ *
+ * layout: {
+ *     component: AppLayout
+ *   },
+ *
+ *   panels:
+ *   {
+ *     backgroundPanel: {
+ *       backgroundColor: SURFACE_DARK_BLUE
+ *     },
+ *
+ *     topPanel: {
+ *       component: TopPanelWithLogo,
+ *       classNames: "g-something-special"
+ *    },
+ *
+ *     contentPanel: {
+ *       component: ContentPanelHome,
+ *       backgroundColor: SURFACE_DARK_BLUE
+ *     }
+ *
+ *     // bottomPanel: {
+ *     //   component: BottomPanel,
+ *     //   backgroundColor: SURFACE_DARK
+ *     // }
+ *   }
+ */
+
 /* ------------------------------------------------------------------ Imports */
 
 import { DedupValueStore } from "@hkd-base/stores.js";
@@ -125,14 +155,14 @@ export function markOverlayPanelReady()
   let readyTimeoutMs = 500;
   let layoutAspect = 0;
 
-  let layoutBackgroundClass = "";
+  let layoutBackgroundClassNames = "";
 
-  let bgPanelBackgroundClass = "";
-  let topPanelBackgroundClass = "";
-  let subTopPanelBackgroundClass = "";
-  let contentPanelBackgroundClass = "";
-  let bottomPanelBackgroundClass = "";
-  let overlayPanelBackgroundClass = "";
+  let bgPanelBackgroundClassNames = "";
+  let topPanelBackgroundClassNames = "";
+  let subTopPanelBackgroundClassNames = "";
+  let contentPanelBackgroundClassNames = "";
+  let bottomPanelBackgroundClassNames = "";
+  let overlayPanelBackgroundClassNames = "";
 
   let onColorLayout = SURFACE_COLOR_DEFAULT;
 
@@ -376,24 +406,24 @@ export function markOverlayPanelReady()
 
   $: {
     // If property `layoutParams` changes:
-    // - Set properties `onColorLayout` and `layoutBackgroundClass`
+    // - Set properties `onColorLayout` and `layoutBackgroundClassNames`
 
     if( layoutParams )
     {
       if( layoutParams.backgroundColor )
       {
-        layoutBackgroundClass =
-          `g-bgcolor-${layoutParams.backgroundColor}`;
+        layoutBackgroundClassNames =
+          `g-color gx-bgcolor-${layoutParams.backgroundColor}`;
 
         onColorLayout = layoutParams.backgroundColor;
       }
       else if( layoutParams.onColor )
       {
-        layoutBackgroundClass = "";
+        layoutBackgroundClassNames = "";
         onColorLayout = layoutParams.onColor;
       }
       else {
-        layoutBackgroundClass = "";
+        layoutBackgroundClassNames = "";
       }
     }
 
@@ -402,31 +432,31 @@ export function markOverlayPanelReady()
       onColorLayout = onColor;
     }
 
-    // console.log("layout:layout", { layoutParams, onColorLayout, layoutBackgroundClass } );
+    // console.log("layout:layout", { layoutParams, onColorLayout, layoutBackgroundClassNames } );
   }
 
   // ---------------------------------------------------------------------------
 
   $: {
     // If property `bgPanelParams` changes:
-    // - Set properties `onColorBgPanel` and `bgPanelBackgroundClass`
+    // - Set properties `onColorBgPanel` and `bgPanelBackgroundClassNames`
 
     if( bgPanelParams )
     {
       if( bgPanelParams.backgroundColor )
       {
-        bgPanelBackgroundClass =
-          `g-bgcolor-${bgPanelParams.backgroundColor}`;
+        bgPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${bgPanelParams.backgroundColor}`;
 
         onColorBgPanel = bgPanelParams.backgroundColor;
       }
       else if( bgPanelParams.onColor )
       {
-        bgPanelBackgroundClass = "";
+        bgPanelBackgroundClassNames = "";
         onColorBgPanel = bgPanelParams.onColor;
       }
       else {
-        bgPanelBackgroundClass = "";
+        bgPanelBackgroundClassNames = "";
       }
     }
 
@@ -435,31 +465,31 @@ export function markOverlayPanelReady()
       onColorBgPanel = onColor;
     }
 
-    // console.log("layout:bgPanel", { bgPanelParams, onColorBgPanel, bgPanelBackgroundClass } );
+    // console.log("layout:bgPanel", { bgPanelParams, onColorBgPanel, bgPanelBackgroundClassNames } );
   }
 
   // ---------------------------------------------------------------------------
 
   $: {
     // If property `topPanelParams` changes:
-    // - Set properties `onColorTopPanel` and `topPanelBackgroundClass`
+    // - Set properties `onColorTopPanel` and `topPanelBackgroundClassNames`
 
     if( topPanelParams )
     {
       if( topPanelParams.backgroundColor )
       {
-        topPanelBackgroundClass =
-          `g-bgcolor-${topPanelParams.backgroundColor}`;
+        topPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${topPanelParams.backgroundColor}`;
 
         onColorTopPanel = topPanelParams.backgroundColor;
       }
       else if( topPanelParams.onColor )
       {
-        topPanelBackgroundClass = "";
+        topPanelBackgroundClassNames = "";
         onColorTopPanel = topPanelParams.onColor;
       }
       else {
-        topPanelBackgroundClass = "";
+        topPanelBackgroundClassNames = "";
       }
     }
 
@@ -468,31 +498,31 @@ export function markOverlayPanelReady()
       onColorTopPanel = onColor;
     }
 
-    // console.log("layout:topPanel", { topPanelParams, onColorTopPanel, topPanelBackgroundClass } );
+    // console.log("layout:topPanel", { topPanelParams, onColorTopPanel, topPanelBackgroundClassNames } );
   }
 
   // ---------------------------------------------------------------------------
 
   $: {
     // If property `subTopPanelParams` changes:
-    // - Set properties `onColorSubTopPanel` and `subTopPanelBackgroundClass`
+    // - Set properties `onColorSubTopPanel` and `subTopPanelBackgroundClassNames`
 
     if( subTopPanelParams )
     {
       if( subTopPanelParams.backgroundColor )
       {
-        subTopPanelBackgroundClass =
-          `g-bgcolor-${subTopPanelParams.backgroundColor}`;
+        subTopPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${subTopPanelParams.backgroundColor}`;
 
         onColorSubTopPanel = subTopPanelParams.backgroundColor;
       }
       else if( subTopPanelParams.onColor )
       {
-        subTopPanelBackgroundClass = "";
+        subTopPanelBackgroundClassNames = "";
         onColorSubTopPanel = subTopPanelParams.onColor;
       }
       else {
-        subTopPanelBackgroundClass = "";
+        subTopPanelBackgroundClassNames = "";
       }
     }
 
@@ -501,31 +531,31 @@ export function markOverlayPanelReady()
       onColorSubTopPanel = onColor;
     }
 
-    // console.log("layout:subTopPanel", { subTopPanelParams, onColorSubTopPanel, subTopPanelBackgroundClass } );
+    // console.log("layout:subTopPanel", { subTopPanelParams, onColorSubTopPanel, subTopPanelBackgroundClassNames } );
   }
 
   // ---------------------------------------------------------------------------
 
   $: {
     // If property `contentPanelParams` changes:
-    // - Set properties `onColorContentPanel` and `contentPanelBackgroundClass`
+    // - Set properties `onColorContentPanel` and `contentPanelBackgroundClassNames`
 
     if( contentPanelParams )
     {
       if( contentPanelParams.backgroundColor )
       {
-        contentPanelBackgroundClass =
-          `g-bgcolor-${contentPanelParams.backgroundColor}`;
+        contentPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${contentPanelParams.backgroundColor}`;
 
         onColorContentPanel = contentPanelParams.backgroundColor;
       }
       else if( contentPanelParams.onColor )
       {
-        contentPanelBackgroundClass = "";
+        contentPanelBackgroundClassNames = "";
         onColorContentPanel = contentPanelParams.onColor;
       }
       else {
-        contentPanelBackgroundClass = "";
+        contentPanelBackgroundClassNames = "";
       }
     }
 
@@ -534,31 +564,31 @@ export function markOverlayPanelReady()
       onColorContentPanel = onColor;
     }
 
-    // console.log("layout:contentPanel", { contentPanelParams, onColorContentPanel, contentPanelBackgroundClass } );
+    // console.log("layout:contentPanel", { contentPanelParams, onColorContentPanel, contentPanelBackgroundClassNames } );
   }
 
   // ---------------------------------------------------------------------------
 
   $: {
     // If property `bottomPanelParams` changes:
-    // - Set properties `onColorBottomPanel` and `bottomPanelBackgroundClass`
+    // - Set properties `onColorBottomPanel` and `bottomPanelBackgroundClassNames`
 
     if( bottomPanelParams )
     {
       if( bottomPanelParams.backgroundColor )
       {
-        bottomPanelBackgroundClass =
-          `g-bgcolor-${bottomPanelParams.backgroundColor}`;
+        bottomPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${bottomPanelParams.backgroundColor}`;
 
         onColorBottomPanel = bottomPanelParams.backgroundColor;
       }
       else if( bottomPanelParams.onColor )
       {
-        bottomPanelBackgroundClass = "";
+        bottomPanelBackgroundClassNames = "";
         onColorBottomPanel = bottomPanelParams.onColor;
       }
       else {
-        bottomPanelBackgroundClass = "";
+        bottomPanelBackgroundClassNames = "";
       }
     }
 
@@ -572,7 +602,7 @@ export function markOverlayPanelReady()
 
   $: {
     // If property `overlayPanelParams` changes:
-    // - Set properties `onColorOverlayPanel` and `overlayPanelBackgroundClass`
+    // - Set properties `onColorOverlayPanel` and `overlayPanelBackgroundClassNames`
 
     if( overlayPanelParams )
     {
@@ -580,18 +610,18 @@ export function markOverlayPanelReady()
 
       if( overlayPanelParams.backgroundColor )
       {
-        overlayPanelBackgroundClass =
-          `g-bgcolor-${overlayPanelParams.backgroundColor}`;
+        overlayPanelBackgroundClassNames =
+          `g-color gx-bgcolor-${overlayPanelParams.backgroundColor}`;
 
         onColorOverlayPanel = overlayPanelParams.backgroundColor;
       }
       else if( overlayPanelParams.onColor )
       {
-        overlayPanelBackgroundClass = "";
+        overlayPanelBackgroundClassNames = "";
         onColorOverlayPanel = overlayPanelParams.onColor;
       }
       else {
-        overlayPanelBackgroundClass = "";
+        overlayPanelBackgroundClassNames = "";
       }
     }
 
@@ -761,18 +791,23 @@ $: {
 
 <!-- {#if !$isLandscapeOnMobile} -->
 
-  <div class="c-app-layout {cssClassNames}">
+  <div class="c-app-layout
+              {cssClassNames}
+              {layoutCssClassNames}
+              {layoutBackgroundClassNames}">
 
     {#if bgPanelParams && onColorBgPanel}
       <div class="layout-grid-background">
         <div class:x-ready={$backgroundPanelReady}
              class="cc-panel-background
-                    g-color {bgPanelBackgroundClass}
-                    {bgPanelCssClassNames}">
+                    {bgPanelCssClassNames}
+                    {bgPanelBackgroundClassNames}">
 
-          <Panel component={bgPanelParams.component}
-                 onColor={onColorBgPanel}
-                 on:message />
+          {#if bgPanelParams.component}
+            <Panel component={bgPanelParams.component}
+                   onColor={onColorBgPanel}
+                   on:message />
+          {/if}
 
         </div>
       </div>
@@ -784,18 +819,20 @@ $: {
           {#if topPanelParams && onColorTopPanel}
             <div class:x-ready={$topPanelReady}
                  class="cc-panel-top
-                        g-color {topPanelBackgroundClass}
+                        {topPanelBackgroundClassNames}
                         {topPanelCssClassNames}">
+
               <Panel component={topPanelParams.component}
                      onColor={onColorTopPanel}
                      on:message />
+
             </div>
           {/if}
 
           {#if subTopPanelParams && onColorSubTopPanel}
             <div class:x-ready={$subTopPanelReady}
                  class="cc-panel-sub-top
-                        g-color {subTopPanelBackgroundClass}
+                        {subTopPanelBackgroundClassNames}
                         {subTopPanelCssClassNames}">
               <Panel component={subTopPanelParams.component}
                      onColor={onColorSubTopPanel}
@@ -810,7 +847,7 @@ $: {
           <div bind:this={contentPanelElement}
                class:x-ready={$contentPanelReady}
                class="cc-panel-content
-                      g-color {contentPanelBackgroundClass}
+                      {contentPanelBackgroundClassNames}
                       {contentPanelCssClassNames}">
 
             <Panel component={contentPanelParams.component}
@@ -824,7 +861,7 @@ $: {
       {#if bottomPanelParams && onColorBottomPanel}
         <div class:x-ready={$bottomPanelReady}
              class="cc-panel-bottom
-                    g-color {bottomPanelBackgroundClass}
+                    {bottomPanelBackgroundClassNames}
                     {bottomPanelCssClassNames}">
           <Panel component={bottomPanelParams.component}
                  onColor={onColorBottomPanel}
@@ -838,7 +875,7 @@ $: {
       <div class="layout-grid-overlay">
         <div class:x-ready={$overlayPanelReady}
              class="cc-panel-overlay
-                    g-color {overlayPanelBackgroundClass}
+                    {overlayPanelBackgroundClassNames}
                     {overlayPanelCssClassNames}">
 
           <Panel component={overlayPanelParams.component}
@@ -876,6 +913,7 @@ $: {
     /*background-color: blue;*/
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
     z-index: 10;
+    min-height: 100vh;
   }
 
   .layout-grid-main
