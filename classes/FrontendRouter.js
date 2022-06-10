@@ -1326,7 +1326,7 @@ class FrontendRouter
       return;
     }
 
-    // debug( "pushState", state );
+    // console.log( "pushState", state );
 
     let historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
 
@@ -1342,6 +1342,18 @@ class FrontendRouter
       {
         // Limit stored history length
         history = history.slice( history.length - MAX_HISTORY_LENGTH + 1 );
+      }
+
+      const n = history.length - 1;
+
+      if( n > 0 )
+      {
+        //
+        // Update documentElement.scrollTop information in current state
+        //
+        const documentElement = document.documentElement;
+
+        history[ n ].documentScrollTop = documentElement.scrollTop;
       }
     }
     else {

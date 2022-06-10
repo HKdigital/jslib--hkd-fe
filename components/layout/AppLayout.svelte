@@ -1,115 +1,37 @@
-<script context="module">
-
-/**
- * Example data
- *
- * layout: {
- *     component: AppLayout
- *   },
- *
- *   panels:
- *   {
- *     backgroundPanel: {
- *       backgroundColor: SURFACE_DARK_BLUE
- *     },
- *
- *     topPanel: {
- *       component: TopPanelWithLogo,
- *       classNames: "g-something-special"
- *    },
- *
- *     contentPanel: {
- *       component: ContentPanelHome,
- *       backgroundColor: SURFACE_DARK_BLUE
- *     }
- *
- *     // bottomPanel: {
- *     //   component: BottomPanel,
- *     //   backgroundColor: SURFACE_DARK
- *     // }
- *   }
- */
-
-/* ------------------------------------------------------------------ Imports */
-
-import { DedupValueStore } from "@hkd-base/stores.js";
-
-import { defer } from '@hkd-base/process.js';
-
-/* ------------------------------------------------------------------ Exports */
-
-//
-// `ready` stores can be used to mark panels as `ready to show to the user`
-//
-
-export const backgroundPanelReady = new DedupValueStore( false );
-export const topPanelReady = new DedupValueStore( false );
-export const subTopPanelReady = new DedupValueStore( false );
-export const contentPanelReady = new DedupValueStore( false );
-export const bottomPanelReady = new DedupValueStore( false );
-
-export const overlayPanelReady = new DedupValueStore( false );
-
-/**
- * Mark background panel as ready for showing to the user
- */
-export function markBackgroundPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { backgroundPanelReady.set( true ); } );
-}
-
-/**
- * Mark top panel as ready for showing to the user
- */
-export function markTopPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { topPanelReady.set( true ); } );
-}
-
-/**
- * Mark sub top panel as ready for showing to the user
- */
-export function markSubTopPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { subTopPanelReady.set( true ); } );
-}
-
-/**
- * Mark content panel as ready for showing to the user
- */
-export function markContentPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { contentPanelReady.set( true ); } );
-}
-
-/**
- * Mark bottom panel as ready for showing to the user
- */
-export function markBottomPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { bottomPanelReady.set( true ); } );
-}
-
-/**
- * Mark overlay panel as ready for showing to the user
- */
-export function markOverlayPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { overlayPanelReady.set( true ); } );
-}
-
-</script>
-
-<!-- ======================================================================= -->
-
 <script>
+  /**
+   * Example data
+   *
+   * layout: {
+   *     component: AppLayout
+   *   },
+   *
+   *   panels:
+   *   {
+   *     backgroundPanel: {
+   *       backgroundColor: SURFACE_DARK_BLUE
+   *     },
+   *
+   *     topPanel: {
+   *       component: TopPanelWithLogo,
+   *       classNames: "g-something-special"
+   *    },
+   *
+   *     contentPanel: {
+   *       component: ContentPanelHome,
+   *       backgroundColor: SURFACE_DARK_BLUE
+   *     }
+   *
+   *     // bottomPanel: {
+   *     //   component: BottomPanel,
+   *     //   backgroundColor: SURFACE_DARK
+   *     // }
+   *   }
+   */
+
   /* ---------------------------------------------------------------- Imports */
+
+  import { defer } from '@hkd-base/process.js';
 
   import { expectString,
            expectPositiveNumber } from "@hkd-base/expect.js";
@@ -132,7 +54,19 @@ export function markOverlayPanelReady()
 
   // import { SURFACE_COLOR_DEFAULT } from "@hkd-fe/helpers/colors.js";
 
+  import { backgroundPanelReady,
+           topPanelReady,
+           subTopPanelReady,
+           contentPanelReady,
+           bottomPanelReady,
+           overlayPanelReady } from "./AppLayout.js";
+
   /* -------------------------------------------------------------- Internals */
+
+  //
+  // Disable automatic scroll restauration by browser when navigating back
+  //
+  history.scrollRestoration = 'manual';
 
   const SURFACE_COLOR_DEFAULT = "surface1"; // To have a sane value
 
@@ -182,8 +116,6 @@ export function markOverlayPanelReady()
   let bottomPanelCssClassNames = "";
   let overlayPanelCssClassNames = "";
 
-  let currentPath = null;
-
   let contentPanelElement;
 
   let panelWidth;
@@ -193,6 +125,8 @@ export function markOverlayPanelReady()
 
   let topPanelHeight = -1;
   let bottomPanelHeight = -1;
+
+  const documentElement = document.documentElement;
 
   /* ---------------------------------------------------------------- Exports */
 
@@ -304,6 +238,69 @@ export function markOverlayPanelReady()
 
   // ---------------------------------------------------------------------------
 
+  //
+  // Restore or reset scroll on navigation change
+  //
+  // FIXME: somehow $contentPanelReady is not triggered by SVELTE, using
+  //        manual subscribe and unsubscribe as workaround
+  //
+  // {
+  //   let unsubscribeFn;
+
+  //   let currentPath = null;
+
+  //   onMount( () => {
+  //     unsubscribeFn =
+  //       contentPanelReady
+  //         .subscribe( ( ready ) => {
+  //           if( ready )
+  //           {
+  //             if( currentPath !== currentState.path )
+  //             {
+  //               // console.log("RESTORE SCROLL", currentState);
+
+  //               if( "documentScrollTop" in currentState  )
+  //               {
+  //                 defer( () => {
+  //                   documentElement.scrollTop = currentState.documentScrollTop; } );
+  //               }
+  //               else {
+  //                 documentElement.scrollTop = 0;
+  //               }
+
+  //               currentPath = currentState.path;
+  //             }
+  //           }
+  //         } );
+  //   } );
+
+  //   onDestroy( () => {
+  //     unsubscribeFn();
+  //   } );
+  // }
+
+  $: {
+    if( currentRouteReady )
+    {
+      document.documentElement.scrollTop = 0;
+
+      // FIXME: Restore scroll does not work well
+
+      // if( "documentScrollTop" in currentState )
+      // {
+      //   defer( () => {
+      //     document.documentElement.scrollTop = currentState.documentScrollTop; } );
+      // }
+      // else {
+      //   document.documentElement.scrollTop = 0;
+      // }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  let pathOnStart; // Path on start navigation change
+
   $: {
     // Set properties `{background,top,subTop,content,bottom}PanelReady`
     // - to false on route change
@@ -313,13 +310,16 @@ export function markOverlayPanelReady()
     {
       if( !currentRouteReady )
       {
-        const pathOnStart = currentRoute.path;
+        pathOnStart = currentRoute.path;
         // console.log("Route change started", pathOnStart);
 
         backgroundPanelReady.set( false );
         topPanelReady.set( false );
         subTopPanelReady.set( false );
         contentPanelReady.set( false );
+
+        // console.log("JENS1", $contentPanelReady );
+
         bottomPanelReady.set( false );
         overlayPanelReady.set( false );
 
@@ -330,13 +330,18 @@ export function markOverlayPanelReady()
           }
         }, readyTimeoutMs );
       }
-      else  {
+      else if( currentRoute.path === pathOnStart )
+      {
         // console.log("Route change ready", currentRoute.path);
 
         backgroundPanelReady.set( true );
         topPanelReady.set( true );
         subTopPanelReady.set( true );
+
         contentPanelReady.set( true );
+
+        // console.log("JENS2", $contentPanelReady );
+
         bottomPanelReady.set( true );
         overlayPanelReady.set( true );
       }
@@ -344,6 +349,8 @@ export function markOverlayPanelReady()
   }
 
   // ---------------------------------------------------------------------------
+
+  let previousCurrentRoutePanels = null;
 
   $: {
     // - Set properties `{bg,top,subTop,content,bottom}PanelParams`
@@ -354,22 +361,33 @@ export function markOverlayPanelReady()
 
     const currentRoutePanels = currentRoute.panels;
 
-    if( currentRoutePanels )
+    if( currentRoutePanels !== previousCurrentRoutePanels )
     {
-      bgPanelParams = currentRoutePanels.backgroundPanel;
-      topPanelParams = currentRoutePanels.topPanel;
-      subTopPanelParams = currentRoutePanels.subTopPanel;
-      contentPanelParams = currentRoutePanels.contentPanel;
-      bottomPanelParams = currentRoutePanels.bottomPanel;
-      overlayPanelParams = currentRoutePanels.overlayPanel;
-    }
-    else {
-      bgPanelParams = null;
-      topPanelParams = null;
-      subTopPanelParams = null;
-      contentPanelParams = null;
-      bottomPanelParams = null;
-      overlayPanelParams = null;
+      // FIXME: workaround to prevent setting params two times
+      // FIXME: seems not to work. e.g. topPanelParams changes still
+      //        get triggered twice
+
+      if( currentRoutePanels )
+      {
+        previousCurrentRoutePanels = currentRoutePanels;
+
+        // console.log( { currentRoutePanels } );
+
+        bgPanelParams = currentRoutePanels.backgroundPanel;
+        topPanelParams = currentRoutePanels.topPanel;
+        subTopPanelParams = currentRoutePanels.subTopPanel;
+        contentPanelParams = currentRoutePanels.contentPanel;
+        bottomPanelParams = currentRoutePanels.bottomPanel;
+        overlayPanelParams = currentRoutePanels.overlayPanel;
+      }
+      else {
+        bgPanelParams = null;
+        topPanelParams = null;
+        subTopPanelParams = null;
+        contentPanelParams = null;
+        bottomPanelParams = null;
+        overlayPanelParams = null;
+      }
     }
 
     const currentRouteLayout = currentRoute.layout;
@@ -391,13 +409,13 @@ export function markOverlayPanelReady()
 
       // console.log(`Set layout background [${layoutBackgroundColor}]`);
 
-      document.documentElement.style
+      documentElement.style
         .setProperty(
           "background-color",
           `var(--color-${layoutBackgroundColor})` );
     }
     else {
-      document.documentElement.style
+      documentElement.style
         .setProperty( "background-color", "transparent" );
     }
   }
@@ -497,6 +515,8 @@ export function markOverlayPanelReady()
     {
       onColorTopPanel = onColor;
     }
+
+    // console.log("layout:topPanel", { topPanelParams } );
 
     // console.log("layout:topPanel", { topPanelParams, onColorTopPanel, topPanelBackgroundClassNames } );
   }
@@ -721,24 +741,6 @@ export function markOverlayPanelReady()
   // ---------------------------------------------------------------------------
 
   $: {
-    // - Scroll content panel to top on [state.path] change
-
-    if( contentPanelElement )
-    {
-      const currentState = $routeStateAccessStore.state;
-
-      if( currentPath !== currentState.path )
-      {
-        currentPath = currentState.path;
-
-        contentPanelElement.scrollTop = 0;
-      }
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-
-  $: {
     // - FIXME: apply aspect to layout element (e.g. for fixed size displays)
 
     if( layoutAspect )
@@ -856,6 +858,14 @@ $: {
 
           </div>
         </div>
+
+        <!-- <Scrollbar
+          onColor={onColorContentPanel}
+          observerTarget={contentPanelElement}
+          scrollArea={contentPanelElement}
+          showArrows={false}
+          buttonPressingMove={10} /> -->
+
       {/if}
 
       {#if bottomPanelParams && onColorBottomPanel}
