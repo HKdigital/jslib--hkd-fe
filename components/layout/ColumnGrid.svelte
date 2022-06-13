@@ -9,9 +9,9 @@
  *
  * The `c-column-grid`
  * - Has a width of 100%
- * - Contains a single column centered column called `inner-grid`
+ * - Contains a single column centered column called `cc-inner-grid`
  *
- * The `inner-grid`
+ * The `cc-inner-grid`
  * - May constist of one or more columns (cells)
  * - Every column has a minimum colum width
  * - The content of each column has a maximum width (thereby limiting the
@@ -44,11 +44,13 @@ $: {
     `--column-max-width:${columnMaxWidth};`;
 }
 
+
+
 </script>
 
 <div {style} class="c-column-grid {cssClassNames}">
 
-  <div class="inner-grid">
+  <div class="cc-inner-grid">
     <slot></slot>
   </div>
 
@@ -76,7 +78,12 @@ $: {
   justify-content: start;
 }*/
 
-:global(.inner-grid)
+:global(.c-column-grid.x-no-column-gap > .cc-inner-grid )
+{
+  column-gap: 0;
+}
+
+:global(.cc-inner-grid)
 {
   display: grid;
 
@@ -86,10 +93,11 @@ $: {
     repeat(auto-fit, minmax( var(--column-min-width, 18rem), 1fr) );
 
   justify-content: center;
-  /*justify-content: start;*/
+
+  column-gap: 1rem;
 }
 
-:global(.inner-grid > *)
+:global(.cc-inner-grid > *)
 {
   /* prevent 'too big content' to break out */
   max-width: min( var(--column-max-width, 25rem), 100% );
@@ -101,7 +109,7 @@ $: {
   padding-bottom: 1rem;
 }
 
-:global(.c-column-grid.x-row-gap-100 ,inner-grid)
+:global(.c-column-grid.x-row-gap-100 ,cc-inner-grid)
 {
   /* Add 1rem row gap (padding) between the rows */
   padding-bottom: 1rem;

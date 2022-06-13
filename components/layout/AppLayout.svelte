@@ -118,8 +118,8 @@
 
   let contentPanelElement;
 
-  let panelWidth;
-  let heightStyle = "";
+  // let panelWidth;
+  // let heightStyle = "";
 
   let contentPanelOuterElem;
 
@@ -740,18 +740,18 @@
 
   // ---------------------------------------------------------------------------
 
-  $: {
-    // - FIXME: apply aspect to layout element (e.g. for fixed size displays)
+  // $: {
+  //   // - FIXME: apply aspect to layout element (e.g. for fixed size displays)
 
-    if( layoutAspect )
-    {
-      heightStyle = `height: ${panelWidth / layoutAspect}px`;
-      // console.log( "CHECK", panelWidth, panelHeight );
-    }
-    else {
-      heightStyle = "";
-    }
-  }
+  //   if( layoutAspect )
+  //   {
+  //     heightStyle = `height: ${panelWidth / layoutAspect}px`;
+  //     // console.log( "CHECK", panelWidth, panelHeight );
+  //   }
+  //   else {
+  //     heightStyle = "";
+  //   }
+  // }
 
 // -----------------------------------------------------------------------------
 
