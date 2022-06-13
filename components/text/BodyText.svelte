@@ -19,7 +19,7 @@ $: expectValidSurfaceColor( onColor );
 </script>
 
 <div class="c-body-text
-            g-color x-default-on-{onColor}
+            g-color gx-default-on-{onColor}
             {cssClassNames}"
             on:click>
   <slot></slot>

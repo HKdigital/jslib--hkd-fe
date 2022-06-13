@@ -130,7 +130,7 @@ class FrontendRouter
     }
 
     //
-    // `this[ routeStateAccessStore$ ]` is a store that will updaten on all
+    // `router[ routeStateAccessStore$ ]` is a store that will updaten on all
     // navigation and state updates
     //
     // `initialData` are `sane` defaults in case the store is accessed
@@ -322,7 +322,8 @@ class FrontendRouter
       if( route.app )
       {
         try {
-          router._normalizeAppParams( route.app );
+          router._normalizeAppParams(
+            route.app, { routePartName: "app", label } );
         }
         catch( e )
         {
@@ -338,7 +339,8 @@ class FrontendRouter
       if( route.layout )
       {
         try {
-          router._normalizeLayoutOrPanelParams( route.layout );
+          router._normalizeLayoutOrPanelParams(
+            route.layout, { routePartName: "layout", label } );
         }
         catch( e )
         {
@@ -363,7 +365,8 @@ class FrontendRouter
           const panel = panels[ key ];
 
           try {
-            router._normalizeLayoutOrPanelParams( panel );
+            router._normalizeLayoutOrPanelParams(
+              panel, { routePartName: key, label } );
           }
           catch( e )
           {
@@ -818,7 +821,7 @@ class FrontendRouter
    */
   goHome( { replaceCurrent=true }={} )
   {
-    const homeLabel = this[ homeLabel$ ];
+    const homeLabel = router[ homeLabel$ ];
 
     const { route } = router.routeStateAccessStore.get();
 
@@ -1323,7 +1326,7 @@ class FrontendRouter
       return;
     }
 
-    // debug( "pushState", state );
+    // console.log( "pushState", state );
 
     let historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
 
@@ -1339,6 +1342,18 @@ class FrontendRouter
       {
         // Limit stored history length
         history = history.slice( history.length - MAX_HISTORY_LENGTH + 1 );
+      }
+
+      const n = history.length - 1;
+
+      if( n > 0 )
+      {
+        //
+        // Update documentElement.scrollTop information in current state
+        //
+        const documentElement = document.documentElement;
+
+        history[ n ].documentScrollTop = documentElement.scrollTop;
       }
     }
     else {
@@ -1673,7 +1688,7 @@ class FrontendRouter
     }
     else {
       console.log("_onHistoryPop(): state not found -> redirect to home");
-      router.redirectToRoute( this[ homeLabel$ ] );
+      router.redirectToRoute( router[ homeLabel$ ] );
     }
   }
 
@@ -1956,23 +1971,42 @@ class FrontendRouter
    * - A route part can be the [app], [layout] or a [panel] part of the route
    *
    * @param {object} routePart
+   *
+   * @param {object} debug
+   * @param {object} debug.part
+   * @param {object} debug.label
    */
-  _normalizeLayoutOrPanelParams( routePart )
+  _normalizeLayoutOrPanelParams( routePart, { routePartName, label } )
   {
     expectObject( routePart, "Missing or invalid parameter [routePart]" );
 
-    const { component, classNames } = routePart;
+    const {
+      component,
+      classNames,
+      backgroundColor } = routePart;
 
-    expectObject( component,
-      "Missing or invalid parameter [routePart.component]" );
+    if( component )
+    {
+      expectObject( component,
+        `Invalid route [${label}], missing or invalid property ` +
+        `[${routePartName}.component]` );
+    }
 
     if( classNames )
     {
       expectString( classNames,
-        "Missing or invalid parameter [routePart.classNames]" );
+        `Invalid route [${label}], missing or invalid property ` +
+        `[${routePartName}.classNames]` );
     }
     else {
       routePart.classNames = "";
+    }
+
+    if( backgroundColor )
+    {
+      expectString( backgroundColor,
+        `Invalid route [${label}], missing or invalid property ` +
+        `[${routePartName}.backgroundColor]` );
     }
   }
 
