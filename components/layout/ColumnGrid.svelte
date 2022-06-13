@@ -1,5 +1,23 @@
 <script>
 
+/* -------------------------------------------------------------------- About */
+
+/**
+ * The column grid spans 100% of the width and by default centers the
+ * content of the column grid. The content itself may consist of multiple
+ * columns. Every column has a maximum width.
+ *
+ * The `c-column-grid`
+ * - Has a width of 100%
+ * - Contains a single column centered column called `inner-grid`
+ *
+ * The `inner-grid`
+ * - May constist of one or more columns (cells)
+ * - Every column has a minimum colum width
+ * - The content of each column has a maximum width (thereby limiting the
+ *   column width)
+ */
+
 /* ------------------------------------------------------------------ Imports */
 
 /* ---------------------------------------------------------------- Internals */
@@ -64,9 +82,6 @@ $: {
 
   width: min( var(--grid-max-width, 50rem), 100vw );
 
-  /*grid-template-columns:
-    repeat(auto-fit, minmax( var(--column-min-width, 18rem), 1fr) );*/
-
   grid-template-columns:
     repeat(auto-fit, minmax( var(--column-min-width, 18rem), 1fr) );
 
@@ -86,7 +101,7 @@ $: {
   padding-bottom: 1rem;
 }
 
-:global(.c-column-grid.x-grid-gap-100 ,inner-grid)
+:global(.c-column-grid.x-row-gap-100 ,inner-grid)
 {
   /* Add 1rem row gap (padding) between the rows */
   padding-bottom: 1rem;
