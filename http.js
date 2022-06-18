@@ -11,7 +11,9 @@ import { getGlobalConfig } from "@hkd-base/global-config.js";
 
 /* ------------------------------------------------------------------ Exports */
 
-export const CONFIG_LABEL_BACKEND = "backend";
+export const CONFIG_LABEL_DEFAULT_API = "default-api";
+export const CONFIG_LABEL_SESSIONS_API = "sessions-api";
+export const CONFIG_LABEL_LIVE_API = "live-api";
 
 // -----------------------------------------------------------------------------
 
@@ -56,12 +58,12 @@ export function expectValidHttpStatus( response, url )
  *
  * @param {string} uri - Custom uri part to append
  *
- * @param {string} [configLabel=CONFIG_LABEL_BACKEND]
+ * @param {string} [configLabel=CONFIG_LABEL_DEFAULT_API]
  *   Label of the global config entry to use
  *
  * @returns {object} URI object
  */
-export function buildBackendUrl( uri, configLabel )
+export function buildBackendUrl( uri, configLabel=CONFIG_LABEL_DEFAULT_API )
 {
   expectNotEmptyString( configLabel,
     "Missing or invalid parameter [configLabel]");

@@ -20,6 +20,8 @@ const disconnect$ = Symbol("disconnect");
 
 const autoReconnect$ = Symbol("autoReconnect");
 
+const destroyed$ = Symbol("destroyed");
+
 /* ------------------------------------------------------------------ Exports */
 
 export default class Feed
@@ -63,6 +65,8 @@ export default class Feed
       this[ data$ ].set( value );
     };
 
+    this[ destroyed$ ] = false;
+
     this[ url$ ] = null;
     this[ eventSource$ ] = null;
 
@@ -102,6 +106,11 @@ export default class Feed
    */
   get()
   {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has been destroyed");
+    }
+
     return this[ data$ ].get();
   }
 
@@ -117,6 +126,11 @@ export default class Feed
    */
   subscribe( /* callback */ )
   {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has been destroyed");
+    }
+
     return this[ data$ ].subscribe( ...arguments );
   }
 
@@ -129,6 +143,11 @@ export default class Feed
    */
   configure( { url, autoReconnect=false } )
   {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has been destroyed");
+    }
+
     //console.log( `Feed: configure [${url}]` );
 
     this[ autoReconnect$ ] = autoReconnect;
@@ -180,6 +199,31 @@ export default class Feed
   // -------------------------------------------------------------------- Method
 
   /**
+   * Shutdown the feed
+   * - Disconnects from the event source
+   * - Sets `null` as last data value
+   * - Unsubscribes all listeners
+   */
+  destroy()
+  {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has already been destroyed");
+    }
+
+    this.disconnectAndSetNull();
+
+    if( this[ data$ ] )
+    {
+      this[ data$ ].unsubscribeAll();
+    }
+
+    this[ destroyed$ ] = true;
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
    * Reconnect, e.g. after an error
    *
    * @param {number} [delay=5000]
@@ -187,6 +231,11 @@ export default class Feed
    */
   reconnect( delay=5000 )
   {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has been destroyed");
+    }
+
     console.log(`reconnect [${delay}]`);
 
     expectNumber( delay, "Invalid parameter [delay]" );
@@ -205,6 +254,11 @@ export default class Feed
    */
   disconnectAndSetNull()
   {
+    if( this[ destroyed$ ] )
+    {
+      throw new Error("Feed has been destroyed");
+    }
+
     // console.log( `Feed: disconnect and set null` );
 
     this[ disconnect$ ]();
@@ -212,8 +266,11 @@ export default class Feed
     this[ data$ ].set( null );
   }
 
-  // -------------------------------------------------------------------- Method
+  /* ------------------------------------------------------- Internal methods */
 
+  /**
+   * Disconnect from the event source
+   */
   [ disconnect$ ]()
   {
     if( this[ eventSource$ ] )

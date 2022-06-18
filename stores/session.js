@@ -58,7 +58,7 @@ import Feed from "@hkd-fe/classes/Feed.js";
 
 import { DerivedStore, DedupValueStore } from "@hkd-base/stores.js";
 
-import { UserError } from "@hkd-base/exceptions.js";
+import { ExtendedError } from "@hkd-base/exceptions.js";
 
 import { debug } from "@hkd-base/log.js";
 
@@ -174,7 +174,7 @@ function processor( eventOrError )
   catch( e )
   {
     console.log( "event.data", event.data );
-    throw new UserError( "Failed to parse [event.data]", e );
+    throw new ExtendedError( "Failed to parse [event.data]", e );
   }
 
   if( !eventData )

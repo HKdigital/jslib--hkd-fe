@@ -31,7 +31,7 @@
 
   /* ---------------------------------------------------------------- Imports */
 
-  import { defer } from '@hkd-base/process.js';
+  // import { defer } from '@hkd-base/process.js';
 
   import { expectString,
            expectPositiveNumber } from "@hkd-base/expect.js";
