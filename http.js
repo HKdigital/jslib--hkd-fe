@@ -119,7 +119,7 @@ export async function backendJsonGet( url, options )
       `Failed to JSON decode server response from [${decodeURI(url.href)}]`);
   }
 
-  if( "error" in parsedResponse )
+  if( parsedResponse.error )
   {
     throw new Error( parsedResponse.error );
   }
@@ -295,7 +295,7 @@ export async function backendFormDataPost( url, formData, options )
       `Failed to JSON decode server response from [${decodeURI(url.href)}]`);
   }
 
-  if( "error" in parsedResponse )
+  if( parsedResponse.error )
   {
     throw new Error( parsedResponse.error );
   }
@@ -380,7 +380,7 @@ export async function backendJsonPost( url, body=null )
       `Failed to JSON decode server response from [${decodeURI(url.href)}]`);
   }
 
-  if( "error" in parsedResponse )
+  if( parsedResponse.error )
   {
     throw new Error( parsedResponse.error );
   }
