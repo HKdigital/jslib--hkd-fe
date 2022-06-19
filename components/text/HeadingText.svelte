@@ -34,6 +34,8 @@ $: expectValidSurfaceColor( onColor );
     line-height: 1.4;
     letter-spacing: 0.02rem;
     padding: 0.5rem;
+
+    /*inline-size: calc( 100% - 2rem );*/
   }
 
   :global(.c-heading-text.x-center)
@@ -60,14 +62,13 @@ $: expectValidSurfaceColor( onColor );
     font-size: 2.2rem
   }
 
-
-  :global(.c-skills-heading-text)
+  /*:global(.c-skills-heading-text)
   {
     padding-left: 1rem;
     inline-size: calc( 100% - 2rem );
     text-align: center;
-    /*background-color:  red;*/
-  }
+    background-color:  red;
+  }*/
 
   :global(.c-heading-text.x-compact)
   {
