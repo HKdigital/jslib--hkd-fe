@@ -1,12 +1,12 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectPositiveNumber, expectFunction } from "@hkd-base/expect.js";
+import { expectPositiveNumber, expectFunction } from "@hkd-base/helpers/expect.js";
 
-import { sortByKeyValue } from "@hkd-base/array.js";
-import { largestFirst } from "@hkd-base/compare.js";
+import { sortByKeyValue } from "@hkd-base/helpers/array.js";
+import { largestFirst } from "@hkd-base/helpers/compare.js";
 
-import { rethrow } from "@hkd-base/exceptions.js";
+import { rethrow } from "@hkd-base/helpers/exceptions.js";
 
 /* ---------------------------------------------------------------- Internals */
 

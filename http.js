@@ -3,11 +3,11 @@
 
 import { expectString,
          expectNotEmptyString,
-         expectObject } from "@hkd-base/expect.js";
+         expectObject } from "@hkd-base/helpers/expect.js";
 
 import { sessionId } from "@hkd-fe/stores/session.js";
 
-import { getGlobalConfig } from "@hkd-base/global-config.js";
+import { getGlobalConfig } from "@hkd-base/helpers/global-config.js";
 
 /* ------------------------------------------------------------------ Exports */
 

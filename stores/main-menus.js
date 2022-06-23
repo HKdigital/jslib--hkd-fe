@@ -3,7 +3,7 @@
 
 import MenuTree from "@hkd-fe/classes/MenuTree.js";
 
-import { ValueStore } from "@hkd-base/stores.js";
+import ValueStore from "@hkd-base/classes/ValueStore.js";
 
 /* ---------------------------------------------------------------- Internals */
 

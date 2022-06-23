@@ -5,19 +5,19 @@ import {
   expectString,
   expectArray,
   expectObject,
-  expectSet } from "@hkd-base/expect.js";
+  expectSet } from "@hkd-base/helpers/expect.js";
 
-import { defer } from "@hkd-base/process.js";
+import { defer } from "@hkd-base/helpers/process.js";
 
-import { rethrow } from "@hkd-base/exceptions.js";
+import { rethrow } from "@hkd-base/helpers/exceptions.js";
 
-import { equals } from "@hkd-base/compare.js";
+import { equals } from "@hkd-base/helpers/compare.js";
 
-import { clone, updateObject } from "@hkd-base/object.js";
+import { clone, updateObject } from "@hkd-base/helpers/object.js";
 
-import { generateLocalId } from "@hkd-base/unique.js";
+import { generateLocalId } from "@hkd-base/helpers/unique.js";
 
-import { ValueStore } from "@hkd-base/stores.js";
+import ValueStore from "@hkd-base/classes/ValueStore.js";
 
 import { currentLanguage,
          LANG_DEFAULT } from "@hkd-base/stores/language.js";
@@ -27,7 +27,7 @@ import { sessionData,
 
 import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
 
-// import { debug } from "@hkd-base/log.js";
+// import { debug } from "@hkd-base/helpers/log.js";
 
 /* ---------------------------------------------------------------- Internals */
 

@@ -33,9 +33,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectStringOrNull } from "@hkd-base/expect.js";
+import { expectStringOrNull } from "@hkd-base/helpers/expect.js";
 
-import { equals } from "@hkd-base/compare.js";
+import { equals } from "@hkd-base/helpers/compare.js";
 
 import ObjectBox from "./media-include/ObjectBox.svelte";
 

@@ -31,14 +31,14 @@
 
   /* ---------------------------------------------------------------- Imports */
 
-  // import { defer } from '@hkd-base/process.js';
+  // import { defer } from '@hkd-base/helpers/process.js';
 
   import { expectString,
-           expectPositiveNumber } from "@hkd-base/expect.js";
+           expectPositiveNumber } from "@hkd-base/helpers/expect.js";
 
   import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
 
-  import { equals } from "@hkd-base/compare.js";
+  import { equals } from "@hkd-base/helpers/compare.js";
 
   import Panel from "@hkd-fe/components/layout/Panel.svelte";
 
@@ -50,7 +50,7 @@
   // import { isLandscapeOnMobile }
   //   from "$skills-fe/stores/screen-orientation.js";
 
-  // import { debug } from "@hkd-base/log.js";
+  // import { debug } from "@hkd-base/helpers/log.js";
 
   // import { SURFACE_COLOR_DEFAULT } from "@hkd-fe/helpers/colors.js";
 

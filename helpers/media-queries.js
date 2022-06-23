@@ -2,7 +2,7 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectNotEmptyString,
-         expectObject } from "@hkd-base/expect.js";
+         expectObject } from "@hkd-base/helpers/expect.js";
 
 import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 

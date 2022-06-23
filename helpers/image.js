@@ -7,9 +7,9 @@
     expectNotEmptyString,
     expectNumber,
     expectObject,
-    expectArrayBuffer } from "@hkd-base/expect.js";
+    expectArrayBuffer } from "@hkd-base/helpers/expect.js";
 
-  import { HkPromise, doNothing } from "@hkd-base/promises.js";
+  import { HkPromise, doNothing } from "@hkd-base/helpers/promises.js";
 
 // -----------------------------------------------------------------------------
 // Constants

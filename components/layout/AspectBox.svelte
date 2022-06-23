@@ -2,7 +2,7 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectPositiveNumber } from "@hkd-base/expect.js";
+import { expectPositiveNumber } from "@hkd-base/helpers/expect.js";
 
 /* ---------------------------------------------------------------- Internals */
 

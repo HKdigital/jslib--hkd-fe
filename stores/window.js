@@ -1,8 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { DedupValueStore } from "@hkd-base/stores.js";
-import { debounce } from "@hkd-base/helpers/flow.js";
+import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+
+import { debounce } from "@hkd-base/helpers/function.js";
 
 /* ---------------------------------------------------------------- Internals */
 

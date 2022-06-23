@@ -1,7 +1,7 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectString, expectArray, expectObject } from "@hkd-base/expect.js";
+import { expectString, expectArray, expectObject } from "@hkd-base/helpers/expect.js";
 
 /* ------------------------------------------------------------------ Exports */
 

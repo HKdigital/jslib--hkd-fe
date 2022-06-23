@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { DedupValueStore } from "@hkd-base/stores.js";
+import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
 
-import { defer } from '@hkd-base/process.js';
+import { defer } from '@hkd-base/helpers/process.js';
 
 // import Scrollbar from "../scrollbar/Scrollbar.svelte";
 

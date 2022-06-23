@@ -1,7 +1,8 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { ValueStore, DedupValueStore } from "@hkd-base/stores.js";
+import ValueStore from "@hkd-base/classes/ValueStore.js";
+import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
 
 import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 

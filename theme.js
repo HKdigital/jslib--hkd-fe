@@ -1,5 +1,5 @@
 
-// import { expectString } from "@hkd-base/expect.js";
+// import { expectString } from "@hkd-base/helpers/expect.js";
 
 // import { surfaceColors,
 //          colors } from "$theme/all-constants.js";

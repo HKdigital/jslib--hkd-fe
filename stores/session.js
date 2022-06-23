@@ -48,23 +48,22 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectString } from "@hkd-base/expect.js";
+import { expectString } from "@hkd-base/helpers/expect.js";
 
-import { randomStringBase58 } from "@hkd-base/unique.js";
+import { randomStringBase58 } from "@hkd-base/helpers/unique.js";
 
-import { getGlobalConfig } from "@hkd-base/global-config.js";
+import { getGlobalConfig } from "@hkd-base/helpers/global-config.js";
 
 import Feed from "@hkd-fe/classes/Feed.js";
 
-import { DerivedStore, DedupValueStore } from "@hkd-base/stores.js";
+import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DerivedStore from "@hkd-base/classes/DerivedStore.js";
 
-import { ExtendedError } from "@hkd-base/exceptions.js";
-
-import { debug } from "@hkd-base/log.js";
+import { ExtendedError } from "@hkd-base/helpers/exceptions.js";
 
 import { onLoad, onBeforeUnload } from "@hkd-fe/helpers/browser-events.js";
 
-import { backendJsonGet, backendJsonPost } from "@hkd-fe/http.js";
+import { backendJsonGet } from "@hkd-fe/http.js";
 
 /* ------------------------------------------------------------- First export */
 
