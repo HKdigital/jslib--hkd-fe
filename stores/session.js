@@ -63,7 +63,7 @@ import { ExtendedError } from "@hkd-base/helpers/exceptions.js";
 
 import { onLoad, onBeforeUnload } from "@hkd-fe/helpers/browser-events.js";
 
-import { backendJsonGet } from "@hkd-fe/http.js";
+import { backendJsonGet } from "@hkd-fe/helpers/http.js";
 
 /* ------------------------------------------------------------- First export */
 

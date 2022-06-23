@@ -7,7 +7,7 @@
  *
  * @example
  *
- * import { log, DEBUG } from "$platform/console.js";
+ * import { log, DEBUG } from "@platform/helpers/console.js";
  *
  * log(
  * {
