@@ -1,4 +1,9 @@
 <script>
+  //
+  // About SEO optimalization
+  // @see https://www.seobility.net/en/seocheck/
+  //
+
   // @see https://ogp.me/
 
   export let title;
