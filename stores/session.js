@@ -418,6 +418,6 @@ if( import.meta.hot )
 {
   import.meta.hot.accept( () => {
     // Force page reload
-    import.meta.hot.invalidate()
+    import.meta.hot.invalidate();
   } );
 }

@@ -22,8 +22,8 @@ import ValueStore from "@hkd-base/classes/ValueStore.js";
 import { currentLanguage,
          LANG_DEFAULT } from "@hkd-base/stores/language.js";
 
-import { sessionData,
-         authenticationBusy } from "@hkd-fe/stores/session.js";
+// import { sessionData,
+//          authenticationBusy } from "@hkd-fe/stores/session.js";
 
 import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
 
@@ -1231,73 +1231,73 @@ class FrontendRouter
 
     //-- Access
 
-    let access;
+    let access = { allowed: false, validated: false };
 
-    const sessionDataValue = sessionData.get();
+    // const sessionDataValue = sessionData.get();
 
     // console.log( "FrontendRouter:authenticationBusy", authenticationBusy.get() );
     // console.log( "FrontendRouter:sessionDataValue", sessionDataValue );
 
-    const allowGuest = route.data.allowGuest;
-    const requireGroup = route.data.requireGroup;
+    // const allowGuest = route.data.allowGuest;
+    // const requireGroup = route.data.requireGroup;
 
-    if( !authenticationBusy.get() )
-    {
-      if( requireGroup )
-      {
-        if( !sessionDataValue )
-        {
-          access = { allowed: false, validated: false };
-        }
-        else {
-          // Get user groups from session data
+    // if( !authenticationBusy.get() )
+    // {
+    //   if( requireGroup )
+    //   {
+    //     if( !sessionDataValue )
+    //     {
+    //       access = { allowed: false, validated: false };
+    //     }
+    //     else {
+    //       // Get user groups from session data
 
-          let groups = sessionDataValue.groups;
+    //       let groups = sessionDataValue.groups;
 
-          if( groups )
-          {
-            expectSet( groups,
-              "Invalid property [groups] in session data " );
-          }
-          else {
-            groups = new Set();
-          }
+    //       if( groups )
+    //       {
+    //         expectSet( groups,
+    //           "Invalid property [groups] in session data " );
+    //       }
+    //       else {
+    //         groups = new Set();
+    //       }
 
-          // console.log("****requireGroup", { requireGroup, groups });
+    //       // console.log("****requireGroup", { requireGroup, groups });
 
-          if( groups.has( requireGroup ) )
-          {
-            access = { allowed: true, validated: true };
-          }
-          else {
-            access = { allowed: false, validated: true };
-          }
-        }
-      }
-      else if( false === allowGuest )
-      {
-        // User should not be a guest
+    //       if( groups.has( requireGroup ) )
+    //       {
+    //         access = { allowed: true, validated: true };
+    //       }
+    //       else {
+    //         access = { allowed: false, validated: true };
+    //       }
+    //     }
+    //   }
+    //   else if( false === allowGuest )
+    //   {
+    //     // User should not be a guest
 
-        // console.log("****!allowGuest", { isGuest: sessionDataValue.isGuest });
+    //     // console.log("****!allowGuest", { isGuest: sessionDataValue.isGuest });
 
-        if( !sessionDataValue )
-        {
-          access = { allowed: false, validated: false };
-        }
-        else {
-          access = {
-            allowed: !sessionDataValue.isGuest,
-            validated: true };
-        }
-      }
-      else {
-        access = { allowed: true, validated: true };
-      }
-    }
-    else {
-      // FIXME: use current value for access ????
-      access = { allowed: false, validated: false };
-    }
+    //     if( !sessionDataValue )
+    //     {
+    //       access = { allowed: false, validated: false };
+    //     }
+    //     else {
+    //       access = {
+    //         allowed: !sessionDataValue.isGuest,
+    //         validated: true };
+    //     }
+    //   }
+    //   else {
+    //     access = { allowed: true, validated: true };
+    //   }
+    // }
+    // else {
+    //   // FIXME: use current value for access ????
+    //   access = { allowed: false, validated: false };
+    // }
 
     route = { selector: route.selector, params: route.params, ...route.data };
 
@@ -1617,13 +1617,13 @@ class FrontendRouter
 
     // -- Keep track of session data (used to update access property)
 
-    router[ offs$ ].sessionData =
-      sessionData.subscribe( ( /*sessionDataValue*/ ) => {
+    // router[ offs$ ].sessionData =
+    //   sessionData.subscribe( ( /*sessionDataValue*/ ) => {
 
-        // debug("sessionData", sessionDataValue);
+    //     // debug("sessionData", sessionDataValue);
 
-        router._updateCurrentRouteAndState();
-      } );
+    //     router._updateCurrentRouteAndState();
+    //   } );
   }
 
   // -------------------------------------------------------------------- Method
