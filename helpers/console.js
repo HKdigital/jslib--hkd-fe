@@ -30,7 +30,7 @@
 import { DEBUG,
          INFO,
          WARNING,
-         ERROR } from "@hkd-base/constants/log-types.js";
+         ERROR } from "@hkd-base/types/log-types.js";
 
 /* ---------------------------------------------------------------- Internals */
 
