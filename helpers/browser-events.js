@@ -1,12 +1,11 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectPositiveNumber, expectFunction } from "@hkd-base/helpers/expect.js";
+import { expectPositiveNumber,
+         expectFunction } from "@hkd-base/helpers/expect.js";
 
 import { sortByKeyValue } from "@hkd-base/helpers/array.js";
 import { largestFirst } from "@hkd-base/helpers/compare.js";
-
-import { rethrow } from "@hkd-base/helpers/exceptions.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -35,7 +34,7 @@ async function dom_content_loaded()
     }
     catch( e )
     {
-      rethrow( "Exception in [onload] callback", e );
+      throw new Error( "Exception in [onload] callback", { cause: e } );
     }
   }
 

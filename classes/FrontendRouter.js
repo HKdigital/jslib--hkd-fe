@@ -4,12 +4,9 @@
 import {
   expectString,
   expectArray,
-  expectObject,
-  expectSet } from "@hkd-base/helpers/expect.js";
+  expectObject } from "@hkd-base/helpers/expect.js";
 
 import { defer } from "@hkd-base/helpers/process.js";
-
-import { rethrow } from "@hkd-base/helpers/exceptions.js";
 
 import { equals } from "@hkd-base/helpers/compare.js";
 
@@ -22,12 +19,14 @@ import ValueStore from "@hkd-base/classes/ValueStore.js";
 import { currentLanguage,
          LANG_DEFAULT } from "@hkd-base/stores/language.js";
 
-// import { sessionData,
-//          authenticationBusy } from "@hkd-fe/stores/session.js";
-
 import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
 
-// import { debug } from "@hkd-base/helpers/log.js";
+
+import LogBase from "@hkd-base/classes/LogBase.js";
+
+import RouteStateStore from "@hkd-fe/classes/RouteStateStore.js";
+
+import HistoryStorage from "@hkd-fe/classes/HistoryStorage.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -36,21 +35,15 @@ const routesByLangAndLabel$ = Symbol();
 
 const homeLabel$ = Symbol();
 const notFoundLabel$ = Symbol();
-const mainMenuLabel$ = Symbol();
 
 const offs$ = Symbol();
 
-// const sessionStorage$ = Symbol("storage");
-
-const HISTORY_STORAGE_LABEL = "frontend-router/history";
-
-const MAX_HISTORY_LENGTH = 15;
+// const HISTORY_STORAGE_LABEL = "frontend-router/history";
 
 const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
 
 const DEFAULT_ROUTE_LABEL_HOME = "/";
 const DEFAULT_ROUTE_LABEL_NOT_FOUND = "not-found";
-const DEFAULT_ROUTE_LABEL_MAIN_MENU = "main-menu";
 
 //
 // A single instance of the FrontendRouter class will be assigned to the
@@ -61,13 +54,15 @@ let router;
 /**
  * Class that will be instantiated only once and handles the routing magic
  */
-class FrontendRouter
+class FrontendRouter extends LogBase
 {
   /**
    * Construct a FrontendRouter (frontend router) instance
    */
   constructor()
   {
+    super();
+
     if( router )
     {
       throw new Error("Variable [router] has already been assigned");
@@ -75,98 +70,118 @@ class FrontendRouter
 
     //
     // Assign this (the only) instance to variable `router`
-    // - Internally the variable router is used, so methods do not have to be
-    //   bound when exported without the instance context
+    //
+    // - The class uses the variable `router` internally instead of `this`,
+    //   so exported methods do not need to be bound
     //
     router = this;
 
     router[ offs$ ] = {};
 
-    //-- Create path matcher (used to match routes)
+    // -- Create path matcher (used to match routes)
 
     router[ pathMatcher$ ] = new PathMatcher();
 
-    //-- Default route labels
+    // -- Default route labels
 
     router[ homeLabel$ ] = DEFAULT_ROUTE_LABEL_HOME;
     router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
-    router[ mainMenuLabel$ ] = DEFAULT_ROUTE_LABEL_MAIN_MENU;
 
-    //-- Routes by language and route label
+    // -- Routes by language and route label
 
     router[ routesByLangAndLabel$ ] = {};
 
-    if( !sessionStorage.getItem( HISTORY_STORAGE_LABEL ) )
-    {
-      // IDEA: copy state to server and use access code to restore history
 
-      let historyJson = localStorage.getItem( HISTORY_STORAGE_LABEL );
+    // router.log.debug( "-> constructor");
 
-      if( historyJson )
+    // -- historyStorage manages history in sessionStorage
+
+    router.historyStorage = new HistoryStorage();
+
+    // -- routeStateStore contains the current route and state
+
+    const routeStateStore =
+      router.routeStateStore = new RouteStateStore();
+
+    // const off =
+    routeStateStore.configureEventListener(
       {
-        let currentPath =
-          router._stripPath(
-            location.href, { includeSearch: false, includeHash: true } );
-
-        // Copy state from localStorage
-        // - To support copy current url in same browser
-
-        let history = JSON.parse( historyJson );
-
-        for( let j = history.length - 1; j >= 0; j = j - 1 )
-        {
-          const item = history[ j ];
-
-          if( item.path === currentPath )
+        target: window,
+        eventName: "popstate",
+        callbackFn: ( /* e, { target, stream } */ ) =>
           {
-            console.log("Restored state from local storage");
+            let stateFromHistory = router.historyStorage.tryGoBack();
 
-            sessionStorage
-              .setItem( HISTORY_STORAGE_LABEL, JSON.stringify( [ item ] ) );
-            break;
+            // router.log.debug( "popstate", { href: location.href, stateFromHistory } );
+
+            if( router._isValidCurrentState( stateFromHistory ) )
+            {
+              router._updateRouteStateStore();
+              //
+              // event handler return value
+              // `false` prevents browser (safari) from a complete page reload
+              //
+              return false;
+            }
+            else {
+              //
+              // No valid current state found
+              // -> remove hash (contains invalid state id)
+              // -> create new state
+              //
+              // router.log.debug("popstate: create new state");
+
+              //
+              // Remove hash from location.href (if any)
+              // - the hash is part of the path and is used to identify the
+              //   state in history
+              //
+              const path =
+                router._stripPath(
+                  location.href, { includeSearch: true, includeHash: false } );
+
+              window.history.replaceState( null, '', path );
+
+              let newState = router._stateFromLocationHref();
+
+              router.historyStorage.push( newState );
+
+              router._updateRouteStateStore();
+            }
+
+            return false;
           }
-        } // end for
-      }
-    }
+      } );
 
-    //
-    // `router[ routeStateAccessStore$ ]` is a store that will updaten on all
-    // navigation and state updates
-    //
-    // `initialData` are `sane` defaults in case the store is accessed
-    // before route and state have been set
-    //
-
-    const initialData =
+    // const off =
+    routeStateStore.configureStoreSubscriber(
       {
-        route: { layout: null },
-        state: router._getOrCreateCurrentState(),
-        access: { validated: false }
-      };
-
-    const routeStateAccessStore =
-      router.routeStateAccessStore = new ValueStore( initialData );
-
-    routeStateAccessStore
-      .hasSubscribers.subscribe( ( hasSubscribers ) =>
-        {
-          if( !router[ pathMatcher$ ] )
+        store: currentLanguage,
+        callbackFn: ( value, { store, stream } ) =>
           {
-            throw new Error(`Not configured yet (call configureRoutes first)`);
-          }
+            //
+            // An update of the current language might cause a route change
+            // (if the routes are configured for multiple languages)
+            //
 
-          if( hasSubscribers )
-          {
-            router._registerLocationAndSessionListeners();
+            //
+            // !! NOT IMPLEMENTED YET !!!!
+            //
+            // TODO: GET CURRENT PATH AND FIND THE PATH FOR THE NEW LANGUAGE,
+            //       THEN REDIRECT
+            //
           }
-          else {
-            router._unregisterLocationAndSessionListeners();
-          }
-        },
-        false );
+      } );
+
+    //
+    // TEST: subscribe to ensure that the event listeners are enabled
+    //
+    // defer( () => {
+    //   routeStateStore.subscribe( () => {} );
+    // } );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Configure routes
@@ -213,7 +228,7 @@ class FrontendRouter
    *
    *    panels:
    *    {
-   *      appBar: {
+   *      topPanel: {
    *        component: TopPanelTitleAndClose,
    *        title: "Instellingen",
    *        backgroundColor: SURFACE_WHITE
@@ -230,16 +245,14 @@ class FrontendRouter
    */
   configureRoutes( routes )
   {
-    // debug( "*****configure: ROUTES", routes );
+    // router.log.debug("configureRoutes");
 
     expectArray( routes, "Missing or invalid configuration [routes]" );
 
     router[ pathMatcher$ ] = new PathMatcher();
 
-
     let homeLabel = null;
     let notFoundLabel = null;
-    let mainMenuLabel = null;
 
     for( const route of routes )
     {
@@ -266,13 +279,6 @@ class FrontendRouter
       if( "isNotFound" in route )
       {
         notFoundLabel = label;
-      }
-
-      // -- Process property `isMainMenu`
-
-      if( "isMainMenu" in route )
-      {
-        mainMenuLabel = label;
       }
 
       // -- Process property  `language`
@@ -317,23 +323,6 @@ class FrontendRouter
         "Invalid configuration [routes] " +
         "(missing or invalid property item.path)" );
 
-      // -- Process property `app`
-
-      if( route.app )
-      {
-        try {
-          router._normalizeAppParams(
-            route.app, { routePartName: "app", label } );
-        }
-        catch( e )
-        {
-          rethrow( "Invalid configuration [app]", e );
-        }
-      }
-      else {
-        route.app = {};
-      }
-
       // -- Process property `layout`
 
       if( route.layout )
@@ -344,7 +333,8 @@ class FrontendRouter
         }
         catch( e )
         {
-          rethrow( "Invalid configuration [layout]", e );
+          throw new Error(
+            "Invalid configuration [layout]", { cause: e } );
         }
       }
       else {
@@ -370,7 +360,8 @@ class FrontendRouter
           }
           catch( e )
           {
-            rethrow( `Invalid configuration [panels[${key}]]`, e );
+            throw new Error(
+              `Invalid configuration [panels[${key}]]`, { cause: e } );
           }
         }
       }
@@ -428,87 +419,22 @@ class FrontendRouter
       router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
     }
 
-    if( mainMenuLabel )
-    {
-      router[ mainMenuLabel$ ] = mainMenuLabel;
-    }
-    else {
-      router[ mainMenuLabel$ ] = DEFAULT_ROUTE_LABEL_MAIN_MENU;
-    }
-
     // -- Handle redirect if it applies to the current route
 
     if( !router._tryCurrentRouteIsRedirect() )
     {
-      // Force initial update
-      router._updateCurrentRouteAndState();
+      //
+      // No redirect in route -> force initial update
+      //
+      // Use defer, because configureRoutes might be called during bootstrap
+      // and components might not be ready yet
+      //
+      router._firstUpdateDone = true;
+      defer( router._updateRouteStateStore );
     }
   }
 
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get a store that contains route values
-   * - A new value will be set if the route data changes
-   */
-  getRouteStore()
-  {
-    //-- Create new `currentRouteStore`
-
-    const { route: initialValue } = router.getRouteStateAccess();
-
-    const currentRouteStore = new ValueStore( initialValue );
-
-    //-- Create unique entries for storing unsubscribe methods
-
-    const unsubscribe$ = Symbol();
-    const unsubscribeHasSubscribers$ = Symbol();
-
-    //-- Handle store subscribers and data updates
-
-    let previousRoute = null;
-
-    router[ offs$ ][ unsubscribeHasSubscribers$ ] =
-      currentRouteStore
-        .hasSubscribers.subscribe( ( $hasSubscribers ) =>
-    {
-      // console.log(
-      //   "currentRouteStore.hasSubscribers", $hasSubscribers );
-
-      if( $hasSubscribers )
-      {
-        router[ offs$ ][ unsubscribe$ ] =
-          router.routeStateAccessStore.subscribe( ( routeStateAccess ) =>
-          {
-            const currentRoute = routeStateAccess.route;
-
-            // console.log("FIXME: gets fired twice?");
-
-            // console.log("CHECK", currentRoute, previousRoute );
-
-            if( !equals( currentRoute, previousRoute ) )
-            {
-              // @note duplicate access data is skipped
-
-              previousRoute = currentRoute;
-
-              // Set current state
-
-              currentRouteStore
-                .set( { ...currentRoute } );
-            }
-          } );
-      }
-      else {
-        // no more subscribers -> stop store
-        router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
-      }
-    } );
-
-    return currentRouteStore;
-  }
-
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Get a store that outputs the state for the current route only
@@ -527,23 +453,25 @@ class FrontendRouter
    */
   getStateStoreForCurrentRoute()
   {
-    //-- Store original path upon creation of the store
+    // router.log.debug( "-> getStateStoreForCurrentRoute()" );
+
+    // -- Store original path upon creation of the store
 
     const originalPath =
       router.getCurrentPath( { includeSearch: true, includeHash: false } );
 
-    //-- Create new `currentStateStore`
+    // -- Create new `currentStateStore`
 
-    const { state: initialValue } = router.getRouteStateAccess();
+    const { state: initialValue } = router.getRouteAndState();
 
     const currentStateStore = new ValueStore( initialValue );
 
-    //-- Create unique entries for storing unsubscribe methods
+    // -- Create unique entries for storing unsubscribe methods
 
     const unsubscribe$ = Symbol();
     const unsubscribeHasSubscribers$ = Symbol();
 
-    //-- Handle store subscribers and data updates
+    // -- Handle store subscribers and data updates
 
     let previousState = null;
 
@@ -557,7 +485,7 @@ class FrontendRouter
       if( $hasSubscribers )
       {
         router[ offs$ ][ unsubscribe$ ] =
-          router.routeStateAccessStore
+          router.routeStateStore
             .subscribe( ( routeStateAccess ) =>
           {
             const currentState = routeStateAccess.state;
@@ -593,106 +521,7 @@ class FrontendRouter
     return currentStateStore;
   }
 
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get a store that outputs the access data for the current route only
-   * - When the route path changes, values in the store will no longer be
-   *   updated. This prevents access changes that are meant for other routes
-   *   to propagate in the components of the previous route.
-   *
-   * The store auto destructs when:
-   * - When the route path changes
-   * - When the last subscriber unsubscribes
-   *
-   * When the store has been destructed, values in the store will no longer be
-   * updated.
-   *
-   * @returns {object} current state store instance
-   */
-  getAccessStoreForCurrentRoute()
-  {
-    console.log("TODO: TEST");
-
-    //-- Store original path upon creation of the store
-
-    const originalPath =
-      router.getCurrentPath( { includeSearch: true, includeHash: false } );
-
-    //-- Create new `currentAccessStore`
-
-    const { access: initialValue } = router.getRouteStateAccess();
-
-    const currentAccessStore = new ValueStore( initialValue );
-
-    //-- Create unique entries for storing unsubscribe methods
-
-    const unsubscribe$ = Symbol();
-    const unsubscribeHasSubscribers$ = Symbol();
-
-    //-- Handle store subscribers and data updates
-
-    let previousAccess = null;
-
-    router[ offs$ ][ unsubscribeHasSubscribers$ ] =
-      currentAccessStore
-        .hasSubscribers.subscribe( ( $hasSubscribers ) =>
-    {
-      // console.log(
-      //   "currentAccessStore.hasSubscribers", $hasSubscribers );
-
-      if( $hasSubscribers )
-      {
-        router[ offs$ ][ unsubscribe$ ] =
-          router.routeStateAccessStore.subscribe( ( routeStateAccess ) =>
-          {
-            const currentState = routeStateAccess.state;
-            const currentAccess = routeStateAccess.access;
-
-            const currentPath = currentState.path;
-
-            if( originalPath === currentPath )
-            {
-              if( !equals( currentAccess, previousAccess ) )
-              {
-                // @note duplicate access data is skipped
-
-                previousAccess = currentAccess;
-
-                // Set current state
-
-                currentAccessStore
-                  .set( { ...currentAccess } );
-              }
-            }
-            else {
-              // Path changed -> stop store
-              router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
-            }
-          } );
-      }
-      else {
-        // no more subscribers -> stop store
-        router._turnOff( unsubscribe$, unsubscribeHasSubscribers$ );
-      }
-    } );
-
-    return currentAccessStore;
-  }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get a store that contains route, state and access values
-   * - A new value will be set if either the route, the state or the access
-   *   data changes
-   */
-  // getRouteStateAccessStore()
-  // {
-  //   return router.routeStateAccessStore;
-  // }
-
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Redirect to the specified path
@@ -710,6 +539,8 @@ class FrontendRouter
   {
     expectString( path, "Missing or invalid parameter [path]" );
 
+    // router.log.debug("redirectTo", path, options );
+
     let plainPath = router._stripPath( path );
 
     const route = router[ pathMatcher$ ].matchOne( plainPath );
@@ -719,7 +550,7 @@ class FrontendRouter
       throw new Error(`No route found for path [${plainPath}]`);
     }
 
-    // console.log("redirectTo: route found", route );
+    // router.log.debug("redirectTo: route found", route);
 
     // -- Handle [redirectToRoute] property
 
@@ -775,7 +606,7 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Redirect to the specified
@@ -788,7 +619,7 @@ class FrontendRouter
    */
   redirectToRoute( label, options={} )
   {
-    // console.log("redirectToRoute", label);
+    // router.log.debug("redirectToRoute", label);
 
     expectString( label, "Missing or invalid parameter [label]" );
 
@@ -814,7 +645,7 @@ class FrontendRouter
     router.redirectTo( path, options );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Redirect to the home route
@@ -823,7 +654,7 @@ class FrontendRouter
   {
     const homeLabel = router[ homeLabel$ ];
 
-    const { route } = router.routeStateAccessStore.get();
+    const { route } = router.routeStateStore.get();
 
     if( homeLabel !== route.label )
     {
@@ -832,45 +663,39 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Try to go back to the previous page
-   * - This method will only navigate back if there was a route history item
+   * - This method will only navigate back if there a previous history
+   *   item exists
    *
    * @returns {boolean} false if the location was not navigated back in history
    */
   goBack()
   {
-    const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
+    const newState = router.historyStorage.tryGoBack();
 
-    let history;
-
-    if( historyJson )
+    if( newState )
     {
-      history = JSON.parse( historyJson );
+      //
+      // storage history went back -> update browser history too
+      //
+      // @note browser history only contains the path since state data is
+      //       stored in the historyStorage
+      //
+
+      window.history.replaceState( null, '', newState.path );
+
+      router._updateRouteStateStore();
+
+      return true;
     }
-    else {
-      history = [];
-    }
 
-    if( history.length < 2 )
-    {
-      return false;
-    }
-
-    history.pop(); // remove state from history
-
-    let state = history[ history.length - 1 ];
-
-    sessionStorage.setItem( HISTORY_STORAGE_LABEL, JSON.stringify(history) );
-
-    window.history.replaceState( null, '', state.path );
-
-    router._updateCurrentRouteAndState();
+    return false;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Returns true if a history.back() operation would lead to an "in-app" page
@@ -879,28 +704,10 @@ class FrontendRouter
    */
   canGoBack()
   {
-    const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
-
-    // debug("canGoBack: historyJson", historyJson);
-
-    let history;
-
-    if( historyJson )
-    {
-      history = JSON.parse( historyJson );
-    }
-
-    // debug("canGoBack: history", history);
-
-    if( !history || history.length < 2 )
-    {
-      return false;
-    }
-
-    return true;
+    return router.historyStorage.canGoBack();
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Update the state data
@@ -915,12 +722,7 @@ class FrontendRouter
    */
   updateStateData( updateData, { replaceCurrent=false }={} )
   {
-    const currentState = router._getCurrentStateFromSessionStorage();
-
-    if( !currentState )
-    {
-      throw new Error("No current state");
-    }
+    const currentState = router._getCurrentState();
 
     let updatedData =
       router._cloneAndUpdate( currentState.data, updateData );
@@ -938,7 +740,7 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Remove the query (search) part of the url
@@ -946,9 +748,9 @@ class FrontendRouter
    */
   removeSearchParams()
   {
-    let state = router._getCurrentStateFromSessionStorage();
+    const currentState = router._getCurrentState();
 
-    if( !state.search )
+    if( !currentState.search )
     {
       return;
     }
@@ -959,12 +761,12 @@ class FrontendRouter
 
     router.redirectTo( path,
       {
-        stateData: state.data,
+        stateData: currentState.data,
         replaceCurrent: true
       } );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Update the main state of the return state
@@ -977,16 +779,7 @@ class FrontendRouter
    */
   updateReturnStateData( updateData )
   {
-    const currentState = router._getCurrentStateFromSessionStorage();
-
-    if( !currentState )
-    {
-      throw new Error("No current state");
-    }
-
-    // console.log(
-    //   "*** updateReturnState: currentState",
-    //   JSON.stringify( currentState, null, 2));
+    const currentState = router._getCurrentState();
 
     if( !currentState.data || !currentState.data.returnState )
     {
@@ -1009,14 +802,10 @@ class FrontendRouter
       newState.data = {};
     }
 
-    // console.log(
-    //   "*** updateReturnStateData: newState",
-    //   JSON.stringify( newState, null, 2));
-
     router.replaceState( newState );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Redirect the return state
@@ -1038,7 +827,7 @@ class FrontendRouter
       goBackFirst = false;
     }
 
-    let currentState = router._getCurrentStateFromSessionStorage();
+    let currentState = router.historyStorage.getLatest();
 
     let returnState = currentState.data.returnState;
 
@@ -1051,7 +840,13 @@ class FrontendRouter
     {
       router.updateReturnStateData( updateData );
 
-      currentState = router._getCurrentStateFromSessionStorage();
+      //
+      // Latest history item changed -> get again
+      //
+      // FIXME: make more efficient
+      //
+      currentState = router.historyStorage.getLatest();
+
       returnState = currentState.data.returnState;
 
       // console.log("*** redirectToReturnState: updated currentState", currentState );
@@ -1070,7 +865,7 @@ class FrontendRouter
     router.replaceState( returnState, { goBackFirst } );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Returns the current path
@@ -1089,7 +884,7 @@ class FrontendRouter
       ._stripPath( location.href, { includeSearch, includeHash } );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Get the current state data
@@ -1099,7 +894,7 @@ class FrontendRouter
    */
   getStateData()
   {
-    const currentState = router._getCurrentStateFromSessionStorage();
+    const currentState = router._getCurrentState();
 
     if( currentState )
     {
@@ -1109,7 +904,57 @@ class FrontendRouter
     return {};
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get the current route and state
+   * - The state is the latest item from the history storage or a new
+   *   state that is creates form the browser's location
+   * - The state's path and configured routes determine the current route
+   *
+   * @returns {object}
+   *   {
+   *     route: { ... },
+   *     state: { path, data, ... }
+   *   }
+   */
+  getRouteAndState()
+  {
+    // router.log.debug( "-> getRouteAndState()" );
+
+    if( !router[ pathMatcher$ ] )
+    {
+      throw new Error(`Not configured yet (call configureRoutes first)`);
+    }
+
+    // -- State
+
+    const currentState = router._getOrCreateCurrentState();
+
+    // -- Route
+
+    const path = currentState.path;
+
+    expectString( path, "Missing or invalid parameter [path]" );
+
+    let plainPath = router._stripPath( path );
+
+    let route = router[ pathMatcher$ ].matchOne( plainPath );
+
+    if( !route )
+    {
+      throw new Error(`No route found for path [${plainPath}]`);
+    }
+
+    route = { selector: route.selector, params: route.params, ...route.data };
+
+    //console.log( { state } );
+
+    return { route, state: currentState };
+  }
+
+
+  // ---------------------------------------------------------------------------
 
   /**
    * Get the path that corresponds to the specified label
@@ -1151,7 +996,7 @@ class FrontendRouter
     return path;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Get the path that corresponds to the specified label
@@ -1187,125 +1032,6 @@ class FrontendRouter
     return route;
   }
 
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get the current route, state and access data
-   * - If the current route defines access via `allowGuest` or `requireGroup`,
-   *   an access property is returned that validates access against credentials
-   *   set in session data.
-   *
-   * @returns {object}
-   *   {
-   *     route: {},
-   *     state: {},
-   *     [access={ allowed: <boolean>, validated: <boolean> }]
-   *   }
-   */
-  getRouteStateAccess()
-  {
-    //-- State
-
-    let currentState = router._getCurrentStateFromSessionStorage();
-
-    if( !currentState )
-    {
-      //throw new Error("No current state");
-      currentState = router._getOrCreateCurrentState();
-    }
-
-    //-- Route
-
-    const path = currentState.path;
-
-    expectString( path, "Missing or invalid parameter [path]" );
-
-    let plainPath = router._stripPath( path );
-
-    let route = router[ pathMatcher$ ].matchOne( plainPath );
-
-    if( !route )
-    {
-      throw new Error(`No route found for path [${plainPath}]`);
-    }
-
-    //-- Access
-
-    let access = { allowed: false, validated: false };
-
-    // const sessionDataValue = sessionData.get();
-
-    // console.log( "FrontendRouter:authenticationBusy", authenticationBusy.get() );
-    // console.log( "FrontendRouter:sessionDataValue", sessionDataValue );
-
-    // const allowGuest = route.data.allowGuest;
-    // const requireGroup = route.data.requireGroup;
-
-    // if( !authenticationBusy.get() )
-    // {
-    //   if( requireGroup )
-    //   {
-    //     if( !sessionDataValue )
-    //     {
-    //       access = { allowed: false, validated: false };
-    //     }
-    //     else {
-    //       // Get user groups from session data
-
-    //       let groups = sessionDataValue.groups;
-
-    //       if( groups )
-    //       {
-    //         expectSet( groups,
-    //           "Invalid property [groups] in session data " );
-    //       }
-    //       else {
-    //         groups = new Set();
-    //       }
-
-    //       // console.log("****requireGroup", { requireGroup, groups });
-
-    //       if( groups.has( requireGroup ) )
-    //       {
-    //         access = { allowed: true, validated: true };
-    //       }
-    //       else {
-    //         access = { allowed: false, validated: true };
-    //       }
-    //     }
-    //   }
-    //   else if( false === allowGuest )
-    //   {
-    //     // User should not be a guest
-
-    //     // console.log("****!allowGuest", { isGuest: sessionDataValue.isGuest });
-
-    //     if( !sessionDataValue )
-    //     {
-    //       access = { allowed: false, validated: false };
-    //     }
-    //     else {
-    //       access = {
-    //         allowed: !sessionDataValue.isGuest,
-    //         validated: true };
-    //     }
-    //   }
-    //   else {
-    //     access = { allowed: true, validated: true };
-    //   }
-    // }
-    // else {
-    //   // FIXME: use current value for access ????
-    //   access = { allowed: false, validated: false };
-    // }
-
-    route = { selector: route.selector, params: route.params, ...route.data };
-
-    //console.log( { state } );
-
-    return { route, state: currentState, access };
-  }
-
   /* ------------------------------------------- Advanced interaction methods */
 
   /**
@@ -1317,66 +1043,29 @@ class FrontendRouter
    */
   pushState( state )
   {
+    // router.log.debug( "pushState", state );
+
     router._normalizeState( state );
 
     if( !router._stateChanged( state ) )
     {
-      //throw new Error("Cannot push state (state has not changed)");
-      console.error("Cannot push state (state has not changed)");
+      router.log.warning("pushState (state has not changed)");
       return;
     }
 
-    // console.log( "pushState", state );
+    //
+    // TODO: store scroll restauration info?
+    // lastItem.documentScrollTop = documentElement.scrollTop;
+    //
 
-    let historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
+    router.historyStorage.push( state );
 
-    let history;
+    router._pushBrowserLocationPath();
 
-    if( historyJson )
-    {
-      history = JSON.parse( historyJson );
-
-      expectArray( history, `Invalid item in storage [${HISTORY_STORAGE_LABEL}]` );
-
-      if( history.length >= MAX_HISTORY_LENGTH )
-      {
-        // Limit stored history length
-        history = history.slice( history.length - MAX_HISTORY_LENGTH + 1 );
-      }
-
-      const n = history.length - 1;
-
-      if( n > 0 )
-      {
-        //
-        // Update documentElement.scrollTop information in current state
-        //
-        const documentElement = document.documentElement;
-
-        history[ n ].documentScrollTop = documentElement.scrollTop;
-      }
-    }
-    else {
-      history = [];
-    }
-
-    history.push( state );
-
-    // debug( "pushState:history", history );
-    // debug( "pushState:history", { path: state.path } );
-
-    historyJson = JSON.stringify(history);
-
-    sessionStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
-    localStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
-
-    window.history.pushState( null, '', state.path );
-
-    // @note pushState never causes a hashchange event to be fired
-    router._updateCurrentRouteAndState();
+    router._updateRouteStateStore();
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Replace the current state object in the state history
@@ -1385,95 +1074,32 @@ class FrontendRouter
    * @param {string} [state.path] - Location path related to the state
    * @param {object} [state.data] - State data object
    *
+   * TODO
    * @param {object} [options]
    * @param {boolean} [options.goBackFirst=false]
    *   If set, both the current and the previous state will be removed from
    *   history before the new state is added
    */
-  replaceState( state, options )
+  replaceState( state /*, options */ )
   {
-    router._normalizeState( state );
+    // router.log.debug("replaceState", state);
 
-    // debug( "replaceState", state );
+    router._normalizeState( state );
 
     if( !router._stateChanged( state ) )
     {
-      // Ignore
+      router.log.warning("replaceState (state has not changed)");
       return;
     }
 
-    const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
+    router.historyStorage.replace( state );
 
-    let history;
+    router._replaceBrowserLocationPath();
 
-    if( historyJson )
-    {
-      history = JSON.parse( historyJson );
-    }
-    else {
-      history = [];
-    }
-
-    if( options && options.goBackFirst )
-    {
-      // Go first back in history (remove extra item from history)
-      history.pop();
-    }
-
-    // Remove last state
-    history.pop();
-
-    for( let j = history.length - 1; j >= 0; j = j - 1 )
-    {
-      const lastState = history[ j ];
-
-      if( equals( state, lastState ) )
-      {
-        // Remove identical state
-        // (might be present in the stack due to redirects e.g. / -> /dashboard)
-        history.pop();
-      }
-    }
-
-    history.push( state );
-
-    sessionStorage.setItem( HISTORY_STORAGE_LABEL, JSON.stringify(history) );
-
-    window.history.replaceState( null, '', state.path );
-
-    router._updateCurrentRouteAndState();
+    router._updateRouteStateStore();
   }
 
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Go to the main menu route or navigate back if already on the main menu
-   * route
-   */
-  // toggleMainMenu()
-  // {
-  //   const { route } = router.getRouteStateAccess();
-
-  //   const mainMenuLabel = router.getLabelMainMenu();
-
-  //   if( mainMenuLabel === route.label )
-  //   {
-  //     //
-  //     // Already on main menu route
-  //     // -> navigate back or home if no previous route exists
-  //     //
-  //     router.goBack() || router.goHome();
-  //   }
-  //   else {
-  //     //
-  //     // Redirect to the main menu route
-  //     // - Leaves current route in history (so we can go back)
-  //     //
-  //     router.redirectToRoute( mainMenuLabel );
-  //   }
-  // }
-
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Returns the label that belongs to the current `home` route
@@ -1484,7 +1110,7 @@ class FrontendRouter
     return router[ homeLabel$ ];
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Returns the label that belongs to the current `not found` route
@@ -1495,44 +1121,83 @@ class FrontendRouter
     return router[ notFoundLabel$ ];
   }
 
-  // -------------------------------------------------------------------- Method
+  /* ------------------------------------------------------- Internal methods */
 
   /**
-   * Returns the label that belongs to the current `main menu` route
-   *
-   * @returns {string} main menu route label
+   * Push the path from the currentState to the browser's history
+   * (updates the browser's location path)
    */
-  getLabelMainMenu() {
-    return router[ mainMenuLabel$ ];
+  _pushBrowserLocationPath()
+  {
+    const currentState =
+      router._getCurrentState( { clearHistoryOnInvalid: false } );
+
+    // router.log.debug("_pushBrowserLocationPath", currentState);
+
+    window.history.pushState( null, '', currentState.path );
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
-   * Go to the `main menu` route
-   *
-   * @returns {boolean}
-   *   true if the route changed, false if already on the main menu route
+   * Replace the from the browser's history with the path from the currentState
+   * (updates the browser's location path)
    */
-  gotoRouteMainMenu()
+  _replaceBrowserLocationPath()
   {
-    const mainMenuLabel = router.getLabelMainMenu();
+    const currentState =
+      router._getCurrentState( { clearHistoryOnInvalid: false } );
 
-    const { route } = router.getRouteStateAccess();
+    // router.log.debug("_replaceBrowserLocationPath", currentState);
 
-    // console.log("gotoRouteMainMenu", route, mainMenuLabel );
+    window.history.replaceState( null, '', currentState.path );
+  }
 
-    if( mainMenuLabel === route.label )
+  // ---------------------------------------------------------------------------
+
+  async _updateScrollRestaurationStore()
+  {
+
+    // console.log(
+    //   "CHECK scroll restauration", { restore: history.scrollRestoration } );
+
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Update route and state store
+   * - Gets current state from history storage or creates new state
+   * - Finds the corresponding current route
+   * - Updates router property `routeAndStateStore`
+   */
+  async _updateRouteStateStore()
+  {
+    // router.log.debug( "_updateRouteStateStore" );
+
+    const newRouteAndState = router.getRouteAndState();
+
+    const existingValue = router.routeStateStore.get();
+
+    if( equals( existingValue, newRouteAndState ) )
     {
-      return false;
+      // Ignore update if state did not change:
+      //
+      // Identical states may occur due to:
+      // - language change
+      // - ...?
+
+      // router.log.debug( "_updateRouteStateStore: state not changed", existingValue );
+
+      return;
     }
 
-    router.redirectToRoute( mainMenuLabel );
+    // console.log("UPDATE: routeStateStore");
 
-    return true;
+    router.routeStateStore.set( newRouteAndState );
   }
 
-  /* ------------------------------------------------------- Internal methods */
+  // ---------------------------------------------------------------------------
 
   /**
    * Apply a redirect if the first route contains a `redirectToRoute`
@@ -1546,36 +1211,53 @@ class FrontendRouter
 
     const route = router[ pathMatcher$ ].matchOne( plainPath );
 
+    // (1) -- no route
+
     if( !route )
     {
-      // Route not found
+      //
+      // No route found for current path in browser location
+      // -> redirect to `not found page` or `home`
+      //
 
       const notFoundRoute =
         router[ pathMatcher$ ].matchOne( router[ notFoundLabel$ ] );
 
       if( notFoundRoute )
       {
+        //
+        // Redirect to `not found` route
+        //
         router.redirectToRoute(
           router[ notFoundLabel$ ], { replaceCurrent: true } );
       }
       else {
-        // No `not found` route has been defined -> redirect to `home`
-
-        router.redirectToRoute( router[ homeLabel$ ], { replaceCurrent: true } );
+        //
+        // Redirect to `home` route
+        //
+        router.redirectToRoute(
+          router[ homeLabel$ ], { replaceCurrent: true } );
       }
 
       return true;
     }
 
-    // -- Handle [redirectToRoute] property
+    // (2) -- with route
+
+    //
+    // A route exists for the current path from the browser's location
+    //
 
     if( route.data.redirectToRoute )
     {
-      console.log("redirectToRoute",
-        {
-          plainPath,
-          redirectToRoute: route.data.redirectToRoute
-        } );
+      //
+      // The current route contains a `redirectToRoute` instruction
+      //
+      // router.log.debug("redirectToRoute",
+      //   {
+      //     plainPath,
+      //     redirectToRoute: route.data.redirectToRoute
+      //   } );
 
       router.redirectToRoute(
         route.data.redirectToRoute, { replaceCurrent: true } );
@@ -1586,171 +1268,51 @@ class FrontendRouter
     return false;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
-   * Register location and session listeners
-   */
-  _registerLocationAndSessionListeners()
-  {
-    // -- Catch `navigate back` action from user
-
-    if( !router[ offs$ ].popstate )
-    {
-      window.addEventListener('popstate', router._onHistoryPop );
-
-      router[ offs$ ].popstate = () =>
-      {
-        window.removeEventListener('popstate', router._onHistoryPop );
-      };
-    }
-
-    // -- Keep track of current language
-
-    router[ offs$ ].currentLanguage =
-      currentLanguage.subscribe( ( /*value*/ ) => {
-
-        // debug("currentLanguage=" + value);
-
-        router._updateCurrentRouteAndState();
-      } );
-
-    // -- Keep track of session data (used to update access property)
-
-    // router[ offs$ ].sessionData =
-    //   sessionData.subscribe( ( /*sessionDataValue*/ ) => {
-
-    //     // debug("sessionData", sessionDataValue);
-
-    //     router._updateCurrentRouteAndState();
-    //   } );
-  }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Unregister location and session listeners
-   */
-  _unregisterLocationAndSessionListeners()
-  {
-    for( const key in router[ offs$ ] )
-    {
-      router[ offs$ ][ key ]();
-    }
-  }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Handle a browser history pop event (history go back)
-   */
-  _onHistoryPop()
-  {
-    // -- Try get latest history item from sessionStorage
-
-    //console.log("*** onHistoryPop");
-
-    const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
-
-    let history;
-
-    if( historyJson )
-    {
-      history = JSON.parse( historyJson );
-
-      if( history.length > 1 )
-      {
-        history.pop();
-
-        sessionStorage.setItem( HISTORY_STORAGE_LABEL, JSON.stringify(history) );
-
-        const current = history[ history.length - 1 ];
-
-        // Removes forward button, but adds extra property to the stack...
-        window.history.pushState( null, '', current.path );
-
-        // console.log("_onHistoryPop(): history", history);
-
-        router._updateCurrentRouteAndState();
-        return;
-      }
-    }
-
-    // No state found for current url -> create empty state
-    // (let panel decide what to do in case of an error)
-
-    if( history && history.length )
-    {
-      console.log("_onHistoryPop(): state not found -> redirect to latest");
-
-      const latest = history[ history.length - 1];
-      router.redirectTo( latest.path, { replaceCurrent: true } );
-    }
-    else {
-      console.log("_onHistoryPop(): state not found -> redirect to home");
-      router.redirectToRoute( router[ homeLabel$ ] );
-    }
-  }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get the current state from the state history in the session storage
-   * - Returns null if no state was found in the session storage
+   * Check if the supplied state is valid
+   * - Compares the browser location path with the path from the state
+   *   If the paths are not the same, the state is not a valid currentState
    *
-   * @returns {object|null} The current state (cloned) or null if not found
+   * @param {object|null} currentState
+   *
+   * @returns {boolean} true if the path in the state is the same as the
+   *   current path from the browser's location
    */
-  _getCurrentStateFromSessionStorage()
+  _isValidCurrentState( currentState )
   {
-    // -- Try get latest history item from sessionStorage
-
-    const historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
-
-    // console.log("_getCurrentStateFromSessionStorage (1)", location.href, historyJson);
-
-    let lastItem;
-
-    if( historyJson )
+    if( !currentState )
     {
-      const history = JSON.parse( historyJson );
-
-      if( history.length )
-      {
-        lastItem = history[ history.length - 1 ];
-      }
-    }
-
-    if( !lastItem )
-    {
-      return null;
+      return false;
     }
 
     const locationPath =
       router._stripPath(
         location.href, { includeSearch: true, includeHash: true } );
 
-    if( lastItem.path === locationPath )
+    if( currentState.path === locationPath )
     {
-      if( !lastItem.data )
-      {
-        // FIXME: replace by validate state?
-        lastItem.data = {};
-      }
-
-      return lastItem;
+      return true;
     }
 
-    return null;
+    return false;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Get current state or create and set a new state
+   * - Gets the latest state from the history storage
+   * - Resets history storage if the latest state is invalid (by default)
+   * - Creates a new state using the browser's current location if no
+   *   (valid) state was found in the history storage
+   *
+   * @returns {object} currentState
    */
   _getOrCreateCurrentState()
   {
-    const currentState = router._getCurrentStateFromSessionStorage();
+    const currentState = router._getCurrentState();
 
     if( currentState )
     {
@@ -1759,41 +1321,58 @@ class FrontendRouter
 
     // -- Create new state
 
-    const state = router._stateFromLocationHref();
+    const newState = router._stateFromLocationHref();
 
-    let historyJson = sessionStorage.getItem( HISTORY_STORAGE_LABEL );
+    router.historyStorage.push( newState );
 
-    let history;
-
-    if( historyJson )
-    {
-      history = JSON.parse( historyJson );
-
-      expectArray( history,
-        `Invalid local storage item [${HISTORY_STORAGE_LABEL}]` );
-    }
-    else {
-      history = [];
-    }
-
-    history.push( state );
-
-    // debug( "pushState:history", history );
-    // console.log( "_getOrCreateCurrentState: createState", state );
-
-    historyJson = JSON.stringify(history);
-
-    sessionStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
-
-    // TODO: depreceate?
-    localStorage.setItem( HISTORY_STORAGE_LABEL, historyJson );
-
-    window.history.pushState( null, '', state.path );
-
-    return state;
+    return newState;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get the current state
+   * - Gets the latest state from the history storage
+   * - Resets history storage if the latest state is invalid (by default)
+   *
+   * @param {boolean} [clearHistoryOnInvalid=true]
+   *   If false, an invalid state (a state.path that does not match with the
+   *   browser's location path) will lead to clearing of the historyStorage
+   *   and null will be returned.
+   *
+   * @returns {object|null}
+   *   current state or null if no (valid) current state was found
+   */
+  _getCurrentState( { clearHistoryOnInvalid=true }={} )
+  {
+    let currentState = router.historyStorage.getLatest();
+
+    // router.log.debug("_getCurrentState", currentState);
+
+    if( currentState )
+    {
+      if( !clearHistoryOnInvalid ||
+           router._isValidCurrentState( currentState ) )
+      {
+        return currentState;
+      }
+
+      //
+      // Not a valid current state
+      //
+      // path in currentState from historyStorage does not match with current
+      // browser history path
+      // -> clear historyStorage and create a new currentState
+      //
+
+      currentState = null;
+      router.historyStorage.clear();
+
+      return currentState;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
 
   /**
    * Creates a state object, generated from `location.href`
@@ -1806,7 +1385,7 @@ class FrontendRouter
       router._stripPath(
         location.href, { includeSearch: true, includeHash: true } );
 
-    const state = { path, data: {} };
+    const state = { path /*, data: {} */ };
 
     if( location.search.length > 1 )
     {
@@ -1825,7 +1404,7 @@ class FrontendRouter
     return state;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Check if the state object is valid
@@ -1849,7 +1428,7 @@ class FrontendRouter
     return true;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Returns true if the supplied state differs from the current state
@@ -1863,7 +1442,7 @@ class FrontendRouter
   {
     expectObject( state, "Missing or invalid parameter [state]" );
 
-    let currentState = router._getCurrentStateFromSessionStorage();
+    const currentState = router._getCurrentState();
 
     if( !currentState )
     {
@@ -1889,7 +1468,7 @@ class FrontendRouter
     return false;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Normalize a state object
@@ -1900,6 +1479,8 @@ class FrontendRouter
    */
   _normalizeState( state )
   {
+    // router.log.debug("_normalizeState");
+
     // -- Check input parameters
 
     expectObject( state, "Missing or invalid value for parameter [state]" );
@@ -1921,14 +1502,7 @@ class FrontendRouter
       delete state.id;
     }
 
-    let currentState = router._getCurrentStateFromSessionStorage();
-
-    if( !currentState )
-    {
-      //throw new Error("Missing [currentState] (not found in storage)");
-      console.error("Missing [currentState] (not found in storage)");
-      currentState = router._getOrCreateCurrentState();
-    }
+    const currentState = router._getOrCreateCurrentState();
 
     if( !path )
     {
@@ -1964,7 +1538,7 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Normalize a part of a route
@@ -2010,66 +1584,7 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Normalize a part of a route
-   * - A route part can be the [app], [layout] or a [panel] part of the route
-   *
-   * @param {object} routePart
-   */
-  _normalizeAppParams( routePart )
-  {
-    expectObject( routePart, "Missing or invalid parameter [routePart]" );
-
-    const background = routePart.background;
-
-    if( background )
-    {
-      expectString( background,
-        "Missing or invalid parameter [routePart.background]" );
-    }
-    // else {
-    //   routePart.background = "";
-    // }
-  }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Update current route and state
-   */
-  async _updateCurrentRouteAndState()
-  {
-    // console.log(
-    //   "CHECK scroll restauration", { restore: history.scrollRestoration } );
-
-    // Update store `routeStateAccessStore`
-    // - The router is started during bootstrap, using defer gives
-    //   components a chance to react upon the initial state
-
-    defer( () => {
-      const newRouteStateAccess = router.getRouteStateAccess();
-
-      const existingValue = router.routeStateAccessStore.get();
-
-      if( equals( existingValue, newRouteStateAccess ) )
-      {
-        // Ignore update if state did not change:
-        //
-        // Identical states may occur due to:
-        // - language change
-        // - sessionData that changed (but did not alter the state)
-
-        return;
-      }
-
-
-      router.routeStateAccessStore.set( newRouteStateAccess );
-    } );
-  }
-
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Create a new updated object
@@ -2111,11 +1626,13 @@ class FrontendRouter
     return obj;
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Strip parts from the supplied path
    * - Removes origin
+   * - Optionally removes the search part (after the ? token)
+   * - Optionally removes the hash part (after the # token)
    *
    * @param {string} path
    * @param {boolean} [includeSearch=false] - Include query part of the path
@@ -2175,6 +1692,8 @@ class FrontendRouter
     return path.slice( 0, x );
   }
 
+  // ---------------------------------------------------------------------------
+
   /**
    * Throw and exception if the supplied state object contains properties
    * that are not allowed.
@@ -2194,7 +1713,7 @@ class FrontendRouter
     }
   }
 
-  // -------------------------------------------------------------------- Method
+  // ---------------------------------------------------------------------------
 
   /**
    * Turn off

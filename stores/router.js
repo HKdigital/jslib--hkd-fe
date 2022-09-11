@@ -73,7 +73,7 @@
  *   You might want to use this for components that are are not destroyed
  *   when a route changes, e.g. a layout component.
  *
- *   routeStateAccessStore.subscribe( ( route, state, access ) => { ... } );
+ *   routeStateStore.subscribe( ( route, state, access ) => { ... } );
  */
 
 /* ------------------------------------------------------------------ Imports */
@@ -87,12 +87,12 @@ import router from "@hkd-fe/classes/FrontendRouter.js";
 export const {
   configureRoutes,
 
-  getRouteStore,
+  // getRouteStore,
 
   getStateStoreForCurrentRoute,
   getAccessStoreForCurrentRoute,
 
-  routeStateAccessStore,
+  routeStateStore,
 
   redirectTo,
   redirectToRoute,
@@ -116,11 +116,8 @@ export const {
   routePath,
   getRoute,
 
-  gotoRouteMainMenu,
-
   getLabelHome,
-  getLabelNotFound,
-  getLabelMainMenu } = router;
+  getLabelNotFound } = router;
 
 /* --------------------------------------------- Hot Module Replacement (dev) */
 

@@ -17,9 +17,8 @@ export const backgroundPanelReady = new DedupValueStore( false );
 export const topPanelReady = new DedupValueStore( false );
 export const subTopPanelReady = new DedupValueStore( false );
 export const contentPanelReady = new DedupValueStore( false );
+export const superBottomPanelReady = new DedupValueStore( false );
 export const bottomPanelReady = new DedupValueStore( false );
-
-export const overlayPanelReady = new DedupValueStore( false );
 
 /**
  * Mark background panel as ready for showing to the user
@@ -58,19 +57,19 @@ export function markContentPanelReady()
 }
 
 /**
+ * Mark super bottom panel as ready for showing to the user
+ */
+export function markSuperBottomPanelReady()
+{
+  // @note using defer, otherwise fade in effect does not trigger
+  defer( () => { superBottomPanelReady.set( true ); } );
+}
+
+/**
  * Mark bottom panel as ready for showing to the user
  */
 export function markBottomPanelReady()
 {
   // @note using defer, otherwise fade in effect does not trigger
   defer( () => { bottomPanelReady.set( true ); } );
-}
-
-/**
- * Mark overlay panel as ready for showing to the user
- */
-export function markOverlayPanelReady()
-{
-  // @note using defer, otherwise fade in effect does not trigger
-  defer( () => { overlayPanelReady.set( true ); } );
 }
