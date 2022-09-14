@@ -10,22 +10,37 @@ import { expectValidSurfaceColor } from "@hkd-fe/helpers/theme.js";
 let cssClassNames = "";
 export { cssClassNames as class };
 
-export let onColor;
-$: expectValidSurfaceColor( onColor );
+export let onColor = null;
 
-/* -------------------------------------------------------------------- Logic */
+/* ----------------------------------------------------------------- Reactive */
 
+let colorClasses = "";
+
+$: {
+  if( onColor )
+  {
+    colorClasses = `g-color-on-${onColor}`;
+  }
+  else {
+    colorClasses = "";
+  }
+}
 
 </script>
 
 <div class="c-heading-text
-            g-color gg-default-on-{onColor}
+            {colorClasses}
             {cssClassNames}"
             on:click>
     <slot></slot>
 </div>
 
 <style>
+  /*:global(.c-heading-text)
+  {
+    --margin-left-right: 1rem;
+  }*/
+
   :global(.c-heading-text)
   {
     font-family: sans-serif;

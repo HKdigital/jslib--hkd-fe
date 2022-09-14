@@ -2,8 +2,6 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectValidSurfaceColor } from "@hkd-fe/helpers/theme.js";
-
 /* ---------------------------------------------------------------- Internals */
 
 /* ------------------------------------------------------------------ Exports */
@@ -11,15 +9,26 @@ import { expectValidSurfaceColor } from "@hkd-fe/helpers/theme.js";
 let cssClassNames = "";
 export { cssClassNames as class };
 
-export let onColor;
-$: expectValidSurfaceColor( onColor );
+export let onColor = null;
 
-/* -------------------------------------------------------------------- Logic */
+/* ----------------------------------------------------------------- Reactive */
+
+let colorClasses = "";
+
+$: {
+  if( onColor )
+  {
+    colorClasses = `g-color-on-${onColor}`;
+  }
+  else {
+    colorClasses = "";
+  }
+}
 
 </script>
 
 <div class="c-body-text
-            g-color gg-default-on-{onColor}
+            {colorClasses}
             {cssClassNames}"
             on:click>
   <slot></slot>

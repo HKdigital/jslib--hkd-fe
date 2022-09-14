@@ -47,6 +47,9 @@ body {
 
   /* prevent horizontal scrollbar of vertical scrollbar appears */
   overflow-x: hidden;
+
+  /* nicer scroll when making jumps */
+  scroll-behavior: smooth;
 }
 
 /* ------------------------------------- Reset padding, margin and box-sizing */
