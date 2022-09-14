@@ -117,7 +117,7 @@ $: {
   if( surfaceColor )
   {
     // g-color gx-default-on-surface2 gx-bgcolor-surface2
-    colorClasses = `g-color gx-bgcolor-${surfaceColor}`;
+    colorClasses = `g-bgcolor-${surfaceColor}`;
   }
 }
 
