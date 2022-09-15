@@ -42,6 +42,9 @@ let frontStyle = "";
 
 export let surfaceColor = null;
 
+export let surfaceColorFront = null;
+export let surfaceColorBackground = null;
+
 export let cssClassNames = "";
 export { cssClassNames as class };
 
@@ -111,29 +114,34 @@ $: {
 
 // -----------------------------------------------------------------------------
 
-let colorClasses = "";
+let colorClassesFront = "";
+let colorClassesBackground = "";
 
 $: {
-  if( surfaceColor )
+  if( surfaceColorFront || surfaceColor )
   {
-    // g-color gx-default-on-surface2 gx-bgcolor-surface2
-    colorClasses = `g-bgcolor-${surfaceColor}`;
+    colorClassesFront = `g-bg-${surfaceColorFront || surfaceColor}`;
+  }
+
+  if( surfaceColorBackground || surfaceColor )
+  {
+    colorClassesBackground = `g-bg-${surfaceColorBackground || surfaceColor}`;
   }
 }
 
 </script>
 
-<div class="c-single-column-row {cssClassNames} {colorClasses}"
+<div class="c-single-column-row {cssClassNames}"
      bind:clientWidth={rowElemWidth}>
 
-  <div class="cc-front"
+  <div class="cc-front {colorClassesFront}"
        style={frontStyle}
-       class:x-center={centerFront}>
+       class:x-justify-center={centerFront}>
 
     <slot><!-- default slot --></slot>
   </div>
 
-  <div class="cc-background" style="color: red;">
+  <div class="cc-background {colorClassesBackground}">
     <slot name="background"></slot>
   </div>
 
@@ -169,10 +177,10 @@ $: {
     align-items: start;
   }
 
-  /*:global( .c-single-column-row.x-row-gap-100 .cc-front )
+  .cc-front.x-justify-center
   {
-    grid-row-gap: var(--gx-row-gap-100, 1rem);
-  }*/
+    justify-self: center;
+  }
 
   :global( .c-single-column-row.x-row-gap-100 .cc-front )
   {
@@ -198,7 +206,10 @@ $: {
     /*background-color: salmon;*/
   }
 
-  .x-center {
+  /* Justify child elements */
+
+  :global( .c-single-column-row .x-justify-center)
+  {
     justify-self: center;
   }
 

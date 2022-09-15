@@ -194,7 +194,7 @@ $: {
 
   <div class="cc-front"
        style={frontStyle}
-       class:x-center={centerFront}
+       class:x-justify-center={centerFront}
        bind:this={frontElem}>
 
     <slot><!-- default slot --></slot>
@@ -240,6 +240,11 @@ $: {
     align-items: start;
   }
 
+  .cc-front.x-justify-center
+  {
+    justify-self: center;
+  }
+
   /*:global( .c-responsive-grid-row.x-row-gap-100 .cc-front )
   {
     grid-row-gap: var(--gx-row-gap-100, 1rem);
@@ -276,7 +281,10 @@ $: {
     /*background-color: salmon;*/
   }
 
-  .x-center {
+  /* Justify child elements */
+
+  :global( .c-responsive-grid-row .x-justify-center)
+  {
     justify-self: center;
   }
 

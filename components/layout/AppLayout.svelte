@@ -487,7 +487,7 @@
     if( bgColorLayout )
     {
       layoutBgClassNames =
-        `g-bgcolor-${bgColorLayout}`;
+        `g-bg-${bgColorLayout}`;
     }
     else {
       layoutBgClassNames = "";
@@ -506,7 +506,7 @@
       if( bgColorBackgroundPanel )
       {
         backgroundPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         backgroundPanelBgClassNames = "";
@@ -526,7 +526,7 @@
       if( bgColorBackgroundPanel )
       {
         topPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         topPanelBgClassNames = "";
@@ -546,7 +546,7 @@
       if( bgColorBackgroundPanel )
       {
         subTopPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         subTopPanelBgClassNames = "";
@@ -566,7 +566,7 @@
       if( bgColorBackgroundPanel )
       {
         contentPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         contentPanelBgClassNames = "";
@@ -586,7 +586,7 @@
       if( bgColorBackgroundPanel )
       {
         superBottomPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         superBottomPanelBgClassNames = "";
@@ -606,7 +606,7 @@
       if( bgColorBackgroundPanel )
       {
         bottomPanelBgClassNames =
-          `g-bgcolor-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBackgroundPanel}`;
       }
       else {
         bottomPanelBgClassNames = "";

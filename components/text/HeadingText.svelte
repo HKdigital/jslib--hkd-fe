@@ -44,7 +44,7 @@ $: {
   :global(.c-heading-text)
   {
     font-family: sans-serif;
-    font-weight: 400;
+    /*font-weight: 400;*/
     font-size: 2rem;
     line-height: 1.4;
     letter-spacing: 0.02rem;
