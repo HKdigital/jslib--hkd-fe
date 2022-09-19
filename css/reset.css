@@ -80,6 +80,14 @@ input
   appearance: none;
 }
 
+input, textarea, select {
+  font-family: inherit;
+  font-weight: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  letter-spacing: inherit;
+}
+
 a
 {
   outline: none;

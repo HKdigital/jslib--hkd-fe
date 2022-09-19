@@ -11,7 +11,7 @@ export { cssClassNames as class };
 
 export let onColor = null;
 
-/* Center the header text (element should have a width) */
+/* Center the element (element should have a width) */
 export let center = false;
 
 /* ----------------------------------------------------------------- Reactive */
