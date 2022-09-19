@@ -160,7 +160,6 @@
     <slot />
   </span>
 {:else}
-{outbound}
   <a
     bind:this={anchorElement}
     use:preventDefaultOnOutbound={outbound}

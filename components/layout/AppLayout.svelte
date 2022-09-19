@@ -45,6 +45,8 @@
 
   import Panel from "@hkd-fe/components/layout/Panel.svelte";
 
+  // import Scrollbar from "@hkd-fe/components/scrollbar/Scrollbar.svelte";
+
   // import PleaseRotateScreen
   //   from "$src/views/special-panels/PleaseRotateScreen.svelte";
 
@@ -191,7 +193,7 @@
         bgColorBackgroundPanel = currentRoutePanels.backgroundColor;
 
         onColorBackgroundPanel =
-          currentRoutePanels.onColor || bgColorBackgroundPanel;
+          backgroundPanelParams.onColor || bgColorBackgroundPanel;
 
         backgroundPanelCssClassNames = backgroundPanelParams.classNames;
       }
@@ -211,7 +213,7 @@
         bgColorTopPanel = topPanelParams.backgroundColor;
 
         onColorTopPanel =
-          currentRoutePanels.onColor || bgColorTopPanel;
+          topPanelParams.onColor || bgColorTopPanel;
 
         topPanelCssClassNames = topPanelParams.classNames;
       }
@@ -231,7 +233,7 @@
         bgColorSubTopPanel = subTopPanelParams.backgroundColor;
 
         onColorSubTopPanel =
-          currentRoutePanels.onColor || bgColorSubTopPanel;
+          subTopPanelParams.onColor || bgColorSubTopPanel;
 
         subTopPanelCssClassNames = subTopPanelParams.classNames;
       }
@@ -251,7 +253,7 @@
         bgColorContentPanel = contentPanelParams.backgroundColor;
 
         onColorContentPanel =
-          currentRoutePanels.onColor || bgColorContentPanel;
+          contentPanelParams.onColor || bgColorContentPanel;
 
         contentPanelCssClassNames = contentPanelParams.classNames;
       }
@@ -271,7 +273,7 @@
         bgColorSuperBottomPanel = superBottomPanelParams.backgroundColor;
 
         onColorSuperBottomPanel =
-          currentRoutePanels.onColor || bgColorSuperBottomPanel;
+          superBottomPanelParams.onColor || bgColorSuperBottomPanel;
 
         superBottomPanelCssClassNames = superBottomPanelParams.classNames;
       }
@@ -291,7 +293,7 @@
         bgColorBottomPanel = bottomPanelParams.backgroundColor;
 
         onColorBottomPanel =
-          currentRoutePanels.onColor || bgColorBottomPanel;
+          bottomPanelParams.onColor || bgColorBottomPanel;
 
         bottomPanelCssClassNames = bottomPanelParams.classNames;
       }
@@ -665,6 +667,16 @@ $: {
   }
 }
 
+// $: {
+//   console.log(
+//     789,
+//     {
+//       onColorContentPanel,
+//       onColorLayout,
+//       onColor
+//     } );
+// }
+
 </script>
 
 <!-- {#if !$isLandscapeOnMobile} -->
@@ -675,7 +687,7 @@ $: {
               {layoutBgClassNames}">
 
     {#if backgroundPanelParams}
-      <div class="layout-grid-background">
+      <div class="app-layout-grid-background">
         <div class:x-ready={$backgroundPanelReady}
              class="cc-panel-background
                     {backgroundPanelCssClassNames}
@@ -691,7 +703,7 @@ $: {
       </div>
     {/if}
 
-    <div class="layout-grid-main">
+    <div class="app-layout-grid-front">
       {#if topPanelParams || subTopPanelParams}
         <div class="cc-top-subtop-box" bind:clientHeight={topPanelHeight}>
           {#if topPanelParams}
@@ -736,13 +748,15 @@ $: {
         </div>
 
         <!-- <Scrollbar
-          onColor={onColorContentPanel}
-          observerTarget={contentPanelElement}
-          scrollArea={contentPanelElement}
+          onColor={onColorContentPanel || onColorLayout || onColor}
+          observerTarget={document.body}
+          scrollArea={document.body}
           showArrows={false}
           buttonPressingMove={10} /> -->
 
       {/if}
+
+      <!-- TODO super bottom panel -->
 
       {#if bottomPanelParams}
         <div class:x-ready={$bottomPanelReady}
@@ -755,7 +769,9 @@ $: {
         </div>
       {/if}
 
-    </div> <!-- end layout-grid-main -->
+    <!-- Scrollbar (or scroll store) -->
+
+    </div> <!-- end app-layout-grid-front -->
 
   </div> <!-- end c-app-layout -->
 
@@ -779,7 +795,7 @@ $: {
     width: 100%;
   }
 
-  .layout-grid-background
+  .app-layout-grid-background
   {
     /*background-color: blue;*/
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
@@ -787,7 +803,7 @@ $: {
     min-height: 100vh;
   }
 
-  .layout-grid-main
+  .app-layout-grid-front
   {
     /*background-color: red;*/
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
@@ -818,23 +834,34 @@ $: {
     padding: 0;
 
     width: 100%;
-    /*margin: 0 auto;*/
-    /*padding: 0 1.2rem;*/
-    /*background-color:  green;*/
   }
+
+  /* TODO: super bottom panel */
+
 
   :global(.c-app-layout .cc-panel-bottom)
   {
-    z-index: 40;
+    z-index: 50;
 
     position: fixed;
     bottom: 0;
     left: 0;
     width: 100%;
-    /*background-color: yellow;
-    border-top: 2px dashed green;*/
 
     transition: top 0.2s ease-out 0s;
+  }
+
+  /* hide scrollbar but keep scroll functionality */
+
+  :global( body )
+  {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  :global( body::-webkit-scrollbar )
+  {
+    display: none;
   }
 
 </style>

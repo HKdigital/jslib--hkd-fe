@@ -12,6 +12,9 @@ export { cssClassNames as class };
 
 export let onColor = null;
 
+/* Center the header text (element should have a width) */
+export let center = false;
+
 /* ----------------------------------------------------------------- Reactive */
 
 let colorClasses = "";
@@ -19,7 +22,7 @@ let colorClasses = "";
 $: {
   if( onColor )
   {
-    colorClasses = `g-color-on-${onColor}`;
+    colorClasses = `x-color-on-${onColor}`;
   }
   else {
     colorClasses = "";
@@ -31,6 +34,7 @@ $: {
 <div class="c-heading-text
             {colorClasses}
             {cssClassNames}"
+     class:x-center={center}
             on:click>
     <slot></slot>
 </div>
@@ -43,31 +47,31 @@ $: {
 
   :global(.c-heading-text)
   {
-    font-family: sans-serif;
-    /*font-weight: 400;*/
+    /*font-family: sans-serif;
     font-size: 2rem;
     line-height: 1.4;
     letter-spacing: 0.02rem;
-    padding: 0.5rem;
+    padding: 0.5rem;*/
 
     /*inline-size: calc( 100% - 2rem );*/
   }
 
-  :global(.c-heading-text.x-center)
+  .x-center { text-align: center; }
+
+  /*:global(.c-heading-text.x-center)
   {
     text-align: center;
     inline-size: calc( 100% - 2rem );
     margin-left: 1rem;
-  }
+  }*/
 
   /* Fix for c-heading-text inside a c-column.x-center component */
-  :global(.c-column.x-center .c-heading-text)
+  /*:global(.c-column.x-center .c-heading-text)
   {
-    /*background-color: red;*/
     width: 100%;
-  }
+  }*/
 
-  :global(.c-heading-text.x-size-small)
+  /*:global(.c-heading-text.x-size-small)
   {
     font-size: 1.8rem;
   }
@@ -75,7 +79,7 @@ $: {
   :global(.c-heading-text.x-size-large)
   {
     font-size: 2.2rem
-  }
+  }*/
 
   /*:global(.c-skills-heading-text)
   {
@@ -85,11 +89,11 @@ $: {
     background-color:  red;
   }*/
 
-  :global(.c-heading-text.x-compact)
+  /*:global(.c-heading-text.x-compact)
   {
     padding-left: 0;
     inline-size: auto;
-  }
+  }*/
 
 </style>
 

@@ -211,13 +211,16 @@
 <style>
   .scrollbar-thumb {
     /*background-color: #b0b0b0;*/
-    /*width: 0.6rem;
-    border-radius: 0.3rem;*/
+    background-color: red;
+    width: 0.6rem;
+    border-radius: 0.3rem;
     cursor: pointer;
 
     position: absolute;
     z-index: 21;
     display: block;
+
+    height:  20px;
 
     /*background-color: blue !important;*/
     /*width: var(--scrollbar-thumb-width, 0.5rem) !important;*/

@@ -2,8 +2,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { REFERENCE_COLUMN_WIDTH,
-         REFERENCE_COLUMN_WIDTH_SMALL }
+import { SMALL_COLUMN_WIDTH,
+         NORMAL_COLUMN_WIDTH,
+         LARGE_COLUMN_WIDTH }
  from "@hkd-fe/helpers/breakpoints.js";
 
 // import ValueStore from "@hkd-base/classes/ValueStore.js";
@@ -12,9 +13,6 @@ import { referenceFullWidth }
   from "@hkd-fe/components/layout/ResponsiveGridRow.svelte";
 
 /* ---------------------------------------------------------------- Internals */
-
-const normalColumnWidth = REFERENCE_COLUMN_WIDTH;
-const smallColumnWidth = REFERENCE_COLUMN_WIDTH_SMALL;
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -56,7 +54,11 @@ export let centerFront = true;
  */
 export let limitFrontWidth = true;
 
+/**
+ * Enable small, normal (default) or large column width
+ */
 export let small = false;
+export let large = false;
 
 /* ----------------------------------------------------------------- Reactive */
 
@@ -91,12 +93,18 @@ $: {
   {
     if( small )
     {
-      const columnWidth = Math.min( smallColumnWidth, rowElemWidth );
+      const columnWidth = Math.min( SMALL_COLUMN_WIDTH, rowElemWidth );
+
+      frontStyleColumns = `--column-width: ${columnWidth}px`;
+    }
+    else if( large )
+    {
+      const columnWidth = Math.min( LARGE_COLUMN_WIDTH, rowElemWidth );
 
       frontStyleColumns = `--column-width: ${columnWidth}px`;
     }
     else {
-      const columnWidth = Math.min( normalColumnWidth, rowElemWidth );
+      const columnWidth = Math.min( NORMAL_COLUMN_WIDTH, rowElemWidth );
 
       frontStyleColumns = `--column-width: ${columnWidth}px`;
     }
@@ -182,12 +190,6 @@ $: {
     justify-self: center;
   }
 
-  :global( .c-single-column-row.x-row-gap-100 .cc-front )
-  {
-    grid-row-gap: 1rem;
-    /*grid-row-gap: var(--gx-row-gap-100, 1rem);*/
-  }
-
   :global( .c-single-column-row > .cc-front > * )
   {
     /* prevent row from being too small */
@@ -208,9 +210,9 @@ $: {
 
   /* Justify child elements */
 
-  :global( .c-single-column-row .x-justify-center)
+/*  :global( .c-single-column-row .xx-justify-center)
   {
     justify-self: center;
   }
-
+*/
 </style>

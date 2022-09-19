@@ -213,6 +213,7 @@ $: {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
     width: 100vw;
+    /*background-color: salmon;*/
   }
 
   :global( .c-responsive-grid-row .cc-front )
@@ -221,16 +222,19 @@ $: {
     grid-row: 1 / span 1;
     z-index: 2;
     max-width: min( var(--max-front-width, 100%) );
-    /*border: solid 5px green;*/
-    /*background-color: darksalmon;*/
+
+    width: 100%;
+
+    /*border: dashed 1px green;
+    background-color: olive;*/
 
     display: grid;
 
-    grid-template-columns:
-      repeat( var(--number-of-columns, 1), var(--column-width, auto) );
-
     /*grid-template-columns:
-      repeat( var(--number-of-columns, 1), auto );*/
+      repeat( var(--number-of-columns, 1), var(--column-width, auto) );*/
+
+    grid-template-columns:
+      repeat( var(--number-of-columns, 1), auto );
 
     grid-column-gap: 0px;
     grid-row-gap: 0px;
@@ -243,17 +247,6 @@ $: {
   .cc-front.x-justify-center
   {
     justify-self: center;
-  }
-
-  /*:global( .c-responsive-grid-row.x-row-gap-100 .cc-front )
-  {
-    grid-row-gap: var(--gx-row-gap-100, 1rem);
-  }*/
-
-  :global( .c-responsive-grid-row.x-row-gap-100 .cc-front )
-  {
-    grid-row-gap: 1rem;
-    /*grid-row-gap: var(--gx-row-gap-100, 1rem);*/
   }
 
   :global( .c-responsive-grid-row .cc-front .x-span-all )

@@ -132,22 +132,20 @@
 
 <style>
   .scrollbar-track {
-    /*background-color: red !important;*/
     position: absolute;
     z-index: 20;
 
-    /*width: var(--scrollbar-track-width, 0.5rem) !important;
-    right: var(--scrollbar-track-width, 0.5rem) !important;*/
+    width: 0.5rem;
+    right: 0;
+
+    background-color: olive;
 
     /*opacity: 1;*/
     /*transition: opacity 0.5s;*/
-    /*right: 0.5rem;*/
-    /*width: 0.5rem;*/
-    /*right: 4px;
-    width: 13px;*/
-    /*border-radius: 5px;
-    box-shadow: 0 0 0 4px #dbdbdb;
-    background-color: #dbdbdb;*/
+
+    /*border-radius: 5px;*/
+    /*background-color: #dbdbdb;*/
+    /*box-shadow: 0 0 0 4px #dbdbdb;*/
   }
 
   /*.idle {
