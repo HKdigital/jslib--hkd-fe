@@ -679,6 +679,8 @@ $: {
 
 </script>
 
+<!-- <svelte:window bind:scrollY={y}/> -->
+
 <!-- {#if !$isLandscapeOnMobile} -->
 
   <div class="c-app-layout

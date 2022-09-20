@@ -43,6 +43,11 @@ let frontStyle = "";
 
 /* ------------------------------------------------------------------ Exports */
 
+export let surfaceColor = null;
+
+export let surfaceColorFront = null;
+export let surfaceColorBackground = null;
+
 export let cssClassNames = "";
 export { cssClassNames as class };
 
@@ -117,13 +122,13 @@ $: {
             referenceFullWidth: $referenceFullWidth
           } );
 
-      console.log(
-        {
-          availableWidth,
-          maxColumns,
-          referenceFullWidth: $referenceFullWidth,
-          numberOfColumns
-        } );
+      // console.log(
+      //   {
+      //     availableWidth,
+      //     maxColumns,
+      //     referenceFullWidth: $referenceFullWidth,
+      //     numberOfColumns
+      //   } );
 
       if( numberOfColumns > frontChildElementCount )
       {
@@ -170,15 +175,6 @@ $: {
 
 $: {
   //
-  // Combine `frontStyleMaxWidth` and `frontStyleColumns`
-  //
-  frontStyle = frontStyleMaxWidth + frontStyleColumns;
-}
-
-// -----------------------------------------------------------------------------
-
-$: {
-  //
   // Determine the number of child element inside the front element
   //
   if( frontElem )
@@ -187,12 +183,38 @@ $: {
   }
 }
 
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Combine `frontStyleMaxWidth` and `frontStyleColumns`
+  //
+  frontStyle = frontStyleMaxWidth + frontStyleColumns;
+}
+
+// -----------------------------------------------------------------------------
+
+let colorClassesFront = "";
+let colorClassesBackground = "";
+
+$: {
+  if( surfaceColorFront || surfaceColor )
+  {
+    colorClassesFront = `g-bg-${surfaceColorFront || surfaceColor}`;
+  }
+
+  if( surfaceColorBackground || surfaceColor )
+  {
+    colorClassesBackground = `g-bg-${surfaceColorBackground || surfaceColor}`;
+  }
+}
+
 </script>
 
 <div class="c-responsive-grid-row {cssClassNames}"
      bind:clientWidth={rowElemWidth}>
 
-  <div class="cc-front"
+  <div class="cc-front {colorClassesFront}"
        style={frontStyle}
        class:x-justify-center={centerFront}
        bind:this={frontElem}>
@@ -200,7 +222,7 @@ $: {
     <slot><!-- default slot --></slot>
   </div>
 
-  <div class="cc-background">
+  <div class="cc-background {colorClassesBackground}">
     <slot name="background"></slot>
   </div>
 

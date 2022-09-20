@@ -148,7 +148,7 @@
 </script>
 
 {#if disabled}
-  <span
+  <span class="c-link"
     {...$$restProps}
     on:mouseover
     on:mouseenter
@@ -160,7 +160,7 @@
     <slot />
   </span>
 {:else}
-  <a
+  <a class="c-link"
     bind:this={anchorElement}
     use:preventDefaultOnOutbound={outbound}
     on:click={tryRedirect}
