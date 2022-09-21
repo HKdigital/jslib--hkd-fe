@@ -42,8 +42,8 @@ const offs$ = Symbol();
 
 const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
 
-const DEFAULT_ROUTE_LABEL_HOME = "/";
-const DEFAULT_ROUTE_LABEL_NOT_FOUND = "not-found";
+const DEFAULT_ROUTE_HOME = "/";
+const DEFAULT_ROUTE_NOT_FOUND = "not-found";
 
 //
 // A single instance of the FrontendRouter class will be assigned to the
@@ -84,8 +84,8 @@ class FrontendRouter extends LogBase
 
     // -- Default route labels
 
-    router[ homeLabel$ ] = DEFAULT_ROUTE_LABEL_HOME;
-    router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
+    router[ homeLabel$ ] = DEFAULT_ROUTE_HOME;
+    router[ notFoundLabel$ ] = DEFAULT_ROUTE_NOT_FOUND;
 
     // -- Routes by language and route label
 
@@ -408,7 +408,7 @@ class FrontendRouter extends LogBase
       router[ homeLabel$ ] = homeLabel;
     }
     else {
-      router[ homeLabel$ ] = DEFAULT_ROUTE_LABEL_HOME;
+      router[ homeLabel$ ] = DEFAULT_ROUTE_HOME;
     }
 
     if( notFoundLabel )
@@ -416,7 +416,7 @@ class FrontendRouter extends LogBase
       router[ notFoundLabel$ ] = notFoundLabel;
     }
     else {
-      router[ notFoundLabel$ ] = DEFAULT_ROUTE_LABEL_NOT_FOUND;
+      router[ notFoundLabel$ ] = DEFAULT_ROUTE_NOT_FOUND;
     }
 
     // -- Handle redirect if it applies to the current route

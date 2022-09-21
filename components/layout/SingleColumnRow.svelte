@@ -3,7 +3,7 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { SMALL_COLUMN_WIDTH,
-         NORMAL_COLUMN_WIDTH,
+         MEDIUM_COLUMN_WIDTH,
          LARGE_COLUMN_WIDTH }
  from "@hkd-fe/helpers/breakpoints.js";
 
@@ -38,15 +38,42 @@ let frontStyle = "";
 
 /* ------------------------------------------------------------------ Exports */
 
+/**
+ * Set default surface color for front and background element
+ *
+ * @type {string}
+ */
 export let surfaceColor = null;
 
+/**
+ * Set surface color for front element
+ *
+ * @type {string}
+ */
 export let surfaceColorFront = null;
+
+/**
+ * Set surface color for background element
+ *
+ * @type {string}
+ */
 export let surfaceColorBackground = null;
 
-export let cssClassNames = "";
-export { cssClassNames as class };
-
+/**
+ * Center the grid that contains the front content
+ *
+ * @type {boolean}
+ */
 export let centerFront = true;
+
+/**
+ * Enable small, medium or large column width
+ * - By default the column will be as wide as the available space,
+ *   which is by default limited by `referenceFullWidth`.
+ */
+export let small = false;
+export let medium = false;
+export let large = false;
 
 /**
  * Limit front element width to the page's content max width
@@ -55,10 +82,12 @@ export let centerFront = true;
 export let limitFrontWidth = true;
 
 /**
- * Enable small, normal (default) or large column width
+ * Add CSS classes to the components outer element
+ *
+ * @type {string}
  */
-export let small = false;
-export let large = false;
+export let cssClassNames = "";
+export { cssClassNames as class };
 
 /* ----------------------------------------------------------------- Reactive */
 
@@ -91,22 +120,28 @@ $: {
   //
   if( rowElemWidth )
   {
+    let columnWidth;
+
     if( small )
     {
-      const columnWidth = Math.min( SMALL_COLUMN_WIDTH, rowElemWidth );
-
-      frontStyleColumns = `--column-width: ${columnWidth}px`;
+      columnWidth = Math.min( SMALL_COLUMN_WIDTH, rowElemWidth );
     }
     else if( large )
     {
-      const columnWidth = Math.min( LARGE_COLUMN_WIDTH, rowElemWidth );
+      columnWidth = Math.min( LARGE_COLUMN_WIDTH, rowElemWidth );
+    }
+    else if( medium )
+    {
+      columnWidth = Math.min( MEDIUM_COLUMN_WIDTH, rowElemWidth );
+    }
 
+    if( columnWidth )
+    {
+      // frontStyleColumns = `--column-width: min(${columnWidth}px,100%)`;
       frontStyleColumns = `--column-width: ${columnWidth}px`;
     }
     else {
-      const columnWidth = Math.min( NORMAL_COLUMN_WIDTH, rowElemWidth );
-
-      frontStyleColumns = `--column-width: ${columnWidth}px`;
+      frontStyleColumns = "--column-width: 100%;";
     }
   }
 }
@@ -147,6 +182,7 @@ $: {
        class:x-justify-center={centerFront}>
 
     <slot><!-- default slot --></slot>
+
   </div>
 
   <div class="cc-background {colorClassesBackground}">
@@ -161,7 +197,9 @@ $: {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
-    width: 100vw;
+
+    /*width: 100vw;*/
+    width: 100%;
   }
 
   :global( .c-single-column-row .cc-front )
@@ -169,13 +207,18 @@ $: {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
     z-index: 2;
-    max-width: min( var(--max-front-width, 100%) );
-    /*border: solid 5px green;*/
-    /*background-color: darksalmon;*/
+
+    width: var(--column-width);
+    max-width: var(--max-front-width, 100%);
+
+    /*max-width: 100%;
+    width: var(--column-width, 100%);*/
 
     display: grid;
-
-    grid-template-columns: var(--column-width, auto);
+    grid-template-columns: 100%;
+    /*grid-template-columns: var(--column-width, 100%);*/
+    /*grid-template-columns: var(--column-width, 100px);*/
+    /*grid-template-columns: 400px;*/
 
     grid-column-gap: 0px;
     grid-row-gap: 0px;
@@ -193,11 +236,8 @@ $: {
   :global( .c-single-column-row > .cc-front > * )
   {
     /* prevent row from being too small */
-    /*min-width: var(--column-width, auto);*/
-
     /* prevent 'too big content' to break out */
-    max-width: var(--column-width, auto);
-    /*max-width: 100%;*/
+    max-width: 100%;
   }
 
   :global( .c-single-column-row .cc-background )
@@ -208,11 +248,4 @@ $: {
     /*background-color: salmon;*/
   }
 
-  /* Justify child elements */
-
-/*  :global( .c-single-column-row .xx-justify-center)
-  {
-    justify-self: center;
-  }
-*/
 </style>

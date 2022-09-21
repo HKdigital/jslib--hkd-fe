@@ -25,10 +25,10 @@ const BREAK_POINTS =
 export const REFERENCE_FULL_WIDTH = 1366;
 export const REFERENCE_MAX_COLUMNS = 4;
 
-export const NORMAL_COLUMN_WIDTH = Math.floor(REFERENCE_FULL_WIDTH / 2);
+export const MEDIUM_COLUMN_WIDTH = Math.floor(REFERENCE_FULL_WIDTH / 2);
 
-export const SMALL_COLUMN_WIDTH = Math.floor(NORMAL_COLUMN_WIDTH / 1.5);
-export const LARGE_COLUMN_WIDTH = Math.floor(NORMAL_COLUMN_WIDTH * 1.5);
+export const SMALL_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH / 1.5);
+export const LARGE_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH * 1.5);
 
 // -----------------------------------------------------------------------------
 
