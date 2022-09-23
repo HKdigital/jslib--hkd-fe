@@ -59,14 +59,13 @@ export default class Form extends LogBase
     expectObject( initialValues,
       "Missing or invalid parameter [initialValues]" );
 
-    this.pristine = new DedupValueStore( true );
-    this.valid = new DedupValueStore( false );
-
     this._schema = schema;
     this._initialValues = initialValues;
     this._values = {};
 
     const schemaProperties = schema.describe().keys;
+
+    // this.log.debug( "schemaProperties", schemaProperties );
 
     const keys = Object.keys( schemaProperties );
 
@@ -103,8 +102,25 @@ export default class Form extends LogBase
       values[ key ] = initialValues[ key ];
     }
 
+    // == Create property `pristine`
+
+    this.pristine = new DedupValueStore( true );
+
+    // == Create property `valid` (all form data valid)
+
+    this.valid = new DedupValueStore();
+
+    this._updateFormValid();
+
     // this.touched = {};
     // this.errors = {};
+
+    // this.log.debug("CHECK",
+    //   initialValues,
+    //   values,
+    //   {
+    //     name: this.getInitialValue("name")
+    //   } );
   }
 
   // -------------------------------------------------------------------- Method
@@ -234,51 +250,58 @@ export default class Form extends LogBase
       }
       else {
         //
-        // Value equals intialValue => check all form properties
+        // Check all form properties and update property `pristine`
         //
-        const keys = this._keys;
-
-        let pristine = true;
-
-        for( const key of keys )
-        {
-          if( !equals( values[ key ], initialValues[ key ] ) )
-          {
-            // console.log(`Property [${key}] has not the initial value`,
-            //   {
-            //     value: values[ key ],
-            //     initialValue: initialValues[ key ]
-            //   });
-
-            pristine = false;
-            break;
-          }
-        } // end for
-
-        this.pristine.set( pristine );
+        this._updateFormPristine();
       }
 
       // == Update valid (validate all form properties)
 
-      {
-        const values = this._values;
-
-        const { error } =
-          this._schema.validate( values, { abortEarly: true } );
-
-        if( !error )
-        {
-          this.valid.set( true );
-        }
-        else {
-          this.valid.set( false );
-        }
-      }
-
+      this._updateFormValid();
     };
   }
 
 
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Get all form data
+   * - Returns if all the form data is valid
+   * - Returns final values of the form data (e.g. trims strings)
+   *
+   * @returns {object} form valid, form data
+   *   {
+   *     valid: <boolean>,
+   *     values: <object>,
+   *     finalValues: <object>
+   *   }
+   */
+  export()
+  {
+    const valid = this.valid.get();
+
+    // const formData = {};
+
+    const values = this._values;
+
+    const { value: formData,
+            error } =
+
+      this._schema.validate( values,
+        {
+          abortEarly: false,
+          useFinalValue: true
+        } );
+
+    if( error )
+    {
+      // This should not happen
+      throw new Error(
+        "Cannot export form data, validation failed", { cause: error } );
+    }
+
+    return { valid, formData };
+  }
 
   // -------------------------------------------------------------------- Method
 
@@ -288,7 +311,7 @@ export default class Form extends LogBase
    */
   // reset() {}
 
-  // -------------------------------------------------------------------- Method
+  /* ------------------------------------------------------- Internal methods */
 
   /**
    * Parse a value for a form property
@@ -339,6 +362,64 @@ export default class Form extends LogBase
     // this.log.debug( `parse property [${key}] (after validate)`, { value } );
 
     return output;
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Update form property `valid` (store)
+   * - Sets property to true if all form  values are valid
+   */
+  _updateFormValid()
+  {
+    const values = this._values;
+
+    const { error } =
+      this._schema.validate( values, { abortEarly: true } );
+
+    if( !error )
+    {
+      this.valid.set( true );
+    }
+    else {
+      this.valid.set( false );
+    }
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Update form property `pristine` (store)
+   * - Sets property to true if all form  values equal their initial values
+   */
+  _updateFormPristine()
+  {
+    const values = this._values;
+    const initialValues = this._initialValues;
+
+    //
+    // Value equals intialValue => check all form properties
+    //
+    const keys = this._keys;
+
+    let pristine = true;
+
+    for( const key of keys )
+    {
+      if( !equals( values[ key ], initialValues[ key ] ) )
+      {
+        // console.log(`Property [${key}] has not the initial value`,
+        //   {
+        //     value: values[ key ],
+        //     initialValue: initialValues[ key ]
+        //   });
+
+        pristine = false;
+        break;
+      }
+    } // end for
+
+    this.pristine.set( pristine );
   }
 
 } // end class
