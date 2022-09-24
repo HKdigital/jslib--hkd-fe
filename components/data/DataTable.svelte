@@ -12,11 +12,10 @@ import { NO_DATA } from "@hkd-fe/lang/messages.js";
 /* ---------------------------------------------------------------- Internals */
 
 let displayRows = [];
-
+let cssClassNames = "";
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
 export { cssClassNames as class };
 
 export let onColor;

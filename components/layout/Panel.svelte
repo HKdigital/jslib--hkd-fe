@@ -8,13 +8,14 @@ import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
 export let onColor;
 $: expectValidSurfaceColor( onColor );
 
-export let component;
+/* content = SVELTE component */
+export let content;
 
 </script>
 
-{#if component}
+{#if content}
   <svelte:component
-    this={component}
+    this={content}
     {onColor}
     on:message />
 {/if}

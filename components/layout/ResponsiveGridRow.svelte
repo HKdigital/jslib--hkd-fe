@@ -1,5 +1,12 @@
 <script context="module">
 
+/**
+ * Notes
+ *
+ * Use g-justify-self-center to center items inside the grid
+ * @see jslib--hkd-fe/css/common-classes.css
+ */
+
 /* ------------------------------------------------------------------ Imports */
 
 import { REFERENCE_FULL_WIDTH,

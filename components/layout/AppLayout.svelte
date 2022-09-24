@@ -696,7 +696,7 @@ $: {
                     {backgroundPanelBgClassNames}">
 
           {#if backgroundPanelParams.component}
-            <Panel component={backgroundPanelParams.component}
+            <Panel content={backgroundPanelParams.component}
                    onColor={onColorBackgroundPanel || onColorLayout || onColor}
                    on:message />
           {/if}
@@ -714,7 +714,7 @@ $: {
                         {topPanelBgClassNames}
                         {topPanelCssClassNames}">
 
-              <Panel component={topPanelParams.component}
+              <Panel content={topPanelParams.component}
                      onColor={onColorTopPanel || onColorLayout || onColor}
                      on:message />
 
@@ -726,7 +726,7 @@ $: {
                  class="cc-panel-sub-top
                         {subTopPanelBgClassNames}
                         {subTopPanelCssClassNames}">
-              <Panel component={subTopPanelParams.component}
+              <Panel content={subTopPanelParams.component}
                      onColor={onColorSubTopPanel || onColorLayout || onColor}
                      on:message />
             </div>
@@ -742,7 +742,7 @@ $: {
                       {contentPanelBgClassNames}
                       {contentPanelCssClassNames}">
 
-            <Panel component={contentPanelParams.component}
+            <Panel content={contentPanelParams.component}
                    onColor={onColorContentPanel || onColorLayout || onColor}
                   on:message />
 
@@ -765,7 +765,7 @@ $: {
              class="cc-panel-bottom
                     {bottomPanelBgClassNames}
                     {bottomPanelCssClassNames}">
-          <Panel component={bottomPanelParams.component}
+          <Panel content={bottomPanelParams.component}
                  onColor={onColorBottomPanel || onColorLayout || onColor}
                  on:message />
         </div>
