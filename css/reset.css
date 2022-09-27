@@ -72,7 +72,8 @@ img
   display: block; /* remove descender (white space below image) */
 }
 
-input
+input,
+[contenteditable="true"]
 {
   /* remove platform native styling */
   -webkit-appearance: none;
@@ -98,6 +99,7 @@ a
 /* --------------------------- Hide highlight color for active input elements */
 
 input,
+[contenteditable="true"],
 textarea,
 button,
 select,
