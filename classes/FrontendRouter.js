@@ -205,10 +205,10 @@ class FrontendRouter extends LogBase
    *
    *    e.g. redirectToRoute: "/welcome"
    *
-   *  @property {boolean} [allowGuest=true]
-   *  @property {string} [requireGroup]
-   *
-   *    e.g. requireGroup: "registered"
+   *  DEPRECEATED @property {boolean} [allowGuest=true]
+   *  DEPRECEATED @property {string} [requireGroup]
+   *  DEPRECEATED
+   *  DEPRECEATED   e.g. requireGroup: "registered"
    *
    *  @property {object} layout
    *  @property {object} layout.component
@@ -380,16 +380,16 @@ class FrontendRouter extends LogBase
 
       // -- Process properties `allowGuest` and `requireGroup` (access)
 
-      if( "allowGuest" in route && "requireGroup" in route )
-      {
-        throw new Error(
-          `Invalid configuration [allowGuest] and [requireGroup] ` +
-          `are mutually exclusive`);
-      }
-      else if( !("allowGuest" in route) && !("requireGroup" in route) )
-      {
-        route.allowGuest = true;
-      }
+      // if( "allowGuest" in route && "requireGroup" in route )
+      // {
+      //   throw new Error(
+      //     `Invalid configuration [allowGuest] and [requireGroup] ` +
+      //     `are mutually exclusive`);
+      // }
+      // else if( !("allowGuest" in route) && !("requireGroup" in route) )
+      // {
+      //   route.allowGuest = true;
+      // }
 
       // -- Add route to path matcher
 
