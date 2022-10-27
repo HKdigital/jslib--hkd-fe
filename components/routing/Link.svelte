@@ -5,7 +5,7 @@
 
     function _tryPreventDefault( e )
     {
-      console.log( "outbound?", outbound );
+      // console.log( "outbound?", outbound );
 
       if( !outbound )
       {
@@ -30,7 +30,8 @@
   // import { createEventDispatcher } from 'svelte';
   // const dispatch = createEventDispatcher();
 
-  import { redirectTo } from "@hkd-fe/stores/router.js";
+  import { redirectTo,
+           routePath } from "@hkd-fe/stores/router.js";
 
   /* -------------------------------------------------------------- Internals */
 
@@ -72,8 +73,11 @@
 
   /* ---------------------------------------------------------------- Exports */
 
+  /** Use the router functionality to find the href for an internal link */
+  export let route = null;
+
   /** Specify the `href` attribute. */
-  export let href = "javascript:void(0);";
+  export let href = "";
 
   /**
    * Set to `true` to disable the link.
@@ -109,6 +113,22 @@
   export let active = false;
 
   /* ------------------------------------------------------------------ Logic */
+
+  $: if( route )
+  {
+    //
+    // Set href from route
+    //
+    if( href )
+    {
+      throw new Error(
+        "Only one of the properties [route] or [href] may be set");
+    }
+
+    href = routePath( route );
+  }
+
+  // ---------------------------------------------------------------------------
 
   $: {
     //
@@ -148,6 +168,7 @@
 </script>
 
 {#if disabled}
+
   <span class="c-link"
     {...$$restProps}
     on:mouseover
@@ -155,11 +176,13 @@
     on:mouseout
     on:focus
     on:blur
-    on:keydown
-  >
+    on:keydown>
+
     <slot />
   </span>
+
 {:else}
+
   <a class="c-link"
     bind:this={anchorElement}
     use:preventDefaultOnOutbound={outbound}
@@ -178,15 +201,9 @@
     on:mouseout
     on:focus
     on:blur
-    on:keydown
-  >
-<!--
+    on:keydown>
 
-use:preProcessClick={ (e) => { e.jens=123; } }
-use:preprocess={{event:"click", fn: (e) => { e.jens=123 } }}
-on:click|preventDefault
-on:click={tryRedirect}
--->
     <slot />
   </a>
+
 {/if}
