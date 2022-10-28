@@ -205,8 +205,10 @@ $: {
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
 
-    width: 100vw; /* 100% does not work with dev console open! */
-    /*width: 100%;*/
+    /*width: 100vw;*/
+
+    /* 100% does not work with dev console open? */
+    width: 100%;
   }
 
   :global( .c-single-column-row .cc-front )

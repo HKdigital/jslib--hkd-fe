@@ -190,7 +190,7 @@
 
       if( backgroundPanelParams )
       {
-        bgColorBackgroundPanel = currentRoutePanels.backgroundColor;
+        bgColorBackgroundPanel = backgroundPanelParams.backgroundColor;
 
         onColorBackgroundPanel =
           backgroundPanelParams.onColor || bgColorBackgroundPanel;
@@ -605,14 +605,15 @@
 
     if( bottomPanelParams )
     {
-      if( bgColorBackgroundPanel )
+      if( bgColorBottomPanel )
       {
         bottomPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
+          `g-bg-${bgColorBottomPanel}`;
       }
       else {
         bottomPanelBgClassNames = "";
       }
+
     }
   }
 
