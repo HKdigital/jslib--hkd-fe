@@ -169,7 +169,7 @@
 
 {#if disabled}
 
-  <span class="c-link"
+  <span c-link
     {...$$restProps}
     on:mouseover
     on:mouseenter
@@ -183,7 +183,7 @@
 
 {:else}
 
-  <a class="c-link"
+  <a c-link
     bind:this={anchorElement}
     use:preventDefaultOnOutbound={outbound}
     on:click={tryRedirect}
@@ -207,3 +207,11 @@
   </a>
 
 {/if}
+
+<style>
+  :global( [c-link] )
+  {
+    cursor: pointer;
+  }
+
+</style>
