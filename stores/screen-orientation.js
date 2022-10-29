@@ -14,9 +14,15 @@ export const userChangedOrientation = new ValueStore();
 // export const isPortraitOnMobile = new DedupValueStore();
 export const isLandscapeOnMobile = new DedupValueStore();
 
-const looksLikeMobileDevice =
+/**
+ * Boolean that indicates if the current device looks like a mobile device
+ * - Has an `window.orientation` property
+ * - Has `navigator.maxTouchPoints > 0` (more than a single touch point)
+ */
+export const looksLikeMobileDevice =
     ( ("orientation" in window) && navigator.maxTouchPoints > 0 );
      /* && window.screenX !== 0 */
+
 
 /* ---------------------------------------------------------------- Internals */
 

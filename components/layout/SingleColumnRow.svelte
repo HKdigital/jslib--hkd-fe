@@ -181,7 +181,8 @@ $: {
 
 </script>
 
-<div class="c-single-column-row {cssClassNames}"
+<div {...$$restProps}
+     class="c-single-column-row {cssClassNames}"
      bind:clientWidth={rowElemWidth}>
 
   <div class="cc-front {colorClassesFront}"

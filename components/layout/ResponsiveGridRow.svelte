@@ -218,7 +218,8 @@ $: {
 
 </script>
 
-<div class="c-responsive-grid-row {cssClassNames}"
+<div {...$$restProps}
+     class="c-responsive-grid-row {cssClassNames}"
      bind:clientWidth={rowElemWidth}>
 
   <div class="cc-front {colorClassesFront}"

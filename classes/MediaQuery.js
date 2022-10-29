@@ -6,7 +6,7 @@
   // {
   //   const query = "(orientation: portrait)";
 
-  //   const mq = new StdMediaQuery( query );
+  //   const mq = new MediaQuery( query );
 
   //   this[ offs$ ].orientation =
   //     mq.listen( ( MediaQueryListEvent ) =>
@@ -40,7 +40,7 @@
   // {
   //   const query = "(-webkit-min-device-pixel-ratio: 2)";
 
-  //   const mq = new StdMediaQuery( query );
+  //   const mq = new MediaQuery( query );
 
   //   this[ offs$ ].subPixelDetection =
   //     mq.listen( ( MediaQueryListEvent ) =>
