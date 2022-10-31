@@ -306,10 +306,42 @@ export default class Form extends LogBase
   // -------------------------------------------------------------------- Method
 
   /**
-   * Reset all values
-   * - Copy initialValues to values
+   * Clear all values
+   * - Copy initialValues to value
    */
-  // reset() {}
+  clearAllValues()
+  {
+    const values = this._values;
+
+    for( const key in values )
+    {
+      const initialValue = this.getInitialValue( key );
+
+      this._values[ key ] = initialValue;
+
+    } // end for
+
+    this._updateFormPristine();
+    this._updateFormValid();
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Clear the specified value
+   * - Copy initialValue to value
+   */
+  clearValue( key )
+  {
+    expectString( key, "Missing or invalid parameter [key]" );
+
+    const initialValue = this.getInitialValue( key );
+
+    this._values[ key ] = initialValue;
+
+    this._updateFormPristine();
+    this._updateFormValid();
+  }
 
   /* ------------------------------------------------------- Internal methods */
 
