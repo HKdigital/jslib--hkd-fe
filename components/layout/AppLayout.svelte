@@ -811,6 +811,7 @@ $: {
     /*background-color: red;*/
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
     z-index: 20;
+    /*width: 100%;*/
   }
 
   :global(.c-app-layout .cc-panel-background)

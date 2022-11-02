@@ -19,6 +19,9 @@ import { SMALL_COLUMN_WIDTH,
 import { referenceFullWidth }
   from "@hkd-fe/components/layout/ResponsiveGridRow.svelte";
 
+import { windowSize }
+  from "@hkd-fe/stores/window.js";
+
 /* ---------------------------------------------------------------- Internals */
 
 /* ------------------------------------------------------------------ Exports */
@@ -121,6 +124,8 @@ $: {
 // -----------------------------------------------------------------------------
 
 $: {
+  const rowElemWidth = ($windowSize).width;
+
   //
   // Determine `frontStyleColumns`
   // - Contains CSS vars: `--column-width`
@@ -141,15 +146,19 @@ $: {
     {
       columnWidth = Math.min( MEDIUM_COLUMN_WIDTH, rowElemWidth );
     }
-
-    if( columnWidth )
-    {
-      // frontStyleColumns = `--column-width: min(${columnWidth}px,100%)`;
-      frontStyleColumns = `--column-width: ${columnWidth}px`;
-    }
     else {
-      frontStyleColumns = "--column-width: 100%;";
+      columnWidth = rowElemWidth;
     }
+
+    frontStyleColumns = `width: ${columnWidth}px`;
+
+    // if( columnWidth )
+    // {
+    //   frontStyleColumns = `--column-width: ${columnWidth}px`;
+    // }
+    // else {
+    //   frontStyleColumns = "--column-width: 100%;";
+    // }
   }
 }
 
@@ -179,11 +188,21 @@ $: {
   }
 }
 
+// $: {
+//   const size = $windowSize;
+
+//   rowElemWidth = size.width;
+// }
+
 </script>
 
+<!-- {rowElemWidth} -->
+
+<!-- <div class="measure-div" bind:clientWidth={rowElemWidth}></div> -->
+
 <div {...$$restProps}
-     class="c-single-column-row {cssClassNames}"
-     bind:clientWidth={rowElemWidth}>
+     c-single-column-row
+     class="{cssClassNames}">
 
   <div class="cc-front {colorClassesFront}"
        style={frontStyle}
@@ -193,32 +212,37 @@ $: {
 
   </div>
 
-  <div class="cc-background {colorClassesBackground}">
+  <!-- <div class="cc-background {colorClassesBackground}">
     <slot name="background"></slot>
-  </div>
+  </div> -->
 
 </div>
 
 <style>
-  :global( .c-single-column-row )
+  /*.measure-div { height: 10px; width: 99vw; background-color: red; }*/
+  .measure-div { height: 0px; width: 100vw; }
+
+  :global( [c-single-column-row] )
   {
     display: grid;
     grid-template-columns: 1fr;
     grid-template-rows: 1fr;
 
-    /*width: 100vw;*/
-
-    /* 100% does not work with dev console open? */
     width: 100%;
+    overflow-x: hidden;
+
+    /*border: solid 5px green;*/
   }
 
-  :global( .c-single-column-row .cc-front )
+  :global( [c-single-column-row] .cc-front )
   {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
     z-index: 2;
 
-    width: var(--column-width);
+    /*width: max( 100%, var(--column-width, 100%) );*/
+    /*width: var(--column-width);*/
+
     max-width: var(--max-front-width, 100%);
 
     /*max-width: 100%;
@@ -243,14 +267,14 @@ $: {
     justify-self: center;
   }
 
-  :global( .c-single-column-row > .cc-front > * )
+  :global( [c-single-column-row] > .cc-front > * )
   {
     /* prevent row from being too small */
     /* prevent 'too big content' to break out */
     max-width: 100%;
   }
 
-  :global( .c-single-column-row .cc-background )
+  :global( [c-single-column-row] .cc-background )
   {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;

@@ -9,7 +9,12 @@ import { debounce } from "@hkd-base/helpers/function.js";
 
 /* ------------------------------------------------------------------ Exports */
 
-export const windowSize = new DedupValueStore();
+export const windowSize =
+  new DedupValueStore(
+    {
+      width: window.innerWidth,
+      height: window.innerHeight
+    } );
 
 // -----------------------------------------------------------------------------
 

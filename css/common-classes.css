@@ -52,8 +52,43 @@ input[type=text].g-no-select, textarea.g-no-select
 
 /* --------------------------------------------------------------- Animations */
 
-/*@keyframes fadeIn
+@keyframes fadeIn
 {
   0% { opacity: 0; }
   100% { opacity: 1; }
-}*/
+}
+
+@keyframes fadeInDelayed
+{
+  0% { opacity: 0; }
+  80% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+/*  @keyframes opacity-fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+*/
+
+.g-fade-in
+{
+  animation: fadeIn;
+  animation-duration: 250ms;
+}
+
+.g-fade-in-delayed
+{
+  animation: fadeInDelayed;
+  animation-duration: 300ms;
+}
+
+.g-fade-in.x-duration-short
+{
+  animation-duration: 100ms;
+}
+
+.g-fade-in.x-duration-long
+{
+  animation-duration: 500ms;
+}
