@@ -45,6 +45,26 @@ const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
 const DEFAULT_ROUTE_HOME = "/";
 const DEFAULT_ROUTE_NOT_FOUND = "not-found";
 
+
+/**
+ * Strip hash from a path
+ *
+ * @param {string} path
+ *
+ * @returns {string} path without hash part
+ */
+function stripHash( path )
+{
+  let index = path.indexOf("#");
+
+  if( index > -1 )
+  {
+    return path.slice( 0, index );
+  }
+
+  return path;
+}
+
 //
 // A single instance of the FrontendRouter class will be assigned to the
 // variable `router`
@@ -486,11 +506,11 @@ class FrontendRouter extends LogBase
       {
         router[ offs$ ][ unsubscribe$ ] =
           router.routeStateStore
-            .subscribe( ( routeStateAccess ) =>
+            .subscribe( ( routeAndState ) =>
           {
-            const currentState = routeStateAccess.state;
+            const currentState = routeAndState.state;
 
-            const currentPath = currentState.path;
+            const currentPath = stripHash(currentState.path);
 
             if( originalPath === currentPath )
             {

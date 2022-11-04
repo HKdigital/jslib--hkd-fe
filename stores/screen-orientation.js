@@ -23,6 +23,7 @@ export const looksLikeMobileDevice =
     ( ("orientation" in window) && navigator.maxTouchPoints > 0 );
      /* && window.screenX !== 0 */
 
+// IDEA: @media (hover: none) and (pointer: coarse)
 
 /* ---------------------------------------------------------------- Internals */
 

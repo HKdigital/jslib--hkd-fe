@@ -3,6 +3,7 @@
 
 import {
   expectString,
+  expectNotEmptyString,
   expectObject } from "@hkd-base/helpers/expect.js";
 
 import { equals } from "@hkd-base/helpers/compare.js";
@@ -214,7 +215,7 @@ export default class Form extends LogBase
 
       const { value,
               error,
-              finalValue } = this._parseProperty( key, updatedValue );
+              /*finalValue*/ } = this._parseProperty( key, updatedValue );
 
       // this.log.debug(
       //   "updateHandler",
@@ -269,29 +270,26 @@ export default class Form extends LogBase
    * - Returns if all the form data is valid
    * - Returns final values of the form data (e.g. trims strings)
    *
-   * @returns {object} form valid, form data
+   * @returns {object} (complete) form valid and form data
    *   {
    *     valid: <boolean>,
-   *     values: <object>,
-   *     finalValues: <object>
+   *     formData: <object>
    *   }
    */
   export()
   {
     const valid = this.valid.get();
 
-    // const formData = {};
-
     const values = this._values;
 
-    const { value: formData,
-            error } =
-
-      this._schema.validate( values,
-        {
-          abortEarly: false,
-          useFinalValue: true
-        } );
+    const {
+      value: formData,
+      error } =
+        this._schema.validate( values,
+          {
+            abortEarly: false,
+            useFinalValue: true
+          } );
 
     if( error )
     {
@@ -301,6 +299,30 @@ export default class Form extends LogBase
     }
 
     return { valid, formData };
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Get a form value
+   *
+   * @param {string} key
+   *
+   * @returns {*} value
+   */
+  getValue( key )
+  {
+    expectNotEmptyString( key,
+      "Missing or invalid value for parameter [key]" );
+
+    const values = this._values;
+
+    if( key in values )
+    {
+      return values[ key ];
+    }
+
+    throw new Error(`Invalid parameter [key=${key}] (property not found)`);
   }
 
   // -------------------------------------------------------------------- Method
