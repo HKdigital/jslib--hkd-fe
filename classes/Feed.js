@@ -156,7 +156,10 @@ export default class Feed
 
     if( url )
     {
-      expectString( url, "Missing or invalid parameter [url]" );
+      if( typeof url !== "string" && !(url instanceof URL) )
+      {
+        throw new Error( "Missing or invalid parameter [url]" );
+      }
     }
 
     if( !url )

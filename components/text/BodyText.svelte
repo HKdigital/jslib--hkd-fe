@@ -30,16 +30,16 @@ $: {
 
 </script>
 
-<div class="c-body-text
-            {colorClasses}
+<div c-body-text
+     class="{colorClasses}
             {cssClassNames}"
      class:x-center={center}
-            on:click>
+     on:click>
   <slot></slot>
 </div>
 
 <style>
-  :global(.c-body-text)
+  :global( [c-body-text ] )
   {
     /*font-family: sans-serif;
     font-weight: 300;
@@ -51,34 +51,4 @@ $: {
 
   .x-center { text-align: center; }
 
-  /*:global(.c-body-text.x-center)
-  {
-    text-align: center;
-    inline-size: calc( 100% - 2rem );
-    margin-left: 1rem;
-    padding-left: 1rem;
-  }
-
-  :global(.c-body-text.x-right)
-  {
-    text-align: right;
-    inline-size: 100%;
-    padding-left: 1rem;
-  }*/
-
-  /* Fix for c-body-text inside a c-column.x-center component */
-  /*:global(.c-column.x-center .c-body-text)
-  {
-    width: 100%;
-  }*/
-
-  /*:global(.c-body-text.x-size-small)
-  {
-    font-size: 0.945rem;
-  }
-
-  :global(.c-body-text.x-size-large)
-  {
-    font-size: 1.155rem
-  }*/
 </style>
