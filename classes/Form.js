@@ -191,13 +191,9 @@ export default class Form extends LogBase
 
   /**
    * Get an update handler that can be used to update a form property
-   *
-   * --
-   *
-   * @note This method returns and update handler.
-   *       It does not handle updates
-   *
-   * --
+   * - This method returns a function that can be used as update handler
+   *   by e.g. an input component.
+   * - The method does not handle updates itself
    *
    * @param {string} key
    *
@@ -209,6 +205,13 @@ export default class Form extends LogBase
 
     // == Return update handler for specified key
 
+    /**
+     * Update handler
+     * - Accepts an input component event
+     *
+     * @param {object} event
+     * @param {*} event.detail - Updated value
+     */
     return ( event ) => {
 
       const updatedValue = event.detail;
@@ -304,26 +307,49 @@ export default class Form extends LogBase
   // -------------------------------------------------------------------- Method
 
   /**
-   * Get a form value
+   * Get a form value and it's valid status
    *
    * @param {string} key
    *
-   * @returns {*} value
+   * @returns {object} { value: <string>, valid: <boolean> }
    */
-  getValue( key )
+  peek( key )
   {
     expectNotEmptyString( key,
       "Missing or invalid value for parameter [key]" );
 
     const values = this._values;
 
-    if( key in values )
+    if( !(key in values) )
     {
-      return values[ key ];
+      throw new Error(`Invalid parameter [key=${key}] (property not found)`);
     }
 
-    throw new Error(`Invalid parameter [key=${key}] (property not found)`);
+    const { value, finalValue, error } =
+      this._schema.validateProperty( values, key );
+
+    const result = { value: values[ key ] };
+
+    if( undefined !== finalValue )
+    {
+      result.finalValue = finalValue;
+    }
+
+    if( error )
+    {
+      result.valid = false;
+      // result.error = error;
+    }
+    else {
+      result.valid = true;
+    }
+
+    return result;
   }
+
+  // -------------------------------------------------------------------- Method
+
+
 
   // -------------------------------------------------------------------- Method
 

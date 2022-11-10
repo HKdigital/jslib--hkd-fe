@@ -11,18 +11,18 @@
 
 import { SMALL_COLUMN_WIDTH,
          MEDIUM_COLUMN_WIDTH,
-         LARGE_COLUMN_WIDTH }
+         LARGE_COLUMN_WIDTH,
+         REFERENCE_FULL_WIDTH }
  from "@hkd-fe/helpers/breakpoints.js";
 
-// import ValueStore from "@hkd-base/classes/ValueStore.js";
-
-import { referenceFullWidth }
-  from "@hkd-fe/components/layout/ResponsiveGridRow.svelte";
+import ValueStore from "@hkd-base/classes/ValueStore.js";
 
 import { windowSize }
   from "@hkd-fe/stores/window.js";
 
 /* ---------------------------------------------------------------- Internals */
+
+const referenceFullWidth = new ValueStore( REFERENCE_FULL_WIDTH );
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -38,8 +38,6 @@ export let onColor;
 /* ------------------------------------------------------------------ Imports */
 
 /* ---------------------------------------------------------------- Internals */
-
-let rowElemWidth;
 
 let frontStyleMaxWidth = "";
 let frontStyleColumns = "";

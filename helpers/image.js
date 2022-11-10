@@ -5,7 +5,7 @@ import { expectObject } from "@hkd-base/helpers/expect.js";
 
 import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
 
-// import MemoryCache from "@hkd-base/classes/Cache.js";
+// import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 // const cache = new MemoryCache();
 
 /* ---------------------------------------------------------------- Internals */
