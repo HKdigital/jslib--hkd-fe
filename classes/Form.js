@@ -9,6 +9,8 @@ import {
 
 import { equals } from "@hkd-base/helpers/compare.js";
 
+import ValueStore from "@hkd-base/classes/ValueStore.js";
+
 import LogBase from "@hkd-base/classes/LogBase.js";
 
 import ObjectSchema from "@hkd-base/classes/ObjectSchema.js";
@@ -63,7 +65,9 @@ export default class Form extends LogBase
 
     this._schema = schema;
     this._initialValues = initialValues;
-    this._values = {};
+
+    const values =
+      this._values = {};
 
     const schemaProperties = schema.describe().keys;
 
@@ -77,6 +81,8 @@ export default class Form extends LogBase
 
     for( const key in schemaProperties )
     {
+      values[ key ] = new ValueStore();
+
       if( key in initialValues )
       {
         continue;
@@ -97,11 +103,9 @@ export default class Form extends LogBase
 
     // == Initialize values
 
-    const values = this._values;
-
     for( const key in initialValues )
     {
-      values[ key ] = initialValues[ key ];
+      values[ key ].set( initialValues[ key ] );
     }
 
     // == Create property `pristine`
@@ -251,16 +255,22 @@ export default class Form extends LogBase
 
     // this.log.debug(
     //   "updateHandler",
-    //   { key, updatedValue, value, error, finalValue } );
+    //   { key, updatedValue, value, error, finalValue, values: this._values } );
 
     // == Store value
 
     if( error )
     {
-      this._values[ key ] = updatedValue;
+      //
+      // Parsing failed -> set `raw unparsed value`
+      //
+      this._values[ key ].set( updatedValue );
     }
     else {
-      this._values[ key ] = value;
+      //
+      // Set parsed value
+      //
+      this._values[ key ].set( value );
     }
 
     // == Update pristine
@@ -270,11 +280,12 @@ export default class Form extends LogBase
 
     // this.log.debug( "CHECK",
     //   {
+    //     values,
     //     value: values[ key ],
     //     initialValue: initialValues[ key ]
     //   } );
 
-    if( !equals( values[ key ], initialValues[ key ] ) )
+    if( !equals( values[ key ].get(), initialValues[ key ] ) )
     {
       //
       // Value changed => form not pristine
@@ -296,6 +307,24 @@ export default class Form extends LogBase
   // -------------------------------------------------------------------- Method
 
   /**
+   * Get a store that returns the value currently set in the form data
+   * - The value may or may not be valid
+   *
+   * @param {string} key
+   *
+   * @returns {object} value store
+   */
+  getValueStore( key )
+  {
+    expectNotEmptyString( key,
+      "Missing or invalid parameter [key]" );
+
+    return this._values[ key ];
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
    * Get all form data
    * - Returns if all the form data is valid
    * - Returns final values of the form data (e.g. trims strings)
@@ -310,12 +339,20 @@ export default class Form extends LogBase
   {
     const valid = this.valid.get();
 
-    const values = this._values;
+    // const exportValues = {};
+
+    // const values = this._values;
+
+    // for( let key in values )
+    // {
+    //   exportValues[ key ] = values[ key ].get();
+    // }
 
     const {
       value: formData,
       error } =
-        this._schema.validate( values,
+        this._schema.validate(
+          this._values,
           {
             abortEarly: false,
             useFinalValue: true
@@ -327,7 +364,6 @@ export default class Form extends LogBase
       throw new Error(
         "Cannot export form data, validation failed", { cause: error } );
     }
-
     return { valid, formData };
   }
 
@@ -338,7 +374,10 @@ export default class Form extends LogBase
    *
    * @param {string} key
    *
-   * @returns {object} { value: <string>, valid: <boolean> }
+   * @returns {object} {
+   *   value: <*>,
+   *   finalValue: <*>,
+   *   valid: <boolean> }
    */
   peek( key )
   {
@@ -355,7 +394,7 @@ export default class Form extends LogBase
     const { finalValue, error } =
       this._schema.validateProperty( values, key );
 
-    const result = { value: values[ key ] };
+    const result = { value: values[ key ].get() };
 
     if( undefined !== finalValue )
     {
@@ -381,7 +420,25 @@ export default class Form extends LogBase
 
   // -------------------------------------------------------------------- Method
 
+  /**
+   * Get a final value of a form property
+   * - Returns null if a value is not valid
+   *
+   * @param {string} key
+   *
+   * @returns {*|null} finalValue
+   */
+  // getFinalValue( key )
+  // {
+  //   const result = this.peek( key );
 
+  //   if( !("error" in result) )
+  //   {
+  //     return null;
+  //   }
+
+  //   return result.finalValue;
+  // }
 
   // -------------------------------------------------------------------- Method
 
@@ -397,7 +454,7 @@ export default class Form extends LogBase
     {
       const initialValue = this.getInitialValue( key );
 
-      this._values[ key ] = initialValue;
+      this._values[ key ].set( initialValue );
 
     } // end for
 
@@ -417,7 +474,7 @@ export default class Form extends LogBase
 
     const initialValue = this.getInitialValue( key );
 
-    this._values[ key ] = initialValue;
+    this._values[ key ].set( initialValue );
 
     this._updateFormPristine();
     this._updateFormValid();
@@ -451,7 +508,7 @@ export default class Form extends LogBase
     //   return { value };
     // }
 
-    values[ key ] = value;
+    values[ key ].set( value );
 
     let output;
 
@@ -469,7 +526,7 @@ export default class Form extends LogBase
     //   errors[ key ] = output.error;
     // }
 
-    values[ key ] = value;
+    values[ key ].set( value );
 
     // this.log.debug( `parse property [${key}] (after validate)`, { value } );
 
@@ -518,7 +575,7 @@ export default class Form extends LogBase
 
     for( const key of keys )
     {
-      if( !equals( values[ key ], initialValues[ key ] ) )
+      if( !equals( values[ key ].get(), initialValues[ key ] ) )
       {
         // console.log(`Property [${key}] has not the initial value`,
         //   {
