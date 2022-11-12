@@ -4,6 +4,7 @@
 import {
   expectString,
   expectNotEmptyString,
+  expectDefined,
   expectObject } from "@hkd-base/helpers/expect.js";
 
 import { equals } from "@hkd-base/helpers/compare.js";
@@ -216,55 +217,81 @@ export default class Form extends LogBase
 
       const updatedValue = event.detail;
 
-      const { value,
-              error,
-              /*finalValue*/ } = this._parseProperty( key, updatedValue );
-
-      // this.log.debug(
-      //   "updateHandler",
-      //   { key, updatedValue, value, error, finalValue } );
-
-      // == Store value
-
-      if( error )
-      {
-        this._values[ key ] = updatedValue;
-      }
-      else {
-        this._values[ key ] = value;
-      }
-
-      // == Update pristine
-
-      const initialValues = this._initialValues;
-      const values = this._values;
-
-      // this.log.debug( "CHECK",
-      //   {
-      //     value: values[ key ],
-      //     initialValue: initialValues[ key ]
-      //   } );
-
-      if( !equals( values[ key ], initialValues[ key ] ) )
-      {
-        //
-        // Value changed => form not pristine
-        //
-        this.pristine.set( false );
-      }
-      else {
-        //
-        // Check all form properties and update property `pristine`
-        //
-        this._updateFormPristine();
-      }
-
-      // == Update valid (validate all form properties)
-
-      this._updateFormValid();
+      this.setValue( key, updatedValue );
     };
   }
 
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Set a form property value
+   *
+   * @note
+   *   This is not the prefered way to interact with a Form instance:
+   *
+   *   - Use an input component and supply it and `updateHandler`
+   *   - Set the value on the input component and let the input component call
+   *     the updateHandler
+   *
+   * @param {string} key
+   * @param {*} updatedValue
+   *
+   */
+  setValue( key, updatedValue )
+  {
+    expectString( key,
+      "Missing or invalid parameter [key]" );
+
+    expectDefined( updatedValue,
+      "Missing or invalid parameter [updatedValue]" );
+
+    const { value,
+            error,
+            /*finalValue*/ } = this._parseProperty( key, updatedValue );
+
+    // this.log.debug(
+    //   "updateHandler",
+    //   { key, updatedValue, value, error, finalValue } );
+
+    // == Store value
+
+    if( error )
+    {
+      this._values[ key ] = updatedValue;
+    }
+    else {
+      this._values[ key ] = value;
+    }
+
+    // == Update pristine
+
+    const initialValues = this._initialValues;
+    const values = this._values;
+
+    // this.log.debug( "CHECK",
+    //   {
+    //     value: values[ key ],
+    //     initialValue: initialValues[ key ]
+    //   } );
+
+    if( !equals( values[ key ], initialValues[ key ] ) )
+    {
+      //
+      // Value changed => form not pristine
+      //
+      this.pristine.set( false );
+    }
+    else {
+      //
+      // Check all form properties and update property `pristine`
+      //
+      this._updateFormPristine();
+    }
+
+    // == Update valid (validate all form properties)
+
+    this._updateFormValid();
+  }
 
   // -------------------------------------------------------------------- Method
 
@@ -325,7 +352,7 @@ export default class Form extends LogBase
       throw new Error(`Invalid parameter [key=${key}] (property not found)`);
     }
 
-    const { value, finalValue, error } =
+    const { finalValue, error } =
       this._schema.validateProperty( values, key );
 
     const result = { value: values[ key ] };
@@ -342,6 +369,11 @@ export default class Form extends LogBase
     }
     else {
       result.valid = true;
+
+      if( !("finalValue" in result) )
+      {
+        result.finalValue = result.value;
+      }
     }
 
     return result;
