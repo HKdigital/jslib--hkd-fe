@@ -78,7 +78,11 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import router from "@hkd-fe/classes/FrontendRouter.js";
+import router
+  from "@hkd-fe/classes/FrontendRouter.js";
+
+import { expectNotEmptyString }
+  from "@hkd-base/helpers/expect.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -118,6 +122,44 @@ export const {
 
   getLabelHome,
   getLabelNotFound } = router;
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Try to the route parameter [uriName] from the url
+ *
+ * @param {string} key - Name of the parameter
+ *
+ * --
+ *
+ * @note
+ *   to define a route with a uriName parameter, add a variable to the
+ *   route's path:
+ *
+ *   e.g.
+ *
+ *   export const ROUTE = `some/prefix/:uriName`;
+ *
+ * --
+ *
+ * @returns {string}
+ */
+export function getRouteParameterValue( key )
+{
+  expectNotEmptyString( key,
+    "Missing or invalid parameter [key]" );
+
+  const { route } = routeStateStore.get();
+
+  const params = route.params;
+
+  if( !params || !params[ key ] )
+  {
+    return null;
+  }
+
+  return params[ key ];
+}
 
 /* --------------------------------------------- Hot Module Replacement (dev) */
 
