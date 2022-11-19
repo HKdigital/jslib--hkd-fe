@@ -635,9 +635,11 @@ class FrontendRouter extends LogBase
    *
    * @param {string|null} [options.lang=null]
    * @param {boolean} [options.replaceCurrent=false]
+   *
    * @param {object} [options.stateData] - Data for the state to set
+   * @param {object} [options.vars] - Route variables
    */
-  redirectToRoute( label, options={} )
+  redirectToRoute( label, options )
   {
     // router.log.debug("redirectToRoute", label);
 
@@ -658,6 +660,43 @@ class FrontendRouter extends LogBase
     if( !path )
     {
       throw new Error(`No path found for route with label [${label}]`);
+    }
+
+    // -- Apply route variables
+
+    const vars = options ? options.vars : null;
+
+    if( vars )
+    {
+      for( const key in vars )
+      {
+        const value = vars[ key ];
+
+        const index = path.indexOf(`:${key}`);
+
+        if( -1 === index)
+        {
+          throw new Error(`Route does not contain variable [${key}]`);
+        }
+
+        const pre = path.slice( 0, index );
+        const post = path.slice( index + key.length + 1 );
+
+        path = pre + value + post;
+
+      } // end for
+    }
+
+    options = { ...options };
+    delete options.vars;
+
+    // -- Check if all route variables have been set
+
+    if( path.includes(":") )
+    {
+      throw new Error(
+        `Failed to redirect to route. ` +
+        `Missing route variables in path [${path}]`);
     }
 
     // console.log(`redirectToRoute [label=${label}], [path=${path}]`, options);
@@ -966,7 +1005,7 @@ class FrontendRouter extends LogBase
       throw new Error(`No route found for path [${plainPath}]`);
     }
 
-    route = { selector: route.selector, params: route.params, ...route.data };
+    route = { selector: route.selector, vars: route.vars, ...route.data };
 
     //console.log( { state } );
 
@@ -1655,12 +1694,12 @@ class FrontendRouter extends LogBase
    * - Optionally removes the hash part (after the # token)
    *
    * @param {string} path
-   * @param {boolean} [includeSearch=false] - Include query part of the path
-   * @param {boolean} [includeHash=false] - Include hash part of the path
+   * @param {boolean} [options.includeSearch=false] - Include query part of the path
+   * @param {boolean} [options.includeHash=false] - Include hash part of the path
    *
    * @returns {string} location path without query or hash
    */
-  _stripPath( path, params )
+  _stripPath( path, options )
   {
     expectString( path, "Missing or invalid parameter [path]");
 
@@ -1675,10 +1714,10 @@ class FrontendRouter extends LogBase
     let includeSearch = false;
     let includeHash = false;
 
-    if( params )
+    if( options )
     {
-      includeSearch = params.includeSearch ? true : false;
-      includeHash = params.includeHash ? true : false;
+      includeSearch = options.includeSearch ? true : false;
+      includeHash = options.includeHash ? true : false;
     }
 
     let x = -1;

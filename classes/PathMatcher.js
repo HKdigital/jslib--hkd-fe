@@ -135,7 +135,7 @@ export default class PathMatcher
     const result =
       {
         selector: match.selector,
-        params: match.params,
+        vars: match.vars,
         data: match.data
       };
 
@@ -153,9 +153,9 @@ export default class PathMatcher
    * @param  {string} arrPath - Query path as array
    *
    * @return {object|null}
-   *   match object: { selector: <string>, params: <object> }
+   *   match object: { selector: <string>, vars: <object> }
    */
-  _findBestMatch( arrPath, _node, _selectorComponentsFound, _paramsFound )
+  _findBestMatch( arrPath, _node, _selectorComponentsFound, _varsFound )
   {
     expectArray( arrPath, 'Invalid or missing parameter [arrPath]' );
 
@@ -171,9 +171,9 @@ export default class PathMatcher
       _selectorComponentsFound = [];
     }
 
-    if( !_paramsFound )
+    if( !_varsFound )
     {
-      _paramsFound = {};
+      _varsFound = {};
     }
 
     const pathPart = arrPath.shift();
@@ -183,7 +183,7 @@ export default class PathMatcher
     let nextNode;
 
     const selectorComponentsFoundOrg = _selectorComponentsFound.slice();
-    const paramsFoundOrg = clone( _paramsFound );
+    const varsFoundOrg = clone( _varsFound );
 
     let selector;
     let data;
@@ -195,7 +195,7 @@ export default class PathMatcher
     function restoreWorkVariables()
     {
       _selectorComponentsFound = selectorComponentsFoundOrg;
-      _paramsFound = paramsFoundOrg;
+      _varsFound = varsFoundOrg;
     }
 
     let recurseResult;
@@ -224,7 +224,7 @@ export default class PathMatcher
         {
           return {
             selector,
-            params: _paramsFound,
+            vars: _varsFound,
             data
           };
         }
@@ -235,7 +235,7 @@ export default class PathMatcher
           this._findBestMatch(
             arrPath,
             nextNode,
-            _selectorComponentsFound, _paramsFound );
+            _selectorComponentsFound, _varsFound );
 
         if( recurseResult )
         {
@@ -268,7 +268,7 @@ export default class PathMatcher
 
       _selectorComponentsFound.push(selectorComponent);
 
-      _paramsFound[key.slice(1)] = pathPart;
+      _varsFound[key.slice(1)] = pathPart;
 
       if( isLastPathPart )
       {
@@ -279,7 +279,7 @@ export default class PathMatcher
         {
           return {
             selector,
-            params: _paramsFound,
+            vars: _varsFound,
             data
           };
         }
@@ -290,7 +290,7 @@ export default class PathMatcher
           this._findBestMatch(
             arrPath,
             nextNode,
-            _selectorComponentsFound, _paramsFound );
+            _selectorComponentsFound, _varsFound );
 
         if( recurseResult )
         {
@@ -321,7 +321,7 @@ export default class PathMatcher
         {
           return {
             selector,
-            params: _paramsFound,
+            vars: _varsFound,
             data
           };
         }
@@ -332,7 +332,7 @@ export default class PathMatcher
           this._findBestMatch(
             arrPath,
             nextNode,
-            _selectorComponentsFound, _paramsFound );
+            _selectorComponentsFound, _varsFound );
 
         if( recurseResult )
         {
@@ -362,7 +362,7 @@ export default class PathMatcher
       {
         return {
           selector,
-          params: _paramsFound,
+          vars: _varsFound,
           data
         };
       }
