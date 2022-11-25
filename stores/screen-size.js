@@ -7,6 +7,7 @@ import Offs from "@hkd-base/classes/Offs.js";
 import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
 
 import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DerivedStore from "@hkd-base/classes/DerivedStore.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -24,6 +25,7 @@ let breakPoints =
   };
 
 let offs;
+
 let screenWidthSize  = new DedupValueStore();
 
 // -----------------------------------------------------------------------------
@@ -108,6 +110,34 @@ screenWidthSize.hasSubscribers.subscribe(
       }
     } );
 
+// -----------------------------------------------------------------------------
+
+// let unsubscribeScreenWidthSmall;
+
+// screenWidthSmall.hasSubscribers.subscribe(
+//   ( hasSubscribers ) =>
+//     {
+//       if( hasSubscribers )
+//       {
+//         unsubscribeScreenWidthSmall =
+//           screenWidthSize.subscribe( ( value ) =>
+//             {
+//               if( value <= SCREEN_WIDTH_SMALL )
+//               {
+//                 screenWidthSmall.set( true );
+//               }
+//               else {
+//                 screenWidthSmall.set( false );
+//               }
+//             } );
+//       }
+//       else if( unsubscribeScreenWidthSmall )
+//       {
+//         unsubscribeScreenWidthSmall();
+//         unsubscribeScreenWidthSmall = null;
+//       }
+//     } );
+
 /* ------------------------------------------------------------------ Exports */
 
 export { SCREEN_WIDTH_SMALL,
@@ -116,6 +146,34 @@ export { SCREEN_WIDTH_SMALL,
          SCREEN_WIDTH_EXTRA_LARGE };
 
 export { screenWidthSize };
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Derived store
+ * - Contains value true if the screen width is small
+ */
+export let screenWidthSmall =
+  new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
+      {
+        const value = storesMap.get(0).get();
+
+        return (value <= SCREEN_WIDTH_SMALL );
+      } );
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Derived store
+ * - Contains value true if the screen width is small
+ */
+export let screenWidthSmallOrMedium =
+  new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
+      {
+        const value = storesMap.get(0).get();
+
+        return (value <= SCREEN_WIDTH_MEDIUM );
+      } );
 
 // -----------------------------------------------------------------------------
 

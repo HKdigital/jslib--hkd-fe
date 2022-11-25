@@ -1108,7 +1108,7 @@ class FrontendRouter extends LogBase
 
     if( !router._stateChanged( state ) )
     {
-      router.log.warning("pushState (state has not changed)");
+      // router.log.warning("pushState (state has not changed)");
       return;
     }
 
@@ -1147,7 +1147,7 @@ class FrontendRouter extends LogBase
 
     if( !router._stateChanged( state ) )
     {
-      router.log.warning("replaceState (state has not changed)");
+      // router.log.warning("replaceState (state has not changed)");
       return;
     }
 

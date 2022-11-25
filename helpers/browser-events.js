@@ -9,6 +9,8 @@ import { largestFirst } from "@hkd-base/helpers/compare.js";
 
 /* ---------------------------------------------------------------- Internals */
 
+let counter = 0;
+
 const onLoadFunctions = [];
 
 /**

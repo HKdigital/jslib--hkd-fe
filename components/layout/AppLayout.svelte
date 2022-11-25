@@ -462,7 +462,7 @@
   $: {
     if( currentRouteReady )
     {
-      console.log( "currentRouteReady: restore scroll" );
+      // console.log( "currentRouteReady: restore scroll" );
       document.documentElement.scrollTop = 0;
 
       // FIXME: Restore scroll does not work well
