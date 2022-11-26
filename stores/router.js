@@ -121,7 +121,9 @@ export const {
   getRoute,
 
   getLabelHome,
-  getLabelNotFound } = router;
+  getLabelNotFound,
+
+  clearHistoryStorage } = router;
 
 // -----------------------------------------------------------------------------
 

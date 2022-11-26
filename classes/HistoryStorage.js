@@ -17,7 +17,7 @@ const DEFAULT_MAX_HISTORY_LENGTH = 15;
 
 /* ------------------------------------------------------------------ Exports */
 
-export default class StateHistoryStorage extends LogBase
+export default class HistoryStorage extends LogBase
 {
   browserHistory = window.history;
   // storage;
@@ -25,7 +25,7 @@ export default class StateHistoryStorage extends LogBase
   // maxHistoryLength;
 
   /**
-   * Construct a new StateHistoryStorage instance
+   * Construct a new HistoryStorage instance
    *
    * @param {string} [_.storageLabel=DEFAULT_STORAGE_LABEL]
    * @param {number} [_.maxHistoryLength=15]

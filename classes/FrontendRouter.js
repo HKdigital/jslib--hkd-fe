@@ -1180,6 +1180,16 @@ class FrontendRouter extends LogBase
     return router[ notFoundLabel$ ];
   }
 
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Clear history from session storage
+   */
+  clearHistoryStorage()
+  {
+    router.historyStorage.clear();
+  }
+
   /* ------------------------------------------------------- Internal methods */
 
   /**
