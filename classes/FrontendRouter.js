@@ -664,7 +664,36 @@ class FrontendRouter extends LogBase
 
     // -- Apply route variables
 
-    const vars = options ? options.vars : null;
+    if( options.vars )
+    {
+      path = router.applyPathVars( { path, vars: options.vars } );
+    }
+
+    // console.log(`redirectToRoute [label=${label}], [path=${path}]`, options);
+
+    router.redirectTo( path, options );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Apply variables to a route path
+   *
+   * @param {string} _.path
+   *   Path that contains variables (e.g. /view/:uriName)
+   *
+   * @param {object} _.vars
+   *   Object with key-value pairs for path variables
+   *
+   * @returns {string} path with substituted variables
+   */
+  applyPathVars( { path, vars }={} )
+  {
+    expectString( path,
+      "Missing or invalid parameter [path]" );
+
+    expectObject( vars,
+      "Missing or invalid parameter [vars]" );
 
     if( vars )
     {
@@ -687,21 +716,14 @@ class FrontendRouter extends LogBase
       } // end for
     }
 
-    options = { ...options };
-    delete options.vars;
-
     // -- Check if all route variables have been set
 
     if( path.includes(":") )
     {
-      throw new Error(
-        `Failed to redirect to route. ` +
-        `Missing route variables in path [${path}]`);
+      throw new Error( `Missing route variables in path [${path}]` );
     }
 
-    // console.log(`redirectToRoute [label=${label}], [path=${path}]`, options);
-
-    router.redirectTo( path, options );
+    return path;
   }
 
   // ---------------------------------------------------------------------------
@@ -1020,15 +1042,17 @@ class FrontendRouter extends LogBase
    *
    * @param {string} [label] - Label that corresponds to the route
    *
-   * @param {string} [lang=<current>]
-   *   Language, if not specified, the current language will be used
+   * @param {string} [lang=null]
+   *   Language, if not set, the current language will be used
    *
-   * @param {boolean} [options.followRedirect=true]
+   * @param {boolean} [options.noFollowRedirect=false]
    *   If a route contains a `redirectToRoute` instruction, the redirect will
-   *   be followed before a path is returned. Set this option to false to
-   *   prevent that.
+   *   be followed before a pƒath is returned. Set this option to false to
+   *   prevent that behaviour
+   *
+   * @param {object} vars - Key-value pairs to apply as route variables
    */
-  routePath( label, lang, options={followRedirect:true} )
+  routePath( label, lang=null, options )
   {
     const route = router.getRoute( label, lang );
 
@@ -1037,12 +1061,11 @@ class FrontendRouter extends LogBase
       throw new Error(`Route [${label}] has not been defined`);
     }
 
-    if( !options || options.followRedirect )
+    const { noFollowRedirect=false, vars } = options || {};
+
+    if( !noFollowRedirect && ("redirectToRoute" in route) )
     {
-      if( "redirectToRoute"in route )
-      {
-        return router.routePath( route.redirectToRoute, lang );
-      }
+      return router.routePath( route.redirectToRoute, lang );
     }
 
     let path = route.path;
@@ -1050,6 +1073,11 @@ class FrontendRouter extends LogBase
     if( !path )
     {
       throw new Error(`Route [${label}] has no path`);
+    }
+
+    if( vars )
+    {
+      path = router.applyPathVars( { path, vars } );
     }
 
     return path;

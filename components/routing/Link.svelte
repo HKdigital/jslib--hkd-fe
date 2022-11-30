@@ -61,7 +61,7 @@
 
     if( !outbound )
     {
-      redirectTo( href );
+      redirectTo( href, routeOptions );
     }
     // else {
     //   //
@@ -75,6 +75,8 @@
 
   /** Use the router functionality to find the href for an internal link */
   export let route = null;
+
+  export let routeOptions = null;
 
   /** Specify the `href` attribute. */
   export let href = "";
@@ -125,7 +127,7 @@
         "Only one of the properties [route] or [href] may be set");
     }
 
-    href = routePath( route );
+    href = routePath( route, null, routeOptions );
   }
 
   // ---------------------------------------------------------------------------
