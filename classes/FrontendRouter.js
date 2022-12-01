@@ -664,7 +664,7 @@ class FrontendRouter extends LogBase
 
     // -- Apply route variables
 
-    if( options.vars )
+    if( options && options.vars )
     {
       path = router.applyPathVars( { path, vars: options.vars } );
     }
