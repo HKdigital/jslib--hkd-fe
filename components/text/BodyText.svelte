@@ -39,7 +39,7 @@ $: {
 </div>
 
 <style>
-  :global( [c-body-text ] )
+  :global( [c-body-text] )
   {
     /*font-family: sans-serif;
     font-weight: 300;
