@@ -762,7 +762,8 @@ $: {
       <!-- TODO super bottom panel -->
 
       {#if bottomPanelParams}
-        <div class:x-ready={$bottomPanelReady}
+        <div bind:clientHeight={bottomPanelHeight}
+             class:x-ready={$bottomPanelReady}
              class="cc-panel-bottom
                     {bottomPanelBgClassNames}
                     {bottomPanelCssClassNames}">

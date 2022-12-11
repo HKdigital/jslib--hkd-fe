@@ -5,6 +5,10 @@
   cursor: pointer;
 }
 
+.g-cursor-default {
+  cursor: default;
+}
+
 /* ----------------------------------------------------------- Pointer events */
 
 .g-pointer-events-none
