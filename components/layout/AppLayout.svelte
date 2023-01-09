@@ -36,8 +36,7 @@
 
   // import { defer } from '@hkd-base/helpers/process.js';
 
-  import { expectString,
-           expectPositiveNumber } from "@hkd-base/helpers/expect.js";
+  import { expectPositiveNumber } from "@hkd-base/helpers/expect.js";
 
   // import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
 
