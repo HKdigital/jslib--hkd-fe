@@ -69,6 +69,8 @@ export default class Form extends LogBase
     const values =
       this._values = {};
 
+    this._flags = {};
+
     const schemaProperties = schema.describe().keys;
 
     // this.log.debug( "schemaProperties", schemaProperties );
@@ -77,7 +79,7 @@ export default class Form extends LogBase
 
     this._keys = keys;
 
-    // == Update missing intialValues using schema
+    // == Update missing intialValues using schema and store flags
 
     for( const key in schemaProperties )
     {
@@ -98,6 +100,8 @@ export default class Form extends LogBase
       {
         initialValues[ key ] = defaultsByType[ type ];
       }
+
+      this._flags[ key ] = flags || {};
 
     } // end for
 
@@ -219,7 +223,15 @@ export default class Form extends LogBase
      */
     return ( event ) => {
 
-      const updatedValue = event.detail;
+      const detail = event.detail;
+
+      expectObject( detail,
+        "Missing or invalid parameter [event.detail]" );
+
+      const updatedValue = event.detail.updatedValue;
+
+      expectDefined( updatedValue,
+        "Missing or invalid parameter [event.detail.updatedValue]" );
 
       this.setValue( key, updatedValue );
     };
@@ -320,6 +332,23 @@ export default class Form extends LogBase
       "Missing or invalid parameter [key]" );
 
     return this._values[ key ];
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Returns true if a value is optional
+   *
+   * @param {string} key
+   *
+   * @returns {boolean} true if the value is optional
+   */
+  isOptional( key )
+  {
+    expectNotEmptyString( key,
+      "Missing or invalid parameter [key]" );
+
+    return this._flags[ key ].presence === "optional";
   }
 
   // -------------------------------------------------------------------- Method
