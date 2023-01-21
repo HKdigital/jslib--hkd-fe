@@ -63,7 +63,7 @@ document.addEventListener('visibilitychange', () => {
   switch( document.visibilityState )
   {
     case "hidden":
-      console.log("app hidden");
+      // console.log("app hidden");
       // fires when user switches tabs, apps, goes to homescreen, etc.
 
       break;
@@ -71,7 +71,7 @@ document.addEventListener('visibilitychange', () => {
     case "visible":
       // fires when app transitions from prerender, user returns to
       // the app / tab.
-      console.log("app visible");
+      // console.log("app visible");
       break;
   }
 });
