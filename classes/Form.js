@@ -348,7 +348,33 @@ export default class Form extends LogBase
     expectNotEmptyString( key,
       "Missing or invalid parameter [key]" );
 
+    // return !this._schema._required.includes( key );
+
     return this._flags[ key ].presence === "optional";
+  }
+
+  // -------------------------------------------------------------------- Method
+
+  /**
+   * Returns the input type of the parser
+   *
+   * @param {string} key
+   *
+   * @returns {string} type
+   */
+  inputType( key )
+  {
+    expectNotEmptyString( key,
+      "Missing or invalid parameter [key]" );
+
+    const properties = this._schema._keys[ key ];
+
+    if( ! properties )
+    {
+      throw new Error(`Form property [${key}] does not exist`);
+    }
+
+    return properties.type || "text";
   }
 
   // -------------------------------------------------------------------- Method
@@ -446,28 +472,6 @@ export default class Form extends LogBase
 
     return result;
   }
-
-  // -------------------------------------------------------------------- Method
-
-  /**
-   * Get a final value of a form property
-   * - Returns null if a value is not valid
-   *
-   * @param {string} key
-   *
-   * @returns {*|null} finalValue
-   */
-  // getFinalValue( key )
-  // {
-  //   const result = this.peek( key );
-
-  //   if( !("error" in result) )
-  //   {
-  //     return null;
-  //   }
-
-  //   return result.finalValue;
-  // }
 
   // -------------------------------------------------------------------- Method
 
