@@ -1453,20 +1453,20 @@ class FrontendRouter extends LogBase
       {
         return currentState;
       }
-
-      //
-      // Not a valid current state
-      //
-      // path in currentState from historyStorage does not match with current
-      // browser history path
-      // -> clear historyStorage and create a new currentState
-      //
-
-      currentState = null;
-      router.historyStorage.clear();
-
-      return currentState;
     }
+
+    //
+    // Missing or not a valid current state
+    //
+    // path in currentState from historyStorage does not match with current
+    // browser history path
+    // -> clear historyStorage and create a new currentState
+    //
+
+    currentState = null;
+    router.historyStorage.clear();
+
+    return currentState;
   }
 
   // ---------------------------------------------------------------------------
