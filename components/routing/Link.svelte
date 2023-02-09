@@ -121,11 +121,11 @@
     //
     // Set href from route
     //
-    if( href )
-    {
-      throw new Error(
-        "Only one of the properties [route] or [href] may be set");
-    }
+    // if( href )
+    // {
+    //   throw new Error(
+    //     "Only one of the properties [route] or [href] may be set");
+    // }
 
     href = routePath( route, null, routeOptions );
   }
