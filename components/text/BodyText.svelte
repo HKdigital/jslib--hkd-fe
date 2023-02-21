@@ -4,6 +4,9 @@
 
 /* ---------------------------------------------------------------- Internals */
 
+let element;
+let lineClampStyle;
+
 /* ------------------------------------------------------------------ Exports */
 
 let cssClassNames = "";
@@ -13,6 +16,13 @@ export let onColor = null;
 
 /* Center the element (element should have a width) */
 export let center = false;
+
+/**
+ * Maximum number of lines inside the body text (0 = unlimited)
+ * - By setting this property, the component will set styles for
+ *   max-height and overflow-y
+ */
+export let lineClamp = 0;
 
 /* ----------------------------------------------------------------- Reactive */
 
@@ -28,9 +38,33 @@ $: {
   }
 }
 
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Calculate and set style for line clamping (limit maximum number of lines)
+  //
+  if( lineClamp && element )
+  {
+    const lineHeight =
+      window.getComputedStyle(element).lineHeight;
+
+    lineClampStyle =
+      `overflow-y: hidden; display: -webkit-box;` +
+      `-webkit-line-clamp: ${lineClamp};` +
+      `-webkit-box-orient: vertical;` +
+      `max-height: calc(${lineClamp} * ${lineHeight})`;
+  }
+  else {
+    lineClampStyle = "";
+  }
+}
+
 </script>
 
 <div c-body-text
+     bind:this={element}
+     style={lineClampStyle}
      class="{colorClasses}
             {cssClassNames}"
      class:x-center={center}
