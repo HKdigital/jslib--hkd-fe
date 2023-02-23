@@ -54,16 +54,9 @@
  * - The FrontendRouter instance offers methods to get `stores` that will
  *   contain the route and or state updates
  *
- *   (1a) e.g. to receive state updates for the current route:
+ *   e.g. to receive state updates for the current route:
  *
  *   const currentState = getStateStoreForCurrentRoute();
- *
- *   -> This store stops updating value swhen the route changes (to prevent
- *      quicks inside component when the route changes)
- *
- *   (1b) e.g. to receive access updates for the current route:
- *
- *   const currentAccess = getAccessStoreForCurrentRoute();
  *
  *   -> This store stops updating value swhen the route changes (to prevent
  *      quicks inside component when the route changes)
@@ -91,10 +84,7 @@ import { expectNotEmptyString }
 export const {
   configureRoutes,
 
-  // getRouteStore,
-
   getStateStoreForCurrentRoute,
-  getAccessStoreForCurrentRoute,
 
   routeStateStore,
 
@@ -116,6 +106,7 @@ export const {
 
   getStateData,
   getCurrentPath,
+  getRouteAndState,
 
   routePath,
   getRoute,

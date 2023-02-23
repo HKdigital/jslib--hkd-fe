@@ -744,7 +744,7 @@ $: {
 
             <Panel content={contentPanelParams.component}
                    onColor={onColorContentPanel || onColorLayout || onColor}
-                  on:message />
+                   on:message />
 
           </div>
         </div>

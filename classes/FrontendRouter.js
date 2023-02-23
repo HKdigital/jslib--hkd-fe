@@ -398,19 +398,6 @@ class FrontendRouter extends LogBase
           "(invalid property [route.redirectToRoute])" );
       }
 
-      // -- Process properties `allowGuest` and `requireGroup` (access)
-
-      // if( "allowGuest" in route && "requireGroup" in route )
-      // {
-      //   throw new Error(
-      //     `Invalid configuration [allowGuest] and [requireGroup] ` +
-      //     `are mutually exclusive`);
-      // }
-      // else if( !("allowGuest" in route) && !("requireGroup" in route) )
-      // {
-      //   route.allowGuest = true;
-      // }
-
       // -- Add route to path matcher
 
       router[ pathMatcher$ ].add( path, route );
@@ -450,7 +437,9 @@ class FrontendRouter extends LogBase
       // and components might not be ready yet
       //
       router._firstUpdateDone = true;
-      defer( router._updateRouteStateStore );
+
+      // defer( router._updateRouteStateStore );
+      router._updateRouteStateStore();
     }
   }
 
@@ -1034,7 +1023,6 @@ class FrontendRouter extends LogBase
     return { route, state: currentState };
   }
 
-
   // ---------------------------------------------------------------------------
 
   /**
@@ -1291,7 +1279,8 @@ class FrontendRouter extends LogBase
 
     // console.log("UPDATE: routeStateStore");
 
-    router.routeStateStore.set( newRouteAndState );
+    // router.routeStateStore.set( newRouteAndState );
+    router.routeStateStore.set( newRouteAndState, /* defer */ true );
   }
 
   // ---------------------------------------------------------------------------
