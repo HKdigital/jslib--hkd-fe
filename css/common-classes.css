@@ -34,6 +34,21 @@
  justify-self: center;
 }
 
+.g-grid-block
+{
+/*  background-color: blue;*/
+  display: grid;
+  grid-template-columns: auto;
+  justify-content: start;
+}
+
+.g-grid-block.x-center,
+.g-justify-content-center
+{
+/*  background-color: red;*/
+ justify-content: center;
+}
+
 /* --------------------------------------------------------------------- Text */
 
 .g-text-align-center
