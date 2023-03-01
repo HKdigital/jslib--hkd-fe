@@ -2,21 +2,18 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-// import PrimaryButton from "@hkd-fe/components/buttons/PrimaryButton.svelte";
-// import SecondaryButton from "@hkd-fe/components/buttons/SecondaryButton.svelte";
-
 import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
-
-import TabIcon from "@hkd-fe/components/icons/TabIcon.svelte";
 
 import PlusSmall
   from "@hkd-fe/components/icons/hero/solid/PlusSmall.svelte";
 
-import { redirectToRoute } from "@hkd-fe/stores/router.js";
+import Button
+  from "@hkd-fe/components/buttons/Button.svelte";
 
-import { SURFACE_LIGHT_GREY } from "@theme-jetnet/all-constants.js";
+// -- Constants
 
-import Button from "@hkd-fe/components/buttons/Button.svelte";
+import { SURFACE_1 }
+  from "@hkd-fe/constants/surfaces.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -28,7 +25,7 @@ let cssClassNames = "";
 export { cssClassNames as class };
 
 export let icon = PlusSmall;
-export let miniIcon = true;
+// export let miniIcon = true;
 
 export let onColor = null;
 
@@ -70,7 +67,7 @@ $: {
 
     <ListIcon
       content={icon}
-      onColor={SURFACE_LIGHT_GREY} />
+      onColor={SURFACE_1} />
 
     <div class="label"><slot></slot></div>
   </div>

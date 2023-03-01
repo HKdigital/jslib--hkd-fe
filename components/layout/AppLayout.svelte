@@ -683,8 +683,8 @@ $: {
 
 <!-- {#if !$isLandscapeOnMobile} -->
 
-  <div class="c-app-layout
-              {cssClassNames}
+  <div c-app-layout
+       class="{cssClassNames}
               {layoutCssClassNames}
               {layoutBgClassNames}">
 
@@ -790,7 +790,7 @@ $: {
 </div> -->
 
 <style>
-  :global(.c-app-layout)
+  :global( [c-app-layout] )
   {
     display: grid;
     grid-template-columns: 1fr; /* 1fr=greedy */
@@ -814,13 +814,13 @@ $: {
     /*width: 100%;*/
   }
 
-  :global(.c-app-layout .cc-panel-background)
+  :global( [c-app-layout] .cc-panel-background )
   {
     width: 100%;
     height: 100%;
   }
 
-  :global(.c-app-layout .cc-top-subtop-box)
+  :global( [c-app-layout] .cc-top-subtop-box )
   {
     z-index: 40;
 
@@ -830,7 +830,7 @@ $: {
     width: 100%;
   }
 
-  :global(.c-app-layout .cc-panel-content)
+  :global( [c-app-layout] .cc-panel-content )
   {
     z-index: 30;
 
@@ -843,7 +843,7 @@ $: {
   /* TODO: super bottom panel */
 
 
-  :global(.c-app-layout .cc-panel-bottom)
+  :global( [c-app-layout] .cc-panel-bottom )
   {
     z-index: 50;
 

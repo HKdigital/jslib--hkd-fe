@@ -11,8 +11,11 @@ import BodyText
 
 // -- Constants
 
-import { SURFACE_LIGHT_GREY }
-  from "@theme-jetnet/all-constants.js";
+import { SURFACE_1 }
+  from "@hkd-fe/constants/surfaces.js";
+
+import { UPDATE_EVENT }
+  from "@hkd-fe/constants/events.js";
 
 // -- Logging
 
@@ -20,46 +23,36 @@ import { getModuleLogger } from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "BodyTextEdit.svelte" );
 
-/* ------------------------------------------------------------------ Exports */
-
-let cssClassNames = "";
-export { cssClassNames as class };
-
-export let surfaceColor = SURFACE_LIGHT_GREY;
-
-export let content;
-export let placeholder;
-export let allowNewLine = false;
-
-/**
- * Parser function that receives the value of the input element
- * and should return an object that contains the parsed value or
- * an error: { value [, error] }
- *
- * @type {function}
- */
-// eslint-disable-next-line no-unused-vars
-export let parser = null;
 
 /* ---------------------------------------------------------------- Internals */
-
 
 let focused;
 
 let editElement;
 
+// -----------------------------------------------------------------------------
+
+/**
+ * Focus the component
+ *
+ * @param {object} e
+ */
 function doFocus( e )
 {
-  console.log("doFocus: " + placeholder);
+  // console.log("doFocus: " + placeholder);
   focused = true;
   e.preventDefault();
 }
 
 // -----------------------------------------------------------------------------
 
+/**
+ * Blur the component
+ * - Emits an `UPDATE` event
+ */
 function doBlur()
 {
-  console.log("doBlur: " + placeholder);
+  // console.log("doBlur: " + placeholder);
 
   focused = false;
 
@@ -76,13 +69,14 @@ function doBlur()
 
   //
   // TESTING:
-  // component crashes when the event fires and an error occurs?
+  // The following timeout is because we're testing something:
+  // The component seems to crash when the event fires and an error occurs
   //
   // -> remove setTimeout!
   //
 
   setTimeout( ()=> {
-    dispatch( "update", { updatedValue: content } );
+    dispatch( UPDATE_EVENT, { updatedValue: content } );
   }, 0 );
 }
 
@@ -124,6 +118,27 @@ function pasteAsPlainText( e )
   document.execCommand("insertHTML", false, text);
 }
 
+/* ------------------------------------------------------------------ Exports */
+
+let cssClassNames = "";
+export { cssClassNames as class };
+
+export let surfaceColor = SURFACE_1;
+
+export let content;
+export let placeholder;
+export let allowNewLine = false;
+
+/**
+ * Parser function that receives the value of the input element
+ * and should return an object that contains the parsed value or
+ * an error: { value [, error] }
+ *
+ * @type {function}
+ */
+// eslint-disable-next-line no-unused-vars
+export let parser = null;
+
 /* ----------------------------------------------------------------- Reactive */
 
 $: {
@@ -133,9 +148,9 @@ $: {
   }
 }
 
-$: {
-  log.debug( { content } );
-}
+// $: {
+//   log.debug( { content } );
+// }
 
 </script>
 

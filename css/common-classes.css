@@ -1,7 +1,8 @@
 
-/* ----------------------------------------------------------------- Pointers */
+/* ------------------------------------------------------------------ Cursors */
 
-.g-pointer {
+.g-cursor-pointer,
+{
   cursor: pointer;
 }
 
@@ -11,17 +12,17 @@
 
 /* ----------------------------------------------------------- Pointer events */
 
-.g-pointer-events-none
+.g-cursor-pointer-events-none
 {
   pointer-events: none;
 }
 
-.g-pointer-events-auto
+.g-cursor-pointer-events-auto
 {
   pointer-events: auto;
 }
 
-/* --------------------------------------------------------------------- Hide */
+/* --------------------------------------------------------------- Visibility */
 
 .g-hidden {
   visibility: hidden;
@@ -34,6 +35,14 @@
  justify-self: center;
 }
 
+.g-justify-content-center
+{
+/*  background-color: red;*/
+ justify-content: center;
+}
+
+/* --------------------------------------------------------------- Grid block */
+
 .g-grid-block
 {
 /*  background-color: blue;*/
@@ -42,8 +51,7 @@
   justify-content: start;
 }
 
-.g-grid-block.x-center,
-.g-justify-content-center
+.g-grid-block.x-center
 {
 /*  background-color: red;*/
  justify-content: center;
