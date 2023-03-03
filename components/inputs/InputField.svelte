@@ -339,7 +339,7 @@ export { inputType as type };
         aria-live="polite">{errorMessage||"&nbsp;"}</span> -->
 </label>
 
-<style type="text/scss">
+<style lang="scss">
 
   :global( [c-input-field] )
   {

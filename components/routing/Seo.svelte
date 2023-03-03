@@ -6,6 +6,24 @@
 
   // @see https://ogp.me/
 
+  /* ---------------------------------------------------------------- Imports */
+
+  import { onDestroy } from "svelte";
+
+  /* -------------------------------------------------------------- Internals */
+
+  const DELAY_LOAD_MS = 100;
+
+  let delayTimer;
+  let img;
+
+  let imageHref;
+
+  let imageWidth;
+  let imageHeight;
+
+  /* ---------------------------------------------------------------- Exports */
+
   export let title;
   export let description;
 
@@ -14,12 +32,7 @@
   export let ogTitle;
   export let ogDescription;
 
-  $: if( title && !ogTitle ) { ogTitle = title; }
-  $: if( description && !ogDescription ) { ogDescription = description; }
-
   export let imageAlt;
-
-  $: if( imageUri && !imageAlt ) { imageAlt = imageUri; }
 
   // export let ogImageType;
 
@@ -31,30 +44,91 @@
   // export let url = 'https://example.com';
   // export let slug;
 
-  let imageHref;
-
-  let imageWidth;
-  let imageHeight;
+  /* --------------------------------------------------------------- Reactive */
 
   $: {
-    if( imageUri )
+    //
+    // Copy title to ogTitle if not set
+    //
+    if( title && !ogTitle )
     {
-      const url = new URL( imageUri, location.origin );
-
-      const href = url.href;
-
-      const img = new Image();
-
-      img.onload = () =>
-        {
-          imageWidth = img.width;
-          imageHeight = img.height;
-          imageHref = href;
-        };
-
-      img.src = href;
+      ogTitle = title;
     }
   }
+
+  // ---------------------------------------------------------------------------
+
+  $: {
+    //
+    // Copy description to ogDescription if not set
+    //
+    if( description && !ogDescription )
+    {
+      ogDescription = description;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  $: {
+    //
+    // Copy imageUri to imageAlt if not set
+    //
+    if( imageUri && !imageAlt )
+    {
+      imageAlt = imageUri;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  $: {
+    //
+    // Initialize the (delayed) loading of the SEO image
+    //
+    if( imageUri && !img )
+    {
+      delayTimer =
+        setTimeout( () =>
+          {
+            if( imageUri )
+            {
+              const url = new URL( imageUri, location.origin );
+
+              const href = url.href;
+
+              img = new Image();
+
+              img.onload = () =>
+                {
+                  imageWidth = img.width;
+                  imageHeight = img.height;
+                  imageHref = href;
+                };
+
+              img.src = href;
+            }
+          },
+          DELAY_LOAD_MS );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  onDestroy( () => {
+    if( delayTimer )
+    {
+      clearTimeout( delayTimer );
+      delayTimer = null;
+    }
+
+    if( img )
+    {
+      img.src = "";
+      img = null;
+    }
+  } );
+
 </script>
 
 <svelte:head>

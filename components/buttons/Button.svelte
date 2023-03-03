@@ -127,7 +127,7 @@ $: {
   <div cc-button-inner><slot></slot></div>
 </div>
 
-<style type="text/scss">
+<style lang="scss">
 
   :global( [c-button] )
   {

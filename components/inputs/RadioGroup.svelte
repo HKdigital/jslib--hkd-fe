@@ -194,6 +194,10 @@ $: {
       {
         value = arrayToObject( value, VALUE_DISPLAYVALUE );
       }
+      else if( !(value instanceof Object) )
+      {
+        value = { value };
+      }
 
       standardizedValues.push( value );
     } // end for

@@ -18,7 +18,7 @@ export let onColor = null;
   <svelte:component this={content} />
 </div>
 
-<style type="text/scss">
+<style lang="scss">
   [c-list-icon] {
     display: inline-flex;
     align-self: center;

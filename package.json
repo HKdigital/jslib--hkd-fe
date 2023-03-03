@@ -5,7 +5,9 @@
   "license": "ISC",
   "version": "1.0.0",
   "dependencies": {
-    "svelte": "^3.35.0"
+    "svelte": "^3.35.0",
+    "svelte-preprocess": "^5.0.1",
+    "sass": "^1.58.3"
   },
   "type": "module"
 }
