@@ -618,7 +618,7 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
-   * Redirect to the specified
+   * Redirect to the specified route
    *
    * @param {string} label
    *
@@ -718,6 +718,22 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
+   * Return true if the current route is the home route
+   *
+   * @returns {boolean} true if on the home route
+   */
+  isHome()
+  {
+    const homeLabel = router[ homeLabel$ ];
+
+    const { route } = router.routeStateStore.get();
+
+    return ( homeLabel === route.label );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Redirect to the home route
    */
   goHome( { replaceCurrent=true }={} )
@@ -731,6 +747,18 @@ class FrontendRouter extends LogBase
       // Not already on home route -> redirect
       router.redirectToRoute( homeLabel, { replaceCurrent } );
     }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Returns true if a history.back() operation would lead to an "in-app" page
+   *
+   * @returns {boolean} true if the previous page was an in-app page
+   */
+  canGoBack()
+  {
+    return router.historyStorage.canGoBack();
   }
 
   // ---------------------------------------------------------------------------
@@ -768,13 +796,14 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
-   * Returns true if a history.back() operation would lead to an "in-app" page
-   *
-   * @returns {boolean} true if the previous page was an in-app page
+   * Go back or go home if no previous page is available
    */
-  canGoBack()
+  goBackOrHome()
   {
-    return router.historyStorage.canGoBack();
+    if( !router.goBack() )
+    {
+      router.goHome();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -933,6 +962,18 @@ class FrontendRouter extends LogBase
 
     // Go back and replace the previous state by the `returnState`
     router.replaceState( returnState, { goBackFirst } );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Returns the current route label
+   */
+  getCurrentRouteLabel()
+  {
+    const { route } = router.routeStateStore.get();
+
+    return route.label;
   }
 
   // ---------------------------------------------------------------------------

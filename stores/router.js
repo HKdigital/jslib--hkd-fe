@@ -91,9 +91,13 @@ export const {
   redirectTo,
   redirectToRoute,
 
+  isHome,
   goHome,
-  goBack,
+
   canGoBack,
+  goBack,
+
+  goBackOrHome,
 
   updateStateData,
   removeSearchParams,
@@ -105,6 +109,7 @@ export const {
   replaceState,
 
   getStateData,
+  getCurrentRouteLabel,
   getCurrentPath,
   getRouteAndState,
 
