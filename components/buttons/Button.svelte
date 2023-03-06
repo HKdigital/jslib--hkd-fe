@@ -100,11 +100,11 @@ export let routeOptions = { replaceCurrent: false };
 
 $: {
   //
-  // Add color class `x-on-<surface color>`
+  // Add color class `x-color-on-<surface color>`
   //
   if( onColor )
   {
-    colorClasses = `x-on-${onColor}`;
+    colorClasses = `x-color-on-${onColor}`;
   }
   else {
     colorClasses = "";
