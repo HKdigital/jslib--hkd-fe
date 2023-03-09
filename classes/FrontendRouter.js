@@ -123,6 +123,8 @@ class FrontendRouter extends LogBase
     const routeStateStore =
       router.routeStateStore = new RouteStateStore();
 
+    router.userHash = new ValueStore();
+
     // const off =
     routeStateStore.configureEventListener(
       {
@@ -130,6 +132,12 @@ class FrontendRouter extends LogBase
         eventName: "popstate",
         callbackFn: ( /* e, { target, stream } */ ) =>
           {
+            router.log.debug("Popstate");
+
+            //
+            // @note popstate only fires if the page has been interacted with
+            //
+
             let stateFromHistory = router.historyStorage.tryGoBack();
 
             // router.log.debug( "popstate", { href: location.href, stateFromHistory } );
@@ -146,8 +154,15 @@ class FrontendRouter extends LogBase
             else {
               //
               // No valid current state found
-              // -> remove hash (contains invalid state id)
-              // -> create new state
+              //
+              // @note popstate only fires if the page has been interacted with
+              //
+              // -> set value in store `userHash`
+              //
+              // NOT ANYMORE -> remove hash (contains invalid state id)
+              //
+              // -> Keeping hash, since it sometimes is used by landing pages
+              // -> create new state (add removedHash as property)
               //
               // router.log.debug("popstate: create new state");
 
@@ -156,6 +171,9 @@ class FrontendRouter extends LogBase
               // - the hash is part of the path and is used to identify the
               //   state in history
               //
+
+              router.userHash.set( location.hash.slice(1) );
+
               const path =
                 router._stripPath(
                   location.href, { includeSearch: true, includeHash: false } );
@@ -163,6 +181,9 @@ class FrontendRouter extends LogBase
               window.history.replaceState( null, '', path );
 
               let newState = router._stateFromLocationHref();
+
+              // newState[ "userHash" ] = userHash;
+              // console.log( "newState, hash", newState, hash );
 
               router.historyStorage.push( newState );
 
@@ -436,6 +457,31 @@ class FrontendRouter extends LogBase
       // Use defer, because configureRoutes might be called during bootstrap
       // and components might not be ready yet
       //
+
+      // router.log.debug("Initial update");
+
+      router.userHash.set( location.hash.slice(1) );
+
+      let currentState = router.historyStorage.getLatest();
+
+      if( !router._isValidCurrentState( currentState ) )
+      {
+        // Not a valid state => remove hash
+
+        const path =
+          router._stripPath(
+            location.href, { includeSearch: true, includeHash: false } );
+
+        window.history.replaceState( null, '', path );
+
+        let newState = router._stateFromLocationHref();
+
+        // newState[ "userHash" ] = userHash;
+        // console.log( "newState, hash", newState, hash );
+
+        router.historyStorage.push( newState );
+      }
+
       router._firstUpdateDone = true;
 
       // defer( router._updateRouteStateStore );
@@ -1247,6 +1293,32 @@ class FrontendRouter extends LogBase
     router.historyStorage.clear();
   }
 
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get the hash value from a path
+   * - Returns the part after the `#` hash token
+   * - If no hash is present, null will be returned
+   *
+   * @param {string} path
+   *
+   * @returns {string|null} the hash value or null
+   */
+  // getHashFromPath( path )
+  // {
+  //   expectString( path,
+  //     "Missing or invalid parameter [path]" );
+
+  //   const x = path.indexOf("#");
+
+  //   if( x >= 0 )
+  //   {
+  //     return path.slice( x + 1 );
+  //   }
+
+  //   return null;
+  // }
+
   /* ------------------------------------------------------- Internal methods */
 
   /**
@@ -1299,7 +1371,7 @@ class FrontendRouter extends LogBase
    */
   async _updateRouteStateStore()
   {
-    // router.log.debug( "_updateRouteStateStore" );
+    router.log.debug( "_updateRouteStateStore" );
 
     const newRouteAndState = router.getRouteAndState();
 

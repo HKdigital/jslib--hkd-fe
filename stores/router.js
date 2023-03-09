@@ -121,6 +121,8 @@ export const {
 
   clearHistoryStorage,
 
+  userHash,
+
   applyPathVars } = router;
 
 // -----------------------------------------------------------------------------
