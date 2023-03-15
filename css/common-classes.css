@@ -1,12 +1,13 @@
 
 /* ------------------------------------------------------------------ Cursors */
 
-.g-cursor-pointer,
+.g-cursor-pointer
 {
   cursor: pointer;
 }
 
-.g-cursor-default {
+.g-cursor-default
+{
   cursor: default;
 }
 
@@ -74,7 +75,8 @@
 
 /* ---------------------------------------------------------------- No select */
 
-.g-no-select {
+.g-no-select
+{
   user-select: none;
   -webkit-user-select: none; /* ios safari */
 }
