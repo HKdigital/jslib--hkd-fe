@@ -1371,7 +1371,7 @@ class FrontendRouter extends LogBase
    */
   async _updateRouteStateStore()
   {
-    router.log.debug( "_updateRouteStateStore" );
+    // router.log.debug( "_updateRouteStateStore" );
 
     const newRouteAndState = router.getRouteAndState();
 
