@@ -363,12 +363,13 @@ class BackendService extends Base
     {
       if( existingToken !== token )
       {
+        // this.log.debug("****update token in storage");
         window.sessionStorage.setItem( tokenName, token );
       }
     }
     else if( !token && existingToken )
     {
-      this.log.debug("****remove token from storage");
+      // this.log.debug("****remove token from storage");
       window.sessionStorage.removeItem( tokenName );
     }
 
@@ -401,8 +402,10 @@ class BackendService extends Base
 
     if( !tokenStore )
     {
-      throw new Error(
-        `No token store has not been defined for token [${tokenName}]`);
+      //
+      // Auto create store
+      //
+      this._ensureTokenStore( tokenName );
     }
 
     return tokenStore;
@@ -660,6 +663,24 @@ class BackendService extends Base
   }
 
   /* ------------------------------------------------------- Internal methods */
+
+  /**
+   * Create a token store if it does not exist
+   *
+   * @param {string} tokenName
+   */
+  _ensureTokenStore( tokenName )
+  {
+    expectNotEmptyString( tokenName,
+      "Missing or invalid item in service config [tokenName]" );
+
+    if( !this.tokens[ tokenName ] )
+    {
+      this.tokens[ tokenName ] = new DedupValueStore( null );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
 
   /**
    * Try to remove an expired token

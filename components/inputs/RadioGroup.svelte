@@ -234,7 +234,8 @@ $: {
     {#each standardizedValues as { displayValue, value }, index }
       {#if selectedIndex < 0 || selectedIndex === index}
         <label
-          class="g-no-select">
+          class="g-no-select"
+          class:x-selected={selectedIndex === index}>
 
           <input type=radio {name} {value}
             on:click={ () => { handleUserSelect( index ); } } />
