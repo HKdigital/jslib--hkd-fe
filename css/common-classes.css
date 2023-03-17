@@ -13,12 +13,12 @@
 
 /* ----------------------------------------------------------- Pointer events */
 
-.g-cursor-pointer-events-none
+.g-pointer-events-none
 {
   pointer-events: none;
 }
 
-.g-cursor-pointer-events-auto
+.g-pointer-events-auto
 {
   pointer-events: auto;
 }

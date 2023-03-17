@@ -2,9 +2,15 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { screenWidthSmall } from "@hkd-fe/stores/screen-size.js";
+// -- Routing
 
-import { redirectToRoute } from "@hkd-fe/stores/router.js";
+import { redirectToRoute }
+  from "@hkd-fe/stores/router.js";
+
+// -- Stores
+
+import { screenWidthSmall }
+  from "@hkd-fe/stores/screen-size.js";
 
 /* ---------------------------------------------------------------- Internals */
 

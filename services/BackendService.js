@@ -215,20 +215,22 @@ class BackendService extends Base
 
     // this.log.debug(`${this.serviceName()}.jsonPost`, { uri, body }, remoteConfig);
 
-    const result =
-      await jsonApiPost(
-        {
-          uri,
-          body,
-          config: remoteConfig
-        } );
+    try {
+      const response =
+        await jsonApiPost(
+          {
+            uri,
+            body,
+            config: remoteConfig
+          } );
 
-    if( result.error )
-    {
-      return { error: new Error(`${this.serviceName()}.jsonPost failed`, {} ) };
+      return response;
     }
-
-    return result;
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonPost failed`, { cause: e } );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -277,20 +279,22 @@ class BackendService extends Base
     //   `${this.serviceName()}.jsonGet`,
     //   { uri, urlSearchParams }, remoteConfig);
 
-    const result =
-      await jsonApiGet(
-        {
-          uri,
-          urlSearchParams,
-          config: remoteConfig
-        } );
+    try {
+      const response =
+        await jsonApiGet(
+          {
+            uri,
+            urlSearchParams,
+            config: remoteConfig
+          } );
 
-    if( result.error )
-    {
-      return { error: new Error(`${this.serviceName()}.jsonGet failed`, {} ) };
+      return response;
     }
-
-    return result;
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonGet failed`, { cause: e } );
+    }
   }
 
   // ---------------------------------------------------------------------------
