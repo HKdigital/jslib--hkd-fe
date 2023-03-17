@@ -1055,7 +1055,7 @@ class FrontendRouter extends LogBase
 
     if( currentState )
     {
-      return currentState.data;
+      return currentState.data || {};
     }
 
     return {};
