@@ -589,6 +589,8 @@ class FrontendRouter extends LogBase
    * @param {object} [options.returnState]
    *   Return state, can be used by the current route to redirect
    *   `back` to a return state.
+   * @param {boolean} [options.defer=false]
+   *   Use defer to make redirect async
    */
   redirectTo( path, options )
   {
@@ -620,7 +622,8 @@ class FrontendRouter extends LogBase
     let {
       stateData,
       returnState,
-      replaceCurrent=false } = options || {};
+      replaceCurrent=false,
+      defer:_defer=false } = options || {};
 
     // console.log("redirectTo: options", options );
 
@@ -652,12 +655,26 @@ class FrontendRouter extends LogBase
 
     // console.log(`redirectTo [path=${path}]`, options);
 
-    if( replaceCurrent )
+    if( !_defer )
     {
-      router.replaceState( newState );
+      if( replaceCurrent )
+      {
+        router.replaceState( newState );
+      }
+      else {
+        router.pushState( newState );
+      }
     }
     else {
-      router.pushState( newState );
+      defer( () => {
+        if( replaceCurrent )
+        {
+          router.replaceState( newState );
+        }
+        else {
+          router.pushState( newState );
+        }
+      } );
     }
   }
 
