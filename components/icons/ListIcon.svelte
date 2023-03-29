@@ -14,7 +14,7 @@ export let onColor = null;
 
 </script>
 
-<div c-list-icon class="x-color-on-{onColor} {cssClassNames}">
+<div c-list-icon class="x-on-{onColor} {cssClassNames}">
   <svelte:component this={content} />
 </div>
 

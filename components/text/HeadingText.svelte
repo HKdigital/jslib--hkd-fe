@@ -20,7 +20,7 @@ let colorClasses = "";
 $: {
   if( onColor )
   {
-    colorClasses = `x-color-on-${onColor}`;
+    colorClasses = `x-on-${onColor}`;
   }
   else {
     colorClasses = "";

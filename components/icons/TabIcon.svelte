@@ -68,7 +68,7 @@ export let routeOptions = { replaceCurrent: false };
 
 <div c-tab-icon
      {...$$restProps}
-     class="x-color-on-{onColor} {cssClassNames}"
+     class="x-on-{onColor} {cssClassNames}"
      use:tryRedirect
      on:click >
   <svelte:component this={content} />

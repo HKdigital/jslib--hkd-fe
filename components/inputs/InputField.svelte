@@ -77,7 +77,7 @@ export { cssClassNames as class };
 
 /**
  * Color of the surface where the element is placed on
- * - Will set a CSS class `x-color-on-{onColor}` on the element
+ * - Will set a CSS class `x-on-{onColor}` on the element
  *
  * @type {string}
  */
@@ -141,11 +141,11 @@ export { setValue };
 $: {
   //
   // If onColor has been set
-  // - add color class `x-color-on-<surface color>`
+  // - add color class `x-on-<surface color>`
   //
   if( onColor )
   {
-    colorClasses = `x-color-on-${onColor}`;
+    colorClasses = `x-on-${onColor}`;
   }
   else {
     colorClasses = "";

@@ -15,7 +15,7 @@ export let onColor;
 </script>
 
 <div c-separator
-     class="x-color-on-{onColor} {cssClassNames}"></div>
+     class="x-on-{onColor} {cssClassNames}"></div>
 
 <style>
 
