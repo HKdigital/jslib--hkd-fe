@@ -1,31 +1,40 @@
 
 /* ------------------------------------------------------------------ Cursors */
 
-.g-cursor-pointer,
+.g-cursor-pointer
 {
   cursor: pointer;
 }
 
-.g-cursor-default {
+.g-cursor-default
+{
   cursor: default;
 }
 
 /* ----------------------------------------------------------- Pointer events */
 
-.g-cursor-pointer-events-none
+.g-pointer-events-none
 {
   pointer-events: none;
 }
 
-.g-cursor-pointer-events-auto
+.g-pointer-events-auto
 {
   pointer-events: auto;
 }
 
 /* --------------------------------------------------------------- Visibility */
 
-.g-hidden {
+.g-hidden
+{
   visibility: hidden;
+}
+
+/* ----------------------------------------------------------------- Overflow */
+
+.g-overflow-hidden
+{
+  overflow: hidden;
 }
 
 /* --------------------------------------------------------------------- Grid */
@@ -61,12 +70,13 @@
 
 .g-text-align-center
 {
- text-align: center;
+  text-align: center;
 }
 
 /* ---------------------------------------------------------------- No select */
 
-.g-no-select {
+.g-no-select
+{
   user-select: none;
   -webkit-user-select: none; /* ios safari */
 }

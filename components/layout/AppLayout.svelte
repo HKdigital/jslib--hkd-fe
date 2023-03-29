@@ -34,11 +34,10 @@
 
   /* ---------------------------------------------------------------- Imports */
 
-  // import { defer } from '@hkd-base/helpers/process.js';
+  import { onDestroy } from 'svelte';
+
 
   import { expectPositiveNumber } from "@hkd-base/helpers/expect.js";
-
-  // import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
 
   import { equals } from "@hkd-base/helpers/compare.js";
 
@@ -61,15 +60,7 @@
            subTopPanelReady,
            contentPanelReady,
            superBottomPanelReady,
-           bottomPanelReady } from "./AppLayout.js";
-
-  import { expectValidRoute }
-    from "@hkd-fe/helpers/frontend-router.js";
-
-   import { log } from "@hkd-base/helpers/log.js";
-
-   import { onMount,
-            onDestroy } from 'svelte';
+           bottomPanelReady } from "@hkd-fe/stores/app-layout.js";
 
    import Offs from "@hkd-base/classes/Offs.js";
 
@@ -461,8 +452,28 @@
   $: {
     if( currentRouteReady )
     {
-      // console.log( "currentRouteReady: restore scroll" );
+      // document.body.style.overflow="hidden";
       document.documentElement.scrollTop = 0;
+
+      // console.log( "currentRouteReady: restore scroll" );
+
+      // const setDocumentVisible = () =>
+      // {
+      //   if( 0 === document.documentElement.scrollTop )
+      //   {
+      //     console.log("show");
+      //     document.body.style.visibility = "visible";
+      //   }
+      // };
+
+      // if( document.documentElement.scrollTop > 0 )
+      // {
+      //   console.log("restore scroll");
+      //   document.body.style.visibility = "hidden";
+      //   document.addEventListener("scroll", setDocumentVisible );
+      //   document.documentElement.scrollTop = 0;
+      // }
+
 
       // FIXME: Restore scroll does not work well
 
@@ -690,9 +701,9 @@ $: {
 
     {#if backgroundPanelParams}
       <div class="app-layout-grid-background">
-        <div class:x-ready={$backgroundPanelReady}
-             class="cc-panel-background
-                    {backgroundPanelCssClassNames}
+        <div cc-panel-background
+             class:x-ready={$backgroundPanelReady}
+             class="{backgroundPanelCssClassNames}
                     {backgroundPanelBgClassNames}">
 
           {#if backgroundPanelParams.component}
@@ -707,7 +718,10 @@ $: {
 
     <div class="app-layout-grid-front">
       {#if topPanelParams || subTopPanelParams}
-        <div class="cc-top-subtop-box" bind:clientHeight={topPanelHeight}>
+
+        <div cc-top-subtop-box
+             bind:clientHeight={topPanelHeight}>
+
           {#if topPanelParams}
             <div class:x-ready={$topPanelReady}
                  class="cc-panel-top
@@ -731,15 +745,17 @@ $: {
                      on:message />
             </div>
           {/if}
+
         </div>
+
       {/if}
 
       {#if contentPanelParams}
         <div class="content-panel-outer" bind:this={contentPanelOuterElem}>
-          <div bind:this={contentPanelElement}
+          <div cc-panel-content
+               bind:this={contentPanelElement}
                class:x-ready={$contentPanelReady}
-               class="cc-panel-content
-                      {contentPanelBgClassNames}
+               class="{contentPanelBgClassNames}
                       {contentPanelCssClassNames}">
 
             <Panel content={contentPanelParams.component}
@@ -761,10 +777,10 @@ $: {
       <!-- TODO super bottom panel -->
 
       {#if bottomPanelParams}
-        <div bind:clientHeight={bottomPanelHeight}
+        <div cc-panel-bottom
+             bind:clientHeight={bottomPanelHeight}
              class:x-ready={$bottomPanelReady}
-             class="cc-panel-bottom
-                    {bottomPanelBgClassNames}
+             class="{bottomPanelBgClassNames}
                     {bottomPanelCssClassNames}">
           <Panel content={bottomPanelParams.component}
                  onColor={onColorBottomPanel || onColorLayout || onColor}
@@ -798,6 +814,119 @@ $: {
     width: 100%;
   }
 
+/*  @keyframes reduce-floc
+  {
+    0% {
+      max-height: 100vh;
+      overflow-y: hidden;
+    }
+
+    99% {
+      max-height: auto;
+      overflow-y: hidden;
+    }
+
+    100% {
+      max-height: auto;
+      overflow-y: hidden;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.1s;
+    animation-name: reduce-floc;
+  }*/
+
+  /*[cc-panel-content]:not(.x-ready)
+  {
+    max-height: 100vh;
+    overflow: hidden;
+  }*/
+
+/* @keyframes reduce-floc
+  {
+    0% {
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    99% {
+      max-height: 100vh;
+    overflow: hidden;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.4s;
+    animation-name: reduce-floc;
+  }
+
+*/
+ /* @keyframes reduce-floc
+  {
+    0% {
+      opacity: 0;
+    }
+
+    99% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.4s;
+    animation-name: reduce-floc;
+  }
+*/
+  /*@keyframes reduce-floc
+  {
+    0% {
+      opacity: 0;
+    }
+
+    80% {
+      opacity: 0.5;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.5s;
+    animation-name: reduce-floc;
+  }*/
+
+/*  [cc-panel-content]
+  {
+    transition: opacity 0.1s
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  [cc-panel-content].x-ready
+  {
+    visibility: visible;
+    opacity: 1;
+  }*/
+
   .app-layout-grid-background
   {
     /*background-color: blue;*/
@@ -814,13 +943,13 @@ $: {
     /*width: 100%;*/
   }
 
-  :global( [c-app-layout] .cc-panel-background )
+  :global( [c-app-layout] [cc-panel-background] )
   {
     width: 100%;
     height: 100%;
   }
 
-  :global( [c-app-layout] .cc-top-subtop-box )
+  :global( [c-app-layout] [cc-top-subtop-box] )
   {
     z-index: 40;
 
@@ -830,7 +959,7 @@ $: {
     width: 100%;
   }
 
-  :global( [c-app-layout] .cc-panel-content )
+  :global( [c-app-layout] [cc-panel-content] )
   {
     z-index: 30;
 
@@ -843,7 +972,7 @@ $: {
   /* TODO: super bottom panel */
 
 
-  :global( [c-app-layout] .cc-panel-bottom )
+  :global( [c-app-layout] [cc-panel-bottom] )
   {
     z-index: 50;
 

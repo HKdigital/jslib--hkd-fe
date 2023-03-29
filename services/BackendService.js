@@ -127,12 +127,12 @@ class BackendService extends Base
 
           for( const tokenName in tokens )
           {
-            this._tryUseTokenFromUrl( tokenName );
+            this.tryUseTokenFromUrl( tokenName );
 
             if( !this.tryGetToken( tokenName ) )
             {
               // Token not found in URL, try session storage
-              this._tryUseTokenFromSessionStorage( tokenName );
+              this.tryUseTokenFromSessionStorage( tokenName );
             }
 
             if( !this.tokens[ tokenName ].get() )
@@ -215,20 +215,22 @@ class BackendService extends Base
 
     // this.log.debug(`${this.serviceName()}.jsonPost`, { uri, body }, remoteConfig);
 
-    const result =
-      await jsonApiPost(
-        {
-          uri,
-          body,
-          config: remoteConfig
-        } );
+    try {
+      const response =
+        await jsonApiPost(
+          {
+            uri,
+            body,
+            config: remoteConfig
+          } );
 
-    if( result.error )
-    {
-      return { error: new Error(`${this.serviceName()}.jsonPost failed`, {} ) };
+      return response;
     }
-
-    return result;
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonPost failed`, { cause: e } );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -277,20 +279,22 @@ class BackendService extends Base
     //   `${this.serviceName()}.jsonGet`,
     //   { uri, urlSearchParams }, remoteConfig);
 
-    const result =
-      await jsonApiGet(
-        {
-          uri,
-          urlSearchParams,
-          config: remoteConfig
-        } );
+    try {
+      const response =
+        await jsonApiGet(
+          {
+            uri,
+            urlSearchParams,
+            config: remoteConfig
+          } );
 
-    if( result.error )
-    {
-      return { error: new Error(`${this.serviceName()}.jsonGet failed`, {} ) };
+      return response;
     }
-
-    return result;
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonGet failed`, { cause: e } );
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -363,12 +367,13 @@ class BackendService extends Base
     {
       if( existingToken !== token )
       {
+        // this.log.debug("****update token in storage");
         window.sessionStorage.setItem( tokenName, token );
       }
     }
     else if( !token && existingToken )
     {
-      this.log.debug("****remove token from storage");
+      // this.log.debug("****remove token from storage");
       window.sessionStorage.removeItem( tokenName );
     }
 
@@ -401,8 +406,10 @@ class BackendService extends Base
 
     if( !tokenStore )
     {
-      throw new Error(
-        `No token store has not been defined for token [${tokenName}]`);
+      //
+      // Auto create store
+      //
+      this._ensureTokenStore( tokenName );
     }
 
     return tokenStore;
@@ -554,15 +561,17 @@ class BackendService extends Base
     return decodedToken;
   }
 
-  /* ------------------------------------------------------- Internal methods */
+  // ---------------------------------------------------------------------------
 
   /**
    * Try to use a JWT token from the url and store it as
    * internal property
    *
    * @param {string} tokenName
+   *
+   * @returns {string|null} token or null if not found
    */
-  _tryUseTokenFromUrl( tokenName )
+  tryUseTokenFromUrl( tokenName )
   {
     expectNotEmptyString( tokenName,
       "Missing or invalid item in service config [tokenName]" );
@@ -579,7 +588,7 @@ class BackendService extends Base
         // TODO: clear location hash
       }
 
-      // this.log.debug( "_tryUseTokenFromUrl", hash );
+      // this.log.debug( "tryUseTokenFromUrl", hash );
 
       if( token )
       {
@@ -588,6 +597,8 @@ class BackendService extends Base
           const decodedToken = this.decodeToken( token );
 
           this.log.debug( "Got token from URL", decodedToken );
+
+          return token;
         }
 
         //
@@ -600,6 +611,8 @@ class BackendService extends Base
     {
       this.log.debug(`Invalid token in url`, { cause: e } );
     }
+
+    return null;
   }
 
   // ---------------------------------------------------------------------------
@@ -612,7 +625,7 @@ class BackendService extends Base
    *
    * @returns {string|null} token or null if not found or invalid
    */
-  _tryUseTokenFromSessionStorage( tokenName )
+  tryUseTokenFromSessionStorage( tokenName )
   {
     expectNotEmptyString( tokenName,
       "Missing or invalid item in service config [tokenName]" );
@@ -627,11 +640,11 @@ class BackendService extends Base
       }
       catch( e )
       {
-        this.log.debug(
-          "_tryUseTokenFromSessionStorage: remove token from storage", e);
+        this.log.debug( `Remove token from storage`, e );
 
         window.sessionStorage.removeItem( tokenName );
-        return;
+
+        return null;
       }
     }
 
@@ -641,10 +654,33 @@ class BackendService extends Base
       {
         const decodedToken = this.decodeToken( token );
 
-        this.log.debug( "Got token from session storage", decodedToken );
+        this.log.debug(
+          `Got token [${tokenName}] from session storage`, decodedToken );
       }
 
       this.setToken( { token, tokenName } );
+
+      return token;
+    }
+
+    return null;
+  }
+
+  /* ------------------------------------------------------- Internal methods */
+
+  /**
+   * Create a token store if it does not exist
+   *
+   * @param {string} tokenName
+   */
+  _ensureTokenStore( tokenName )
+  {
+    expectNotEmptyString( tokenName,
+      "Missing or invalid item in service config [tokenName]" );
+
+    if( !this.tokens[ tokenName ] )
+    {
+      this.tokens[ tokenName ] = new DedupValueStore( null );
     }
 
     return null;

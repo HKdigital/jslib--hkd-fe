@@ -194,6 +194,10 @@ $: {
       {
         value = arrayToObject( value, VALUE_DISPLAYVALUE );
       }
+      else if( !(value instanceof Object) )
+      {
+        value = { value };
+      }
 
       standardizedValues.push( value );
     } // end for
@@ -207,11 +211,11 @@ $: {
 
 $: {
   //
-  // Add color class `x-on-<surface color>`
+  // Add color class `x-color-on-<surface color>`
   //
   if( onColor )
   {
-    colorClasses = `x-on-${onColor}`;
+    colorClasses = `x-color-on-${onColor}`;
   }
   else {
     colorClasses = "";
@@ -230,7 +234,8 @@ $: {
     {#each standardizedValues as { displayValue, value }, index }
       {#if selectedIndex < 0 || selectedIndex === index}
         <label
-          class="g-no-select">
+          class="g-no-select"
+          class:x-selected={selectedIndex === index}>
 
           <input type=radio {name} {value}
             on:click={ () => { handleUserSelect( index ); } } />

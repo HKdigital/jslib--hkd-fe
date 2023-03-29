@@ -202,7 +202,7 @@ $: {
      c-single-column-row
      class="{cssClassNames}">
 
-  <div class="cc-front {colorClassesFront}"
+  <div cc-front class="{colorClassesFront}"
        style={frontStyle}
        class:x-justify-center={centerFront}>
 
@@ -232,7 +232,7 @@ $: {
     /*border: solid 5px green;*/
   }
 
-  :global( [c-single-column-row] .cc-front )
+  :global( [c-single-column-row] [cc-front] )
   {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
@@ -260,12 +260,12 @@ $: {
     align-items: start;
   }
 
-  .cc-front.x-justify-center
+  [cc-front].x-justify-center
   {
     justify-self: center;
   }
 
-  :global( [c-single-column-row] > .cc-front > * )
+  :global( [c-single-column-row] > [cc-front] > * )
   {
     /* prevent row from being too small */
     /* prevent 'too big content' to break out */

@@ -1,11 +1,43 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import { defer }
+  from '@hkd-base/helpers/process.js';
 
-import { defer } from '@hkd-base/helpers/process.js';
+import DedupValueStore
+  from "@hkd-base/classes/DedupValueStore.js";
+
+import DerivedStore
+  from "@hkd-base/classes/DerivedStore.js";
 
 // import Scrollbar from "../scrollbar/Scrollbar.svelte";
+
+/* ---------------------------------------------------------------- Internals */
+
+const backgroundPanelReady = new DedupValueStore( false );
+const topPanelReady = new DedupValueStore( false );
+const subTopPanelReady = new DedupValueStore( false );
+const contentPanelReady = new DedupValueStore( false );
+const superBottomPanelReady = new DedupValueStore( false );
+const bottomPanelReady = new DedupValueStore( false );
+
+const PRIORITY_HIGH = 100;
+const PRIORITY_LOW = 20;
+
+const priority =
+  new DerivedStore( [ contentPanelReady ],
+    function derive( storesMap )
+    {
+      const value = storesMap.get(0).get();
+
+      if( value )
+      {
+        return PRIORITY_LOW;
+      }
+      else {
+        return PRIORITY_HIGH;
+      }
+    } );
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -13,12 +45,21 @@ import { defer } from '@hkd-base/helpers/process.js';
 // `ready` stores can be used to mark panels as `ready to show to the user`
 //
 
-export const backgroundPanelReady = new DedupValueStore( false );
-export const topPanelReady = new DedupValueStore( false );
-export const subTopPanelReady = new DedupValueStore( false );
-export const contentPanelReady = new DedupValueStore( false );
-export const superBottomPanelReady = new DedupValueStore( false );
-export const bottomPanelReady = new DedupValueStore( false );
+export { backgroundPanelReady,
+         topPanelReady,
+         subTopPanelReady,
+         contentPanelReady,
+         superBottomPanelReady,
+         bottomPanelReady };
+
+// -----------------------------------------------------------------------------
+
+export { PRIORITY_HIGH,
+         PRIORITY_LOW };
+
+export { priority };
+
+// -----------------------------------------------------------------------------
 
 /**
  * Mark background panel as ready for showing to the user

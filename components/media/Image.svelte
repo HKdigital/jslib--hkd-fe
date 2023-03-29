@@ -74,16 +74,18 @@ $: {
 </script>
 
 {#if $srcStore}
-  <img comp="image"
+  <img c-image
        src={$srcStore} {alt}
        class="{cssClassNames}"
        in:fade={{duration: parseInt(fadeIn, 10)}}
-       {style} />
+       {style}
+       on:click
+       on:keydown
+       on:keyup />
 {/if}
 
 <style>
 
-/*:global( img[comp="image"] )*/
 img
 {
   display: block; /* display=block removes white space after image */

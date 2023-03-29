@@ -2,9 +2,15 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { screenWidthSmall } from "@hkd-fe/stores/screen-size.js";
+// -- Routing
 
-import { redirectToRoute } from "@hkd-fe/stores/router.js";
+import { redirectToRoute }
+  from "@hkd-fe/stores/router.js";
+
+// -- Stores
+
+import { screenWidthSmall }
+  from "@hkd-fe/stores/screen-size.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -100,11 +106,11 @@ export let routeOptions = { replaceCurrent: false };
 
 $: {
   //
-  // Add color class `x-on-<surface color>`
+  // Add color class `x-color-on-<surface color>`
   //
   if( onColor )
   {
-    colorClasses = `x-on-${onColor}`;
+    colorClasses = `x-color-on-${onColor}`;
   }
   else {
     colorClasses = "";
@@ -127,7 +133,7 @@ $: {
   <div cc-button-inner><slot></slot></div>
 </div>
 
-<style type="text/scss">
+<style lang="scss">
 
   :global( [c-button] )
   {

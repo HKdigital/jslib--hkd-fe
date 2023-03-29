@@ -33,7 +33,8 @@ $: {
      class="{colorClasses}
             {cssClassNames}"
      class:x-center={center}
-     on:click>
+     on:click
+     on:keydown>
     <slot></slot>
 </div>
 

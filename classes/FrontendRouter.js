@@ -123,6 +123,8 @@ class FrontendRouter extends LogBase
     const routeStateStore =
       router.routeStateStore = new RouteStateStore();
 
+    router.userHash = new ValueStore();
+
     // const off =
     routeStateStore.configureEventListener(
       {
@@ -130,6 +132,12 @@ class FrontendRouter extends LogBase
         eventName: "popstate",
         callbackFn: ( /* e, { target, stream } */ ) =>
           {
+            router.log.debug("Popstate");
+
+            //
+            // @note popstate only fires if the page has been interacted with
+            //
+
             let stateFromHistory = router.historyStorage.tryGoBack();
 
             // router.log.debug( "popstate", { href: location.href, stateFromHistory } );
@@ -146,8 +154,15 @@ class FrontendRouter extends LogBase
             else {
               //
               // No valid current state found
-              // -> remove hash (contains invalid state id)
-              // -> create new state
+              //
+              // @note popstate only fires if the page has been interacted with
+              //
+              // -> set value in store `userHash`
+              //
+              // NOT ANYMORE -> remove hash (contains invalid state id)
+              //
+              // -> Keeping hash, since it sometimes is used by landing pages
+              // -> create new state (add removedHash as property)
               //
               // router.log.debug("popstate: create new state");
 
@@ -156,6 +171,9 @@ class FrontendRouter extends LogBase
               // - the hash is part of the path and is used to identify the
               //   state in history
               //
+
+              router.userHash.set( location.hash.slice(1) );
+
               const path =
                 router._stripPath(
                   location.href, { includeSearch: true, includeHash: false } );
@@ -163,6 +181,9 @@ class FrontendRouter extends LogBase
               window.history.replaceState( null, '', path );
 
               let newState = router._stateFromLocationHref();
+
+              // newState[ "userHash" ] = userHash;
+              // console.log( "newState, hash", newState, hash );
 
               router.historyStorage.push( newState );
 
@@ -436,6 +457,31 @@ class FrontendRouter extends LogBase
       // Use defer, because configureRoutes might be called during bootstrap
       // and components might not be ready yet
       //
+
+      // router.log.debug("Initial update");
+
+      router.userHash.set( location.hash.slice(1) );
+
+      let currentState = router.historyStorage.getLatest();
+
+      if( !router._isValidCurrentState( currentState ) )
+      {
+        // Not a valid state => remove hash
+
+        const path =
+          router._stripPath(
+            location.href, { includeSearch: true, includeHash: false } );
+
+        window.history.replaceState( null, '', path );
+
+        let newState = router._stateFromLocationHref();
+
+        // newState[ "userHash" ] = userHash;
+        // console.log( "newState, hash", newState, hash );
+
+        router.historyStorage.push( newState );
+      }
+
       router._firstUpdateDone = true;
 
       // defer( router._updateRouteStateStore );
@@ -543,6 +589,8 @@ class FrontendRouter extends LogBase
    * @param {object} [options.returnState]
    *   Return state, can be used by the current route to redirect
    *   `back` to a return state.
+   * @param {boolean} [options.defer=false]
+   *   Use defer to make redirect async
    */
   redirectTo( path, options )
   {
@@ -574,7 +622,8 @@ class FrontendRouter extends LogBase
     let {
       stateData,
       returnState,
-      replaceCurrent=false } = options || {};
+      replaceCurrent=false,
+      defer:_defer=false } = options || {};
 
     // console.log("redirectTo: options", options );
 
@@ -606,19 +655,33 @@ class FrontendRouter extends LogBase
 
     // console.log(`redirectTo [path=${path}]`, options);
 
-    if( replaceCurrent )
+    if( !_defer )
     {
-      router.replaceState( newState );
+      if( replaceCurrent )
+      {
+        router.replaceState( newState );
+      }
+      else {
+        router.pushState( newState );
+      }
     }
     else {
-      router.pushState( newState );
+      defer( () => {
+        if( replaceCurrent )
+        {
+          router.replaceState( newState );
+        }
+        else {
+          router.pushState( newState );
+        }
+      } );
     }
   }
 
   // ---------------------------------------------------------------------------
 
   /**
-   * Redirect to the specified
+   * Redirect to the specified route
    *
    * @param {string} label
    *
@@ -718,6 +781,22 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
+   * Return true if the current route is the home route
+   *
+   * @returns {boolean} true if on the home route
+   */
+  isHome()
+  {
+    const homeLabel = router[ homeLabel$ ];
+
+    const { route } = router.routeStateStore.get();
+
+    return ( homeLabel === route.label );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Redirect to the home route
    */
   goHome( { replaceCurrent=true }={} )
@@ -731,6 +810,18 @@ class FrontendRouter extends LogBase
       // Not already on home route -> redirect
       router.redirectToRoute( homeLabel, { replaceCurrent } );
     }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Returns true if a history.back() operation would lead to an "in-app" page
+   *
+   * @returns {boolean} true if the previous page was an in-app page
+   */
+  canGoBack()
+  {
+    return router.historyStorage.canGoBack();
   }
 
   // ---------------------------------------------------------------------------
@@ -768,13 +859,14 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
-   * Returns true if a history.back() operation would lead to an "in-app" page
-   *
-   * @returns {boolean} true if the previous page was an in-app page
+   * Go back or go home if no previous page is available
    */
-  canGoBack()
+  goBackOrHome()
   {
-    return router.historyStorage.canGoBack();
+    if( !router.goBack() )
+    {
+      router.goHome();
+    }
   }
 
   // ---------------------------------------------------------------------------
@@ -938,6 +1030,18 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
+   * Returns the current route label
+   */
+  getCurrentRouteLabel()
+  {
+    const { route } = router.routeStateStore.get();
+
+    return route.label;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Returns the current path
    * - Gets the path from `location.href`
    *
@@ -968,7 +1072,7 @@ class FrontendRouter extends LogBase
 
     if( currentState )
     {
-      return currentState.data;
+      return currentState.data || {};
     }
 
     return {};
@@ -1205,6 +1309,32 @@ class FrontendRouter extends LogBase
   {
     router.historyStorage.clear();
   }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get the hash value from a path
+   * - Returns the part after the `#` hash token
+   * - If no hash is present, null will be returned
+   *
+   * @param {string} path
+   *
+   * @returns {string|null} the hash value or null
+   */
+  // getHashFromPath( path )
+  // {
+  //   expectString( path,
+  //     "Missing or invalid parameter [path]" );
+
+  //   const x = path.indexOf("#");
+
+  //   if( x >= 0 )
+  //   {
+  //     return path.slice( x + 1 );
+  //   }
+
+  //   return null;
+  // }
 
   /* ------------------------------------------------------- Internal methods */
 

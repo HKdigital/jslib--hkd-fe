@@ -77,7 +77,7 @@ export { cssClassNames as class };
 
 /**
  * Color of the surface where the element is placed on
- * - Will set a CSS class `x-on-{onColor}` on the element
+ * - Will set a CSS class `x-color-on-{onColor}` on the element
  *
  * @type {string}
  */
@@ -141,11 +141,11 @@ export { setValue };
 $: {
   //
   // If onColor has been set
-  // - add color class `x-on-<surface color>`
+  // - add color class `x-color-on-<surface color>`
   //
   if( onColor )
   {
-    colorClasses = `x-on-${onColor}`;
+    colorClasses = `x-color-on-${onColor}`;
   }
   else {
     colorClasses = "";
@@ -339,7 +339,7 @@ export { inputType as type };
         aria-live="polite">{errorMessage||"&nbsp;"}</span> -->
 </label>
 
-<style type="text/scss">
+<style lang="scss">
 
   :global( [c-input-field] )
   {
