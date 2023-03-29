@@ -607,6 +607,10 @@ class BackendService extends Base
   /**
    * Try to use a JWT token from the session storage and store it as
    * internal property
+   *
+   * @param {string} tokenName
+   *
+   * @returns {string|null} token or null if not found or invalid
    */
   _tryUseTokenFromSessionStorage( tokenName )
   {
@@ -642,6 +646,8 @@ class BackendService extends Base
 
       this.setToken( { token, tokenName } );
     }
+
+    return null;
   }
 
   // ---------------------------------------------------------------------------
