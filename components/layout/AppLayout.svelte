@@ -452,8 +452,28 @@
   $: {
     if( currentRouteReady )
     {
-      // console.log( "currentRouteReady: restore scroll" );
+      // document.body.style.overflow="hidden";
       document.documentElement.scrollTop = 0;
+
+      // console.log( "currentRouteReady: restore scroll" );
+
+      // const setDocumentVisible = () =>
+      // {
+      //   if( 0 === document.documentElement.scrollTop )
+      //   {
+      //     console.log("show");
+      //     document.body.style.visibility = "visible";
+      //   }
+      // };
+
+      // if( document.documentElement.scrollTop > 0 )
+      // {
+      //   console.log("restore scroll");
+      //   document.body.style.visibility = "hidden";
+      //   document.addEventListener("scroll", setDocumentVisible );
+      //   document.documentElement.scrollTop = 0;
+      // }
+
 
       // FIXME: Restore scroll does not work well
 
@@ -793,6 +813,119 @@ $: {
 
     width: 100%;
   }
+
+/*  @keyframes reduce-floc
+  {
+    0% {
+      max-height: 100vh;
+      overflow-y: hidden;
+    }
+
+    99% {
+      max-height: auto;
+      overflow-y: hidden;
+    }
+
+    100% {
+      max-height: auto;
+      overflow-y: hidden;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.1s;
+    animation-name: reduce-floc;
+  }*/
+
+  /*[cc-panel-content]:not(.x-ready)
+  {
+    max-height: 100vh;
+    overflow: hidden;
+  }*/
+
+/* @keyframes reduce-floc
+  {
+    0% {
+      max-height: 100vh;
+      overflow: hidden;
+    }
+
+    99% {
+      max-height: 100vh;
+    overflow: hidden;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.4s;
+    animation-name: reduce-floc;
+  }
+
+*/
+ /* @keyframes reduce-floc
+  {
+    0% {
+      opacity: 0;
+    }
+
+    99% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.4s;
+    animation-name: reduce-floc;
+  }
+*/
+  /*@keyframes reduce-floc
+  {
+    0% {
+      opacity: 0;
+    }
+
+    80% {
+      opacity: 0.5;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    animation-duration: 0.5s;
+    animation-name: reduce-floc;
+  }*/
+
+/*  [cc-panel-content]
+  {
+    transition: opacity 0.1s
+  }
+
+  [cc-panel-content]:not(.x-ready)
+  {
+    visibility: hidden;
+    opacity: 0;
+  }
+
+  [cc-panel-content].x-ready
+  {
+    visibility: visible;
+    opacity: 1;
+  }*/
 
   .app-layout-grid-background
   {

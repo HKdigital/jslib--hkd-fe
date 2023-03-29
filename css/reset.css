@@ -48,7 +48,8 @@ body {
   /* prevent horizontal scrollbar of vertical scrollbar appears */
   overflow-x: hidden;
 
-  /* nicer scroll when making jumps */
+  /* Nicer scroll when changing scroll position,
+     e.g. during navigation changes */
   scroll-behavior: smooth;
 }
 
