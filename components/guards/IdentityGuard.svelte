@@ -7,7 +7,7 @@ import { getCurrentPath,
 
 // -- Constants
 
-import { ROUTE_LOGIN } from "@src/config/route-labels.js";
+import { ROUTE_LOGIN } from "@src/constants/route-labels.js";
 
 // -- Services
 

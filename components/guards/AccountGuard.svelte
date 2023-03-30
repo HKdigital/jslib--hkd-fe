@@ -8,7 +8,7 @@ import { getCurrentPath,
 // -- Constants
 
 import { ROUTE_LOGIN,
-         ROUTE_CONFIRM_ACCOUNT } from "@src/config/route-labels.js";
+         ROUTE_CONFIRM_ACCOUNT } from "@src/constants/route-labels.js";
 
 // -- Stores
 
