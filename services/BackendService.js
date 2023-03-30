@@ -67,9 +67,9 @@ import { decodePayload } from "@hkd-base/helpers/jwt-info.js";
 
 import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 
-import { clearHistoryStorage } from "@hkd-fe/stores/router.js";
-
-import { goHome } from "@hkd-fe/stores/router.js";
+import { clearHistoryStorage,
+         userHash,
+         goHome } from "@hkd-fe/stores/router.js";
 
 /* ------------------------------------------------------------------ Helpers */
 
@@ -579,16 +579,21 @@ class BackendService extends Base
     let token;
 
     try {
-      const hash = location.hash;
+      // let hash = location.hash.slice(1);
 
-      if( hash.startsWith(`#${tokenName}=`) )
+      // if( !hash )
+      // {
+      //   hash = userHash.get();
+      // }
+
+      const hash = userHash.get();
+
+      if( hash.startsWith(`${tokenName}=`) )
       {
-        token = hash.slice( tokenName.length + 2 );
-
-        // TODO: clear location hash
+        token = hash.slice( tokenName.length + 1 );
       }
 
-      // this.log.debug( "tryUseTokenFromUrl", hash );
+      // this.log.debug( "tryUseTokenFromUrl", { tokenName, hash, userHash: userHash.get() } );
 
       if( token )
       {

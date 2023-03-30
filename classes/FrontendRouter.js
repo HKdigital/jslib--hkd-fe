@@ -458,7 +458,7 @@ class FrontendRouter extends LogBase
       // and components might not be ready yet
       //
 
-      // router.log.debug("Initial update");
+      // router.log.debug("Initial update", location.hash);
 
       router.userHash.set( location.hash.slice(1) );
 
