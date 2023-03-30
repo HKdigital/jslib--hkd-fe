@@ -12,7 +12,8 @@ import { arrayToObject } from "@hkd-base/helpers/array.js";
 import TertiaryButton
   from "@hkd-fe/components/buttons/TertiaryButton.svelte";
 
-import BodyText from "@hkd-fe/components/text/BodyText.svelte";
+import BodyText
+  from "@hkd-fe/components/text/BodyText.svelte";
 
 import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
 
@@ -26,7 +27,8 @@ import { generateLocalId } from "@hkd-base/helpers/unique.js";
 
 // -- Logging
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "RadioGroup.svelte" );
 

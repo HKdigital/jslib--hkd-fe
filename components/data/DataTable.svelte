@@ -4,7 +4,8 @@
 
 import { expectValidSurfaceColor } from "@hkd-fe/helpers/theme.js";
 
-import BodyText from "@hkd-fe/components/text/BodyText.svelte";
+import BodyText
+  from "@hkd-fe/components/text/BodyText.svelte";
 
 import { text } from "@hkd-base/helpers/translate.js";
 import { NO_DATA } from "@hkd-fe/lang/messages.js";

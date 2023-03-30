@@ -19,7 +19,8 @@ import { UPDATE_EVENT }
 
 // -- Logging
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "BodyTextEdit.svelte" );
 

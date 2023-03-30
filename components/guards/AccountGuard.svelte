@@ -18,7 +18,8 @@ import { identityTokenStore,
 
 // -- Logging
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "AccountGuard.svelte" );
 

@@ -16,7 +16,8 @@ import BuildingOffice
 import FaceFrown
   from "@hkd-fe/components/icons/hero/outline/FaceFrown.svelte";
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "InlineIconAccounType.svelte" );
 

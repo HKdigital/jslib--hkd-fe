@@ -28,7 +28,8 @@ import { createEventDispatcher } from 'svelte';
 
 const dispatch = createEventDispatcher();
 
-import BodyText from "@hkd-fe/components/text/BodyText.svelte";
+import BodyText
+  from "@hkd-fe/components/text/BodyText.svelte";
 
 import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
 
@@ -48,7 +49,8 @@ import Check
 
 // -- Logging
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "Checkbox.svelte" );
 

@@ -15,7 +15,8 @@ import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
 //
 let loadingImages = {};
 
-// import { getModuleLogger } from "@hkd-base/helpers/log.js";
+// import { getModuleLogger }
+//   from "@hkd-base/helpers/log.js";
 
 // const log = getModuleLogger( "image-helper" );
 

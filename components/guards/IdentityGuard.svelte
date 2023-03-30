@@ -13,11 +13,13 @@ import { ROUTE_LOGIN } from "@src/config/route-labels.js";
 
 import { BACKEND_SERVICE_NAME } from "@src/constants/service-names.js";
 
-import InitService from "@hkd-base/services/InitService.js";
+import InitService
+  from "@hkd-base/services/InitService.js";
 
 // -- Logging
 
-import { getModuleLogger } from "@hkd-base/helpers/log.js";
+import { getModuleLogger }
+  from "@hkd-base/helpers/log.js";
 
 const log = getModuleLogger( "Guard.svelte" );
 
