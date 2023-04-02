@@ -46,7 +46,8 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectString,
-         expectNotEmptyString } from "@hkd-base/helpers/expect.js";
+         expectNotEmptyString,
+         expectArray } from "@hkd-base/helpers/expect.js";
 
 import { Base } from "@hkd-base/helpers/services.js";
 
@@ -115,7 +116,19 @@ class BackendService extends Base
 
         // -- Setup identity token
 
-        if( !config.disableIdentityToken )
+        if( config.tokenNames )
+        {
+          const tokenNames = config.tokenNames;
+
+          expectArray( config.tokenNames,
+            "Missing or invalid parameter [config.tokenNames]" );
+
+          for( const tokenName of tokenNames )
+          {
+            this.tokens[ tokenName ] = new DedupValueStore();
+          }
+        }
+        else if( !config.disableIdentityToken )
         {
           this.tokens[ IDENTITY_TOKEN_NAME ] = new DedupValueStore();
         }
@@ -579,14 +592,26 @@ class BackendService extends Base
     let token;
 
     try {
-      // let hash = location.hash.slice(1);
+      // this.log.debug(`tryUseTokenFromUrl ${tokenName}`);
 
-      // if( !hash )
-      // {
-      //   hash = userHash.get();
-      // }
+      let hash = location.hash.slice(1);
 
-      const hash = userHash.get();
+      if( !hash )
+      {
+        //
+        // Maybe hash has been removed by FrontendRouter
+        // => try use userHash set by FrontendRouter
+        //
+        hash = userHash.get();
+
+        // this.log.debug( { userHash: hash } );
+
+        if( !hash )
+        {
+          // No hash => no token in url => done
+          return;
+        }
+      }
 
       if( hash.startsWith(`${tokenName}=`) )
       {
@@ -609,6 +634,7 @@ class BackendService extends Base
         //
         // FIXME: this also remove other parts of the hash (if any)
         //
+        this.log.debug("clear hash");
         location.hash = "";
       }
     }

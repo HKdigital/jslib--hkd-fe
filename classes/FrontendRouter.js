@@ -172,6 +172,8 @@ class FrontendRouter extends LogBase
               //   state in history
               //
 
+              // this.log.debug("popstate");
+
               router.userHash.set( location.hash.slice(1) );
 
               const path =
@@ -447,6 +449,10 @@ class FrontendRouter extends LogBase
       router[ notFoundLabel$ ] = DEFAULT_ROUTE_NOT_FOUND;
     }
 
+    // router.log.debug("Initial update", location.hash);
+
+    router.userHash.set( location.hash.slice(1) );
+
     // -- Handle redirect if it applies to the current route
 
     if( !router._tryCurrentRouteIsRedirect() )
@@ -457,10 +463,6 @@ class FrontendRouter extends LogBase
       // Use defer, because configureRoutes might be called during bootstrap
       // and components might not be ready yet
       //
-
-      // router.log.debug("Initial update", location.hash);
-
-      router.userHash.set( location.hash.slice(1) );
 
       let currentState = router.historyStorage.getLatest();
 
