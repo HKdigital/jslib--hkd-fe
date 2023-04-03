@@ -1130,6 +1130,21 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
+   * Get route vars
+   * - Returns the routes variables that are set in the browsers location
+   *
+   * @returns {object} route variables (key value pairs)
+   */
+  getRouteVars()
+  {
+    const { route } = router.getRouteAndState();
+
+    return route.vars;
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Get the path that corresponds to the specified label
    *
    * @param {string} [label] - Label that corresponds to the route

@@ -3,12 +3,14 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { getCurrentPath,
-         redirectToRoute } from "@hkd-fe/stores/router.js";
+         redirectToRoute }
+  from "@hkd-fe/stores/router.js";
 
 // -- Constants
 
 import { ROUTE_LOGIN,
-         ROUTE_CONFIRM_ACCOUNT } from "@src/constants/route-labels.js";
+         ROUTE_CONFIRM_ACCOUNT }
+  from "@src/constants/route-labels.js";
 
 // -- Stores
 
