@@ -28,15 +28,21 @@
  *     panels:
  *     {
  *       backgroundPanel: {
- *         component: BackgroundPanelHome
+ *         component: BackgroundLight
  *       },
  *
  *       topPanel: {
- *         component: TopPanelHome
+ *         component: HomeTop
  *       },
  *
  *       contentPanel: {
- *         component: ContentPanelHome
+ *         component: Home
+ *       },
+ *
+ *       bottomPanel: {
+ *         component: AppBottom
+ *         backgroundColor: SURFACE_WHITE,
+ *         classNames: "x-semi-transparent"
  *       }
  *     }
  *   },
@@ -109,9 +115,14 @@ export const {
   replaceState,
 
   getStateData,
+
   getCurrentRouteLabel,
+
   getCurrentPath,
+
   getRouteAndState,
+
+  getRouteVars,
 
   routePath,
   getRoute,
