@@ -123,6 +123,15 @@ export function selectValue( value )
 {
   expectDefined( value, "Missing or invalid parameter [value]" );
 
+  if( null === value )
+  {
+    //
+    // null means no value selected
+    //
+    selectByIndex( -1 );
+    return;
+  }
+
   for( let j = 0, n = standardizedValues.length; j < n; j = j + 1 )
   {
     const current = standardizedValues[ j ];
