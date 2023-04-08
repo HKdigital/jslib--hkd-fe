@@ -46,8 +46,6 @@ const VALUE_DISPLAYVALUE = [ "value", "displayValue" ];
 
 let name = generateLocalId();
 
-let cssClassNames = "";
-
 let colorClasses = "";
 
 let selectedIndex = -1;
@@ -85,7 +83,13 @@ function handleUserSelect( index )
   }
 }
 
+// -----------------------------------------------------------------------------
+
+let cssClassNames = "";
+
 /* ------------------------------------------------------------------ Exports */
+
+export { cssClassNames as class };
 
 export let onColor = null;
 
