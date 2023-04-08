@@ -37,7 +37,7 @@ import Box
   from "@hkd-fe/components/icons/hero/outline/Box.svelte";
 
 import Checkbox
-  from "@hkd-fe/components/icons/hero/outline/Checkbox.svelte";
+  from "@hkd-fe/components/icons/hero/solid/Checkbox.svelte";
 
 import Check
   from "@hkd-fe/components/icons/hero/outline/Check.svelte";
@@ -224,7 +224,7 @@ $: {
 {#if iconContent}
   <div c-checkbox
        on:click={toggle}
-       class="g-no-select"
+       class="g-no-select {cssClassNames}"
        class:x-center={center}
        class:x-pointer={allowEdit}>
 
