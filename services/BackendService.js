@@ -13,13 +13,17 @@
  * - jsonPost - API POST request
  * - jsonGet - API GET request
  * - jsonPostWithIdentity - POST request that includes an identity token
+ * - jsonPostWithAccess - POST request that includes an access token
  * - jsonGetWithIdentity - GET request that includes an identity token
+ * - jsonGetWithAccess - GET request that includes an access token
  * - setToken - Set a token that can be used for backend communication
  * - getTokenStore - Get the store object in which a token is stored
  * - getIdentityTokenStore - Get the store object of the identity token
+ * - getAccessTokenStore - Get the store object of the access token
  * - tryGetToken - Get a token if set
  * - tryGetDecodedToken - Get a decoded token if set
  * - tryGetDecodedIdentityToken - Get a decoded identity token if set
+ * - tryGetDecodedAccessToken - Get a decoded access token if set
  * - logout - Clear session data on the browser side (identity token)
  * - decodeToken - Helper function to decode (view) token contents
  *
@@ -82,6 +86,7 @@ const TOKEN_EXPIRED_MARGIN_MS = 300000; // 300 seconds = 5 minutes
 /* ------------------------------------------------------------------ Exports */
 
 export const IDENTITY_TOKEN_NAME = "jwt-idty";
+export const ACCESS_TOKEN_NAME = "jwt-xs";
 
 /* ------------------------------------------------------------ Service class */
 
@@ -128,10 +133,19 @@ class BackendService extends Base
             this.tokens[ tokenName ] = new DedupValueStore();
           }
         }
-        else if( !config.disableIdentityToken )
-        {
-          this.tokens[ IDENTITY_TOKEN_NAME ] = new DedupValueStore();
+        else {
+          if( !config.disableIdentityToken )
+          {
+            this.tokens[ IDENTITY_TOKEN_NAME ] = new DedupValueStore();
+          }
+
+          if( !config.disableAccessToken )
+          {
+            this.tokens[ ACCESS_TOKEN_NAME ] = new DedupValueStore();
+          }
         }
+
+        // console.log( Object.keys( this.tokens ) );
 
         // -- Get tokens from URL or session storage
 
@@ -196,7 +210,7 @@ class BackendService extends Base
    *
    * @param {string} [_.tokenName]
    *   Name of the token to use (should be defined in service property
-   *   `tokens`), e.g. IDENTITY_TOKEN_NAME
+   *   `tokens`), e.g. IDENTITY_TOKEN_NAME or ACCESS_TOKEN_NAME
    *
    * @returns {object} backend response
    */
@@ -258,7 +272,7 @@ class BackendService extends Base
    *
    * @param {string} [_.tokenName]
    *   Name of the token to use (should be defined in service property
-   *   `tokens`), e.g. IDENTITY_TOKEN_NAME
+   *   `tokens`), e.g. IDENTITY_TOKEN_NAME or ACCESS_TOKEN_NAME
    *
    * @returns {object} backend response
    */
@@ -330,6 +344,23 @@ class BackendService extends Base
   // ---------------------------------------------------------------------------
 
   /**
+   * Send POST request to the backend that includes the access token service
+   * property.
+   *
+   * @param {string} _.uri
+   * @param {object|null} _.body
+   *
+   * @returns {object} backend response
+   */
+  async jsonPostWithAccess( { uri, body }={} )
+  {
+    return this.jsonPost(
+      { uri, body, tokenName: ACCESS_TOKEN_NAME } );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Send GET request to the backend that includes the identity token service
    * property.
    *
@@ -344,6 +375,25 @@ class BackendService extends Base
   {
     return this.jsonGet(
       { uri, urlSearchParams, tokenName: IDENTITY_TOKEN_NAME } );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Send GET request to the backend that includes the access token service
+   * property.
+   *
+   * @param {string} _.uri
+   *
+   * @param {object} [urlSearchParams]
+   *   Parameters that should be added to the request url
+   *
+   * @returns {object} backend response
+   */
+  async jsonGetWithAccess( { uri, urlSearchParams }={} )
+  {
+    return this.jsonGet(
+      { uri, urlSearchParams, tokenName: ACCESS_TOKEN_NAME } );
   }
 
   // ---------------------------------------------------------------------------
@@ -445,6 +495,20 @@ class BackendService extends Base
   // ---------------------------------------------------------------------------
 
   /**
+   * Get the access token store
+   *
+   * @param {string} tokenName
+   *
+   * @returns {object} access token store instance
+   */
+  getAccessTokenStore()
+  {
+    return this.getTokenStore( ACCESS_TOKEN_NAME );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Get the specified token from `this.tokens`
    *
    * @param {string} tokenName
@@ -515,6 +579,18 @@ class BackendService extends Base
   // ---------------------------------------------------------------------------
 
   /**
+   * Get the decoded payload of the access token stored in `this.tokens`
+   *
+   * @returns {object} decoded token
+   */
+  tryGetDecodedAccessToken()
+  {
+    return this.tryGetDecodedToken( ACCESS_TOKEN_NAME );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Logout
    * - Remove identity token from session storage
    * - Clear routing history from session storage
@@ -531,11 +607,12 @@ class BackendService extends Base
     try
     {
       window.sessionStorage.removeItem( IDENTITY_TOKEN_NAME );
+      window.sessionStorage.removeItem( ACCESS_TOKEN_NAME );
     }
     catch( e )
     {
       this.log.debug(
-        `Failed to remove token [${IDENTITY_TOKEN_NAME}] from session storage`);
+        `Failed to remove token(s) from session storage`);
     }
 
     // -- Remove history from session storage

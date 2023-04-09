@@ -46,8 +46,6 @@ const VALUE_DISPLAYVALUE = [ "value", "displayValue" ];
 
 let name = generateLocalId();
 
-let cssClassNames = "";
-
 let colorClasses = "";
 
 let selectedIndex = -1;
@@ -85,7 +83,13 @@ function handleUserSelect( index )
   }
 }
 
+// -----------------------------------------------------------------------------
+
+let cssClassNames = "";
+
 /* ------------------------------------------------------------------ Exports */
+
+export { cssClassNames as class };
 
 export let onColor = null;
 
@@ -122,6 +126,15 @@ export let center = true;
 export function selectValue( value )
 {
   expectDefined( value, "Missing or invalid parameter [value]" );
+
+  if( null === value )
+  {
+    //
+    // null means no value selected
+    //
+    selectByIndex( -1 );
+    return;
+  }
 
   for( let j = 0, n = standardizedValues.length; j < n; j = j + 1 )
   {

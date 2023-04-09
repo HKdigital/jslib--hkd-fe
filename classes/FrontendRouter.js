@@ -889,8 +889,20 @@ class FrontendRouter extends LogBase
   {
     const currentState = router._getOrCreateCurrentState();
 
+    const currentStateData = currentState.data;
+
     let updatedData =
-      router._cloneAndUpdate( currentState.data, updateData );
+      router._cloneAndUpdate( currentStateData, updateData );
+
+    if( equals( currentStateData, updatedData ) )
+    {
+      // State unchanged
+      // replaceCurrent = true; // ?
+      return;
+    }
+
+    //console.log( currentState.data, updatedData );
+
 
     const newState = currentState;
 

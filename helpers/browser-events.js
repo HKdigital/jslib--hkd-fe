@@ -2,14 +2,18 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectPositiveNumber,
-         expectFunction } from "@hkd-base/helpers/expect.js";
+         expectFunction }
+  from "@hkd-base/helpers/expect.js";
 
-import { sortByKeyValue } from "@hkd-base/helpers/array.js";
-import { largestFirst } from "@hkd-base/helpers/compare.js";
+import { sortByKeyValue }
+  from "@hkd-base/helpers/array.js";
+
+import { largestFirst }
+  from "@hkd-base/helpers/compare.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-let counter = 0;
+// let counter = 0;
 
 const onLoadFunctions = [];
 

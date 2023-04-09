@@ -114,14 +114,10 @@ export const {
   pushState,
   replaceState,
 
-  getStateData,
-
   getCurrentRouteLabel,
-
   getCurrentPath,
-
+  getStateData,
   getRouteAndState,
-
   getRouteVars,
   getRouteVar,
 
