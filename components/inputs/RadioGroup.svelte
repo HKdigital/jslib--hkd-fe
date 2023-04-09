@@ -170,7 +170,7 @@ export function reset( e )
 
   selectByIndex( -1 );
 
-  if( e  )
+  if( e )
   {
     e.stopPropagation();
     e.preventDefault();

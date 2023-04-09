@@ -41,6 +41,21 @@ let editElement;
 function doFocus( e )
 {
   // console.log("doFocus: " + placeholder);
+
+  //
+  // Weird hack to force setting focus
+  //
+  // @see https://stackoverflow.com/
+  //      questions/2388164/set-focus-on-div-contenteditable-element
+  //
+  const selection = window.getSelection(),
+        range = document.createRange();
+
+  range.setStart( editElement, 0);
+  range.setEnd( editElement, 0);
+  selection.removeAllRanges();
+  selection.addRange( range );
+
   focused = true;
   e.preventDefault();
 }
@@ -126,6 +141,9 @@ export { cssClassNames as class };
 
 export let surfaceColor = SURFACE_1;
 
+/* Center the element (element should have a width) */
+export let center = false;
+
 export let content;
 export let placeholder;
 export let allowNewLine = false;
@@ -158,10 +176,13 @@ $: {
 <div c-body-text-edit
      class="g-bg-{surfaceColor} g-padding-tiny {cssClassNames}"
      class:x-focused={focused}>
-  <BodyText onColor={surfaceColor} class={cssClassNames}>
+  <BodyText
+    onColor={surfaceColor}
+    class={cssClassNames}>
     <!-- https://stackoverflow.com/questions/24215428/losing-focus-in-contenteditable-in-safari -->
     <div contenteditable="true"
          class="cc-content"
+         class:x-center={center}
          bind:this={editElement}
          on:focus={doFocus}
          on:blur={doBlur}
@@ -192,5 +213,6 @@ $: {
     outline:none;
   }
 
+  .x-center { text-align: center; }
 
 </style>

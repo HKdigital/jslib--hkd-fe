@@ -212,6 +212,13 @@ export default class Form extends LogBase
   {
     expectString( key, "Missing or invalid parameter [key]" );
 
+    if( !this._values[ key ] )
+    {
+      throw new Error(
+        `Cannot get update handler. ` +
+        `Form property [${key}] has not been defined` );
+    }
+
     // == Return update handler for specified key
 
     /**
@@ -225,10 +232,25 @@ export default class Form extends LogBase
 
       const detail = event.detail;
 
+      // console.log( "formPropertyUpdate", {key, ...detail } );
+
       expectObject( detail,
         "Missing or invalid parameter [event.detail]" );
 
-      const updatedValue = event.detail.updatedValue;
+      let updatedValue;
+
+      if( "updatedValue" in detail )
+      {
+        updatedValue = detail.updatedValue;
+      }
+      else if( "value" in detail )
+      {
+        updatedValue = detail.value;
+      }
+      else {
+        throw new Error(
+          "Missing property [updatedValue] or [value] in [event.detail]");
+      }
 
       expectDefined( updatedValue,
         "Missing or invalid parameter [event.detail.updatedValue]" );
@@ -243,7 +265,7 @@ export default class Form extends LogBase
    * Set a form property value
    *
    * @note
-   *   This is not the prefered way to interact with a Form instance:
+   *   Consider using `updateHandler` to interact with a Form instance.
    *
    *   - Use an input component and supply it and `updateHandler`
    *   - Set the value on the input component and let the input component call
@@ -540,6 +562,13 @@ export default class Form extends LogBase
     //   // value is untouched
     //   return { value };
     // }
+
+    if( !values[ key ] )
+    {
+      throw new Error(
+        `Cannot parse property. ` +
+        `Form property [${key}] has not been defined` );
+    }
 
     values[ key ].set( value );
 

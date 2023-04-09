@@ -123,6 +123,7 @@ export const {
   getRouteAndState,
 
   getRouteVars,
+  getRouteVar,
 
   routePath,
   getRoute,
