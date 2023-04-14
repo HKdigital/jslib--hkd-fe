@@ -2,7 +2,8 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import InlineIcon from "@hkd-fe/components/icons/InlineIcon.svelte";
+import InlineIcon
+  from "@hkd-fe/components/icons/InlineIcon.svelte";
 
 import Sparkles
   from "@hkd-fe/components/icons/hero/solid/Sparkles.svelte";

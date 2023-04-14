@@ -119,6 +119,7 @@ export const {
   getStateData,
   getRouteAndState,
   getRouteVars,
+  getRouteVar,
 
   routePath,
   getRoute,

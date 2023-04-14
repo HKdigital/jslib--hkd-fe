@@ -57,7 +57,7 @@ $: {
 <Button
   c-icon-button
   {...$$restProps}
-  class="{cssClassNames}"
+  class="{colorClasses} {cssClassNames}"
   {onColor}
   {center}
   {route}
@@ -66,8 +66,7 @@ $: {
   <div class="grid">
 
     <ListIcon
-      content={icon}
-      onColor={SURFACE_1} />
+      content={icon} />
 
     <div class="label"><slot></slot></div>
   </div>

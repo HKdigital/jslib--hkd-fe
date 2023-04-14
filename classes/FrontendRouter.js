@@ -3,6 +3,7 @@
 
 import {
   expectString,
+  expectNotEmptyString,
   expectArray,
   expectObject } from "@hkd-base/helpers/expect.js";
 
@@ -1156,6 +1157,27 @@ class FrontendRouter extends LogBase
     return route.vars;
   }
 
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Get a single route variable
+   * - Returns the routes variables that are set in the browsers location
+   *
+   * @param {string} label - Name of the route var
+   *
+   * @returns {string|null} content of the specified route variable
+   */
+  getRouteVar( label )
+  {
+    expectNotEmptyString( label,
+      "Missing or invalid parameter [label]" );
+
+    const { route } = router.getRouteAndState();
+
+    const content = route.vars[ label ];
+
+    return content !== undefined ? content : null;
+  }
   // ---------------------------------------------------------------------------
 
   /**
