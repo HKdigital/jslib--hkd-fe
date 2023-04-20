@@ -1,8 +1,15 @@
 <script context="module">
-  const fetched = new Map();
 
-  export function preventDefaultOnOutbound( node, outbound=false ) {
+/* ---------------------------------------------------------------- Internals */
 
+const fetched = new Map();
+
+/* ------------------------------------------------------------------ Exports */
+
+export let preventDefaultOnOutbound;
+
+preventDefaultOnOutbound = ( node, outbound=false ) =>
+  {
     function _tryPreventDefault( e )
     {
       // console.log( "outbound?", outbound );
@@ -20,7 +27,7 @@
         node.removeEventListener("click", _tryPreventDefault, true);
       }
     };
-  }
+  };
 
 </script>
 

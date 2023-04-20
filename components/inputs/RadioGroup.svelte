@@ -9,9 +9,6 @@ import { expectNumber,
 
 import { arrayToObject } from "@hkd-base/helpers/array.js";
 
-import TertiaryButton
-  from "@hkd-fe/components/buttons/TertiaryButton.svelte";
-
 import BodyText
   from "@hkd-fe/components/text/BodyText.svelte";
 
@@ -27,10 +24,10 @@ import { generateLocalId } from "@hkd-base/helpers/unique.js";
 
 // -- Logging
 
-import { getModuleLogger }
-  from "@hkd-base/helpers/log.js";
+// import { getModuleLogger }
+//   from "@hkd-base/helpers/log.js";
 
-const log = getModuleLogger( "RadioGroup.svelte" );
+// const log = getModuleLogger( "RadioGroup.svelte" );
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -123,35 +120,37 @@ export let center = true;
  *   Value to select (selects the first option that has the specified value,
  *   use selectIndex if a specific index should be selected)
  */
-export function selectValue( value )
-{
-  expectDefined( value, "Missing or invalid parameter [value]" );
+export let selectValue;
 
-  if( null === value )
+selectValue = ( value ) =>
   {
-    //
-    // null means no value selected
-    //
-    selectByIndex( -1 );
-    return;
-  }
+    expectDefined( value, "Missing or invalid parameter [value]" );
 
-  for( let j = 0, n = standardizedValues.length; j < n; j = j + 1 )
-  {
-    const current = standardizedValues[ j ];
-
-    if( value === current.value )
+    if( null === value )
     {
-      if( selectedIndex !== j )
-      {
-        selectedIndex = j;
-      }
-      break;
+      //
+      // null means no value selected
+      //
+      selectByIndex( -1 );
+      return;
     }
-  } // end for
 
-  // console.log( { value, selectedIndex } );
-}
+    for( let j = 0, n = standardizedValues.length; j < n; j = j + 1 )
+    {
+      const current = standardizedValues[ j ];
+
+      if( value === current.value )
+      {
+        if( selectedIndex !== j )
+        {
+          selectedIndex = j;
+        }
+        break;
+      }
+    } // end for
+
+    // console.log( { value, selectedIndex } );
+  };
 
 // -----------------------------------------------------------------------------
 
@@ -161,15 +160,17 @@ export function selectValue( value )
  * @param {number} [index=-1]
  *   The value `-1` implies that no value will be selected
  */
-export function selectByIndex( index=-1 )
-{
-  expectNumber( index, "Missing or invalid parameter [index]" );
+export let selectByIndex;
 
-  if( selectedIndex !== index )
+selectByIndex = ( index=-1 ) =>
   {
-    selectedIndex = index;
-  }
-}
+    expectNumber( index, "Missing or invalid parameter [index]" );
+
+    if( selectedIndex !== index )
+    {
+      selectedIndex = index;
+    }
+  };
 
 // -----------------------------------------------------------------------------
 
@@ -177,18 +178,23 @@ export function selectByIndex( index=-1 )
  * Reset the selected value
  * - No value will be selected after calling this function
  */
-export function reset( e )
+export let reset;
+
+reset = ( e ) =>
 {
-  // console.log("reset");
-
-  selectByIndex( -1 );
-
   if( e )
   {
-    e.stopPropagation();
-    e.preventDefault();
+    // console.log("reset");
+
+    selectByIndex( -1 );
+
+    if( e  )
+    {
+      e.stopPropagation();
+      e.preventDefault();
+    }
   }
-}
+};
 
 /* ----------------------------------------------------------------- Reactive */
 
