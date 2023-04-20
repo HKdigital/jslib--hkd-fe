@@ -226,7 +226,8 @@ $: {
        on:click={toggle}
        class="g-no-select {cssClassNames}"
        class:x-center={center}
-       class:x-pointer={allowEdit}>
+       class:x-pointer={allowEdit}
+       on:keydown>
 
       <ListIcon
         content={iconContent}
