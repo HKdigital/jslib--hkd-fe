@@ -22,7 +22,7 @@ import { UPDATE_EVENT }
 import { getModuleLogger }
   from "@hkd-base/helpers/log.js";
 
-const log = getModuleLogger( "BodyTextEdit.svelte" );
+const log = getModuleLogger( "TextEdit.svelte" );
 
 
 /* ---------------------------------------------------------------- Internals */
