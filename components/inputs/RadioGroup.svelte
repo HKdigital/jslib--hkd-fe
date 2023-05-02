@@ -182,17 +182,12 @@ export let reset;
 
 reset = ( e ) =>
 {
-  if( e )
+  selectByIndex( -1 );
+
+  if( e  )
   {
-    // console.log("reset");
-
-    selectByIndex( -1 );
-
-    if( e  )
-    {
-      e.stopPropagation();
-      e.preventDefault();
-    }
+    e.stopPropagation();
+    e.preventDefault();
   }
 };
 
