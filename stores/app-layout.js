@@ -28,7 +28,7 @@ const priority =
   new DerivedStore( [ contentPanelReady ],
     function derive( storesMap )
     {
-      const value = storesMap.get(0).get();
+      const value = storesMap.getValueFromStore( 0 );
 
       if( value )
       {

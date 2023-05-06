@@ -25,7 +25,6 @@ let showErrorMessage = false;
 
 let placeholderText = null;
 
-
 // let pristine = true;
 
 let focused = false;
@@ -155,7 +154,8 @@ $: {
 // -----------------------------------------------------------------------------
 
 $: {
-  if( label && (placeholder.length || value.length) )
+  //if( label && (placeholder.length || value.length) )
+  if( label && (focused || value.length) )
   {
     // Use label as placeholder
     hideLabel = false;
@@ -309,6 +309,8 @@ export { inputType as type };
   <div class="cc-label"
        class:x-hidden={hideLabel}>{label}</div>
 
+   <div cc-input-bg></div>
+
    {#if inputType == "number"}
     <input class="cc-input" type="number" bind:value
            on:focus={setFocus}
@@ -361,9 +363,36 @@ export { inputType as type };
     transition: opacity 0.5s;
   }*/
 
-  .cc-input
+  [cc-input-bg]
+  {
+    z-index: 1;
+
+    grid-row: 2;
+    grid-column: 1;
+
+    background-color: transparent;
+  }
+
+  .cc-placeholder
   {
     z-index: 2;
+
+    grid-row: 2;
+    grid-column: 1;
+
+    justify-self: center;
+
+    transition: opacity 0.5s;
+  }
+
+  .cc-placeholder.x-focused
+  {
+    opacity: 0.5;
+  }
+
+  .cc-input
+  {
+    z-index: 3;
 
     grid-row: 2;
     grid-column: 1;
@@ -382,23 +411,6 @@ export { inputType as type };
     border-color: aqua;
 
     background-color: transparent;
-  }
-
-  .cc-placeholder
-  {
-    z-index: 1;
-
-    grid-row: 2;
-    grid-column: 1;
-
-    justify-self: center;
-
-    transition: opacity 0.5s;
-  }
-
-  .cc-placeholder.x-focused
-  {
-    opacity: 0.5;
   }
 
   .cc-error

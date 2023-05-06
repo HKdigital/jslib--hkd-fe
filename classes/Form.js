@@ -85,12 +85,15 @@ export default class Form extends LogBase
     {
       values[ key ] = new ValueStore();
 
+
+      const { type, flags } = schemaProperties[ key ];
+
+      this._flags[ key ] = flags || {};
+
       if( key in initialValues )
       {
         continue;
       }
-
-      const { type, flags } = schemaProperties[ key ];
 
       if( flags && ("default" in flags) )
       {
@@ -100,8 +103,6 @@ export default class Form extends LogBase
       {
         initialValues[ key ] = defaultsByType[ type ];
       }
-
-      this._flags[ key ] = flags || {};
 
     } // end for
 

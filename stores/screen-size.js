@@ -62,14 +62,11 @@ function enableMediaQueries()
 
     expectNotEmptyString( width, "Invalid breakpoint width" );
 
-    let query;
+    let query = "screen AND ";
 
     if( previousWidth )
     {
-      query = `(min-width: ${previousWidth}) AND `;
-    }
-    else {
-      query = "";
+      query += `(min-width: ${previousWidth}) AND `;
     }
 
     query += `(max-width: ${width})`;
@@ -83,6 +80,18 @@ function enableMediaQueries()
     offs.register(
       mq.listen( ( MediaQueryListEvent ) =>
         {
+          // if( MediaQueryListEvent.matches )
+          // {
+          //   console.log( "MATCHES",
+          //     MediaQueryListEvent,
+          //     MediaQueryListEvent.matches,
+          //     {
+          //       innerWidth: window.innerWidth,
+          //       innerHeight: window.innerHeight,
+          //       devicePixelRatio: window.devicePixelRatio
+          //     } );
+          // }
+
           if( MediaQueryListEvent.matches )
           {
             screenWidthSize.set( label );
@@ -156,7 +165,7 @@ export { screenWidthSize };
 export let screenWidthSmall =
   new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
       {
-        const value = storesMap.get(0).get();
+        const value = storesMap.getValueFromStore( 0 );
 
         return (value <= SCREEN_WIDTH_SMALL );
       } );
@@ -170,7 +179,7 @@ export let screenWidthSmall =
 export let screenWidthSmallOrMedium =
   new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
       {
-        const value = storesMap.get(0).get();
+        const value = storesMap.getValueFromStore( 0 );
 
         return (value <= SCREEN_WIDTH_MEDIUM );
       } );
