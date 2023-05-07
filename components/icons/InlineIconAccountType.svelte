@@ -6,13 +6,13 @@ import InlineIcon
   from "@hkd-fe/components/icons/InlineIcon.svelte";
 
 import Sparkles
-  from "@hkd-fe/components/icons/hero/solid/Sparkles.svelte";
+  from "@hkd-fe/components/icons/hero/outline/Sparkles.svelte";
 
 import AcademicCap
-  from "@hkd-fe/components/icons/hero/solid/AcademicCap.svelte";
+  from "@hkd-fe/components/icons/hero/outline/AcademicCap.svelte";
 
 import BuildingOffice
-  from "@hkd-fe/components/icons/hero/solid/BuildingOffice.svelte";
+  from "@hkd-fe/components/icons/hero/outline/BuildingOffice.svelte";
 
 import FaceFrown
   from "@hkd-fe/components/icons/hero/outline/FaceFrown.svelte";
