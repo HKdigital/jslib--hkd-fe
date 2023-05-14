@@ -127,6 +127,7 @@ $: {
      class:x-inline={inline}
      class:x-center-inner={centerInner}
      class:x-fit-width={!inline && responsive && $screenWidthSmall}
+     class:x-width-max-content={!inline && responsive && !$screenWidthSmall}
      use:preventClickOnDisabled
      use:tryRedirect
      on:click>

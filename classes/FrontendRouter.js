@@ -5,29 +5,42 @@ import {
   expectString,
   expectNotEmptyString,
   expectArray,
-  expectObject } from "@hkd-base/helpers/expect.js";
+  expectObject }
+  from "@hkd-base/helpers/expect.js";
 
-import { defer } from "@hkd-base/helpers/process.js";
+import { defer }
+  from "@hkd-base/helpers/process.js";
 
-import { equals } from "@hkd-base/helpers/compare.js";
+import { equals }
+  from "@hkd-base/helpers/compare.js";
 
-import { clone, updateObject } from "@hkd-base/helpers/object.js";
+import { clone, updateObject }
+  from "@hkd-base/helpers/object.js";
 
-import { generateLocalId } from "@hkd-base/helpers/unique.js";
+import { generateLocalId }
+  from "@hkd-base/helpers/unique.js";
 
-import ValueStore from "@hkd-base/classes/ValueStore.js";
+import ValueStore
+  from "@hkd-base/classes/ValueStore.js";
+
+import DerivedStore
+  from "@hkd-base/classes/DerivedStore.js";
 
 import { currentLanguage,
-         LANG_DEFAULT } from "@hkd-base/stores/language.js";
+         LANG_DEFAULT }
+  from "@hkd-base/stores/language.js";
 
-import PathMatcher from "@hkd-fe/classes/PathMatcher.js";
+import PathMatcher
+  from "@hkd-fe/classes/PathMatcher.js";
 
+import LogBase
+  from "@hkd-base/classes/LogBase.js";
 
-import LogBase from "@hkd-base/classes/LogBase.js";
+import RouteStateStore
+  from "@hkd-fe/classes/RouteStateStore.js";
 
-import RouteStateStore from "@hkd-fe/classes/RouteStateStore.js";
-
-import HistoryStorage from "@hkd-fe/classes/HistoryStorage.js";
+import HistoryStorage
+  from "@hkd-fe/classes/HistoryStorage.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -46,6 +59,7 @@ const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
 const DEFAULT_ROUTE_HOME = "/";
 const DEFAULT_ROUTE_NOT_FOUND = "not-found";
 
+// -----------------------------------------------------------------------------
 
 /**
  * Strip hash from a path
@@ -65,6 +79,8 @@ function stripHash( path )
 
   return path;
 }
+
+// -----------------------------------------------------------------------------
 
 //
 // A single instance of the FrontendRouter class will be assigned to the
@@ -123,6 +139,12 @@ class FrontendRouter extends LogBase
 
     const routeStateStore =
       router.routeStateStore = new RouteStateStore();
+
+    router.routeLabelStore =
+      new DerivedStore( [ routeStateStore ], () =>
+        {
+          return routeStateStore.get().route.label;
+        } );
 
     router.userHash = new ValueStore();
 

@@ -12,7 +12,8 @@ import { ROUTE_NO_ACCESS }
 
 // -- Services
 
-import { BACKEND_SERVICE_NAME } from "@src/constants/service-names.js";
+import { BACKEND_SERVICE_NAME }
+  from "@src/constants/service-names.js";
 
 import InitService
   from "@hkd-base/services/InitService.js";

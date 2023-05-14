@@ -93,6 +93,7 @@ export const {
   getStateStoreForCurrentRoute,
 
   routeStateStore,
+  routeLabelStore,
 
   redirectTo,
   redirectToRoute,
