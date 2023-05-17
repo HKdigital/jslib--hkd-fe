@@ -16,8 +16,6 @@ export let onColor = null;
 
 export let disabled = false;
 
-export let center = false;
-
 export let centerInner = true;
 
 /* ----------------------------------------------------------------- Reactive */
@@ -28,10 +26,10 @@ export let centerInner = true;
   c-tertiary-button
   {...$$restProps}
   inline={true}
-  class="{cssClassNames} {center ? 'g-text-align-center' : ''}"
+  class="{cssClassNames}"
   {centerInner}
   {onColor}
   on:click
   {disabled}>
-  <slot></slot>
+  <span><slot></slot></span>
 </Button>

@@ -95,6 +95,7 @@ export let responsive = true;
 
 export let disabled = false;
 
+export let center = false;
 export let centerInner = true;
 
 export let inline = false;
@@ -103,6 +104,13 @@ export let route = null;
 export let routeOptions = { replaceCurrent: false };
 
 /* ----------------------------------------------------------------- Reactive */
+
+$: {
+  if( center )
+  {
+    inline = false;
+  }
+}
 
 $: {
   //
@@ -125,6 +133,7 @@ $: {
             {cssClassNames}"
      class:x-disabled={disabled}
      class:x-inline={inline}
+     class:x-center={center}
      class:x-center-inner={centerInner}
      class:x-fit-width={!inline && responsive && $screenWidthSmall}
      class:x-width-max-content={!inline && responsive && !$screenWidthSmall}
@@ -146,7 +155,6 @@ $: {
     color: aqua;
     background-color: olive;
 
-
     &:not(.x-inline)
     {
       // width: max-content;
@@ -163,6 +171,12 @@ $: {
     &.x-inline
     {
       display: inline-block;
+    }
+
+    &.x-center
+    {
+      margin-left: auto;
+      margin-right: auto;
     }
 
     &.x-disabled

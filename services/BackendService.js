@@ -85,7 +85,7 @@ const TOKEN_EXPIRED_MARGIN_MS = 300000; // 300 seconds = 5 minutes
 
 /* ------------------------------------------------------------------ Exports */
 
-export const IDENTITY_TOKEN_NAME = "jwt-idty";
+export const IDENTITY_TOKEN_NAME = "jwt-idy";
 export const ACCESS_TOKEN_NAME = "jwt-xs";
 
 /* ------------------------------------------------------------ Service class */
