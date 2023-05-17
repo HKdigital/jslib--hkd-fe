@@ -173,7 +173,7 @@ $: {
 
 </script>
 
-<div c-body-text-edit
+<div c-text-edit
      class="g-bg-{surfaceColor} g-padding-tiny {cssClassNames}"
      class:x-focused={focused}>
   <BodyText
@@ -196,7 +196,7 @@ $: {
 </div>
 
 <style>
-  [c-body-text-edit]
+  [c-text-edit]
   {
     cursor: text;
   }
