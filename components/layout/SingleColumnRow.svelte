@@ -20,6 +20,9 @@ import ValueStore from "@hkd-base/classes/ValueStore.js";
 import { windowSize }
   from "@hkd-fe/stores/window.js";
 
+import { screenWidthSmall }
+  from "@hkd-fe/stores/screen-size.js";
+
 /* ---------------------------------------------------------------- Internals */
 
 const referenceFullWidth = new ValueStore( REFERENCE_FULL_WIDTH );
@@ -200,7 +203,8 @@ $: {
 
 <div {...$$restProps}
      c-single-column-row
-     class="{cssClassNames}">
+     class="{cssClassNames}"
+     class:x-small={$screenWidthSmall}>
 
   <div cc-front class="{colorClassesFront}"
        style={frontStyle}
@@ -218,7 +222,7 @@ $: {
 
 <style>
   /*.measure-div { height: 10px; width: 99vw; background-color: red; }*/
-  .measure-div { height: 0px; width: 100vw; }
+/*  .measure-div { height: 0px; width: 100vw; }*/
 
   :global( [c-single-column-row] )
   {

@@ -17,6 +17,11 @@ import BuildingOffice
 import FaceFrown
   from "@hkd-fe/components/icons/hero/outline/FaceFrown.svelte";
 
+import { IS_SCHOOL_ACCOUNT,
+         IS_COMPANY_ACCOUNT,
+         IS_OPERATOR_ACCOUNT }
+  from "@jetnet-loket/constants/accounts.js";
+
 import { getModuleLogger }
   from "@hkd-base/helpers/log.js";
 
@@ -46,15 +51,15 @@ $: {
   //
   if( account )
   {
-    if( account.isSiteOperator )
+    if( account[ IS_OPERATOR_ACCOUNT ] )
     {
       icon = Sparkles;
     }
-    else if( account.isSchoolAccount )
+    else if( account[ IS_SCHOOL_ACCOUNT ] )
     {
       icon = AcademicCap;
     }
-    else if( account.isCompanyAccount )
+    else if( account[ IS_COMPANY_ACCOUNT ] )
     {
       icon = BuildingOffice;
     }

@@ -39,6 +39,11 @@
 
 /* --------------------------------------------------------------------- Grid */
 
+.g-grid
+{
+  display: grid;
+}
+
 .g-justify-self-center
 {
  justify-self: center;
