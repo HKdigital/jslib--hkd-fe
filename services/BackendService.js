@@ -10,12 +10,14 @@
  * - If an expired identity token is found, it will be erased
  *
  * Functionality includes:
+ *
  * - jsonPost - API POST request
  * - jsonGet - API GET request
  * - jsonPostWithIdentity - POST request that includes an identity token
  * - jsonPostWithAccess - POST request that includes an access token
  * - jsonGetWithIdentity - GET request that includes an identity token
  * - jsonGetWithAccess - GET request that includes an access token
+ *
  * - setToken - Set a token that can be used for backend communication
  * - getTokenStore - Get the store object in which a token is stored
  * - getIdentityTokenStore - Get the store object of the identity token
@@ -24,7 +26,9 @@
  * - tryGetDecodedToken - Get a decoded token if set
  * - tryGetDecodedIdentityToken - Get a decoded identity token if set
  * - tryGetDecodedAccessToken - Get a decoded access token if set
+ *
  * - logout - Clear session data on the browser side (identity token)
+ *
  * - decodeToken - Helper function to decode (view) token contents
  *
  * @example
@@ -51,11 +55,14 @@
 
 import { expectString,
          expectNotEmptyString,
-         expectArray } from "@hkd-base/helpers/expect.js";
+         expectArray }
+  from "@hkd-base/helpers/expect.js";
 
-import { Base } from "@hkd-base/helpers/services.js";
+import { Base }
+  from "@hkd-base/helpers/services.js";
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DedupValueStore
+  from "@hkd-base/classes/DedupValueStore.js";
 
 import {
   STOPPED,
@@ -63,18 +70,27 @@ import {
   RUNNING,
   STOPPING,
   /* UNAVAILABLE, */
-  /* ERROR */ } from "@hkd-base/helpers/service-states.js";
+  /* ERROR */ }
+  from "@hkd-base/helpers/service-states.js";
 
 import { jsonApiGet,
-         jsonApiPost } from "@hkd-base/helpers/json-api.js";
+         jsonApiPost }
+  from "@hkd-base/helpers/json-api.js";
 
-import { decodePayload } from "@hkd-base/helpers/jwt-info.js";
+import { httpApiPost,
+         httpApiGet }
+  from "@hkd-base/helpers/http-api.js";
 
-import MemoryCache from "@hkd-base/classes/MemoryCache.js";
+import { decodePayload }
+  from "@hkd-base/helpers/jwt-info.js";
+
+import MemoryCache
+  from "@hkd-base/classes/MemoryCache.js";
 
 import { clearHistoryStorage,
          userHash,
-         goHome } from "@hkd-fe/stores/router.js";
+         goHome }
+  from "@hkd-fe/stores/router.js";
 
 /* ------------------------------------------------------------------ Helpers */
 
@@ -111,7 +127,7 @@ class BackendService extends Base
      */
     super( /* configureFn */ ( config={} ) =>
       {
-        const displayConfig = config;
+        // const displayConfig = config;
 
         expectNotEmptyString( config.origin,
           "Missing or invalid parameter [config.origin]" );
@@ -199,11 +215,11 @@ class BackendService extends Base
       } );
   }
 
-
   // ---------------------------------------------------------------------------
 
   /**
    * Send POST request to the backend
+   * - Decodes the returned JSON response
    *
    * @param {string} _.uri
    * @param {object|null} _.body
@@ -263,7 +279,71 @@ class BackendService extends Base
   // ---------------------------------------------------------------------------
 
   /**
+   * Send POST request to the backend
+   *
+   * @param {string} _.uri
+   * @param {object|null} _.body
+   *
+   * @param {string} [_.tokenName]
+   *   Name of the token to use (should be defined in service property
+   *   `tokens`), e.g. IDENTITY_TOKEN_NAME or ACCESS_TOKEN_NAME
+   *
+   * @param {object} [headers] - Request headers
+   *
+   * @returns {object} backend response
+   */
+  async httpPost( { uri, body, tokenName=null, headers=null }={} )
+  {
+    const remoteConfig =
+      {
+        origin: this.config.origin,
+        apiPrefix: this.config.apiPrefix
+      };
+
+    expectNotEmptyString( remoteConfig.origin,
+        "Missing or invalid configuration property [origin]" );
+
+    expectString( remoteConfig.apiPrefix,
+        "Missing or invalid configuration property [apiPrefix]" );
+
+    if( tokenName )
+    {
+      const token = this.tryGetToken( tokenName );
+
+      if( !token )
+      {
+        throw new Error(`The token [${tokenName}] has not been set.`);
+      }
+
+      remoteConfig.token = token;
+    }
+
+    // this.log.debug(`${this.serviceName()}.jsonPost`, { uri, body }, remoteConfig);
+
+    try {
+      const response =
+        await httpApiPost(
+          {
+            uri,
+            body,
+            headers,
+            config: remoteConfig
+          } );
+
+      return response;
+    }
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonPost failed`, { cause: e } );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Send GET request to the backend
+   * - Decodes the returned JSON response
    *
    * @param {string} _.uri
    *
@@ -357,6 +437,24 @@ class BackendService extends Base
     return this.jsonPost(
       { uri, body, tokenName: ACCESS_TOKEN_NAME } );
   }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Send POST request to the backend that includes the access token service
+   * property.
+   *
+   * @param {string} _.uri
+   * @param {object|null} _.body
+   *
+   * @returns {object} backend response
+   */
+  async httpPostWithAccess( { uri, body }={} )
+  {
+    return this.httpPost(
+      { uri, body, tokenName: ACCESS_TOKEN_NAME } );
+  }
+
 
   // ---------------------------------------------------------------------------
 
