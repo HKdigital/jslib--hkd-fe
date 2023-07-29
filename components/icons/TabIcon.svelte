@@ -7,10 +7,10 @@
 import { redirectToRoute }
   from "@hkd-fe/stores/router.js";
 
-// -- Stores
+// // -- Stores
 
-import { screenWidthSmall }
-  from "@hkd-fe/stores/screen-size.js";
+// import { screenWidthSmall }
+//   from "@hkd-fe/stores/screen-size.js";
 
 /* ---------------------------------------------------------------- Internals */
 

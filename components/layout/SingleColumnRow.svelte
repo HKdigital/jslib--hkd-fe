@@ -9,27 +9,26 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { SMALL_COLUMN_WIDTH,
-         MEDIUM_COLUMN_WIDTH,
-         LARGE_COLUMN_WIDTH,
-         REFERENCE_FULL_WIDTH }
- from "@hkd-fe/helpers/breakpoints.js";
-
-import ValueStore from "@hkd-base/classes/ValueStore.js";
-
 import { windowSize }
   from "@hkd-fe/stores/window.js";
 
-import { screenWidthSmall }
+import { WIDTH_RANGE_SMALL,
+         WIDTH_RANGE_MEDIUM,
+         WIDTH_RANGE_LARGE,
+         WIDTH_RANGE_XL,
+         BREAKPOINTS,
+         screenWidthRange }
   from "@hkd-fe/stores/screen-size.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-const referenceFullWidth = new ValueStore( REFERENCE_FULL_WIDTH );
+// const DEFAULT_MAX_COLUMN_WIDTH = 1366;
+
+// const maxColumnWidth = new ValueStore( MAX_COLUMN_WIDTH );
 
 /* ------------------------------------------------------------------ Exports */
 
-export { referenceFullWidth };
+// export { maxColumnWidth };
 
 export let onColor;
 
@@ -42,12 +41,19 @@ export let onColor;
 
 /* ---------------------------------------------------------------- Internals */
 
-let frontStyleMaxWidth = "";
-let frontStyleColumns = "";
+const SMALL = 1;
+const MEDIUM = 2;
+const LARGE = 3;
+const XL = 4;
 
-let frontStyle = "";
+let outerWidth;
+
+let columnWidthRange;
+let columnWidth;
 
 /* ------------------------------------------------------------------ Exports */
+
+// export let maxColumnWidth = DEFAULT_MAX_COLUMN_WIDTH;
 
 /**
  * Set default surface color for front and background element
@@ -78,19 +84,15 @@ export let surfaceColorBackground = null;
 export let centerFront = true;
 
 /**
- * Enable small, medium or large column width
- * - By default the column will be as wide as the available space,
- *   which is by default limited by `referenceFullWidth`.
+ * Set maximum column width to size: small, medium or large.
+ * - If not set, the default is xl
+ * - If multiple sizes are set, ...
  */
 export let small = false;
 export let medium = false;
 export let large = false;
 
-/**
- * Limit front element width to the page's content max width
- * @type {boolean}
- */
-export let limitFrontWidth = true;
+export let collapse = false;
 
 /**
  * Add CSS classes to the components outer element
@@ -102,82 +104,15 @@ export { cssClassNames as class };
 
 /* ----------------------------------------------------------------- Reactive */
 
-$: {
-  //
-  // Determine `frontStyleMaxWidth`
-  // - Contains CSS var: `--max-front-width`
-  //
-  if( limitFrontWidth )
-  {
-    const value = $referenceFullWidth;
-
-    //
-    // Limit front width to max view width
-    //
-    frontStyleMaxWidth = `--max-front-width: ${value}px;`;
-  }
-  else if( frontStyleMaxWidth.length )
-  {
-    frontStyleMaxWidth = "";
-  }
-}
-
-// -----------------------------------------------------------------------------
-
-$: {
-  const rowElemWidth = ($windowSize).width;
-
-  //
-  // Determine `frontStyleColumns`
-  // - Contains CSS vars: `--column-width`
-  //
-  if( rowElemWidth )
-  {
-    let columnWidth;
-
-    if( small )
-    {
-      columnWidth = Math.min( SMALL_COLUMN_WIDTH, rowElemWidth );
-    }
-    else if( large )
-    {
-      columnWidth = Math.min( LARGE_COLUMN_WIDTH, rowElemWidth );
-    }
-    else if( medium )
-    {
-      columnWidth = Math.min( MEDIUM_COLUMN_WIDTH, rowElemWidth );
-    }
-    else {
-      columnWidth = rowElemWidth;
-    }
-
-    frontStyleColumns = `width: ${columnWidth}px`;
-
-    // if( columnWidth )
-    // {
-    //   frontStyleColumns = `--column-width: ${columnWidth}px`;
-    // }
-    // else {
-    //   frontStyleColumns = "--column-width: 100%;";
-    // }
-  }
-}
-
-// -----------------------------------------------------------------------------
-
-$: {
-  //
-  // Combine `frontStyleMaxWidth` and `frontStyleColumns`
-  //
-  frontStyle = frontStyleMaxWidth + frontStyleColumns;
-}
-
-// -----------------------------------------------------------------------------
-
 let colorClassesFront = "";
 let colorClassesBackground = "";
 
 $: {
+  //
+  // Use surface colors to determine CSS classes for:
+  // - colorClassesFront
+  // - colorClassesBackground
+  //
   if( surfaceColorFront || surfaceColor )
   {
     colorClassesFront = `g-bg-${surfaceColorFront || surfaceColor}`;
@@ -189,41 +124,114 @@ $: {
   }
 }
 
-// $: {
-//   const size = $windowSize;
+// -----------------------------------------------------------------------------
 
-//   rowElemWidth = size.width;
-// }
+$: {
+  //
+  // Determine the current column width based on the `screenWidthRange` and
+  // the maximum column width (attributes "small", "medium", "large")
+  //
+  switch( $screenWidthRange )
+  {
+    case WIDTH_RANGE_SMALL:
+      columnWidthRange = SMALL;
+      break;
+
+    case WIDTH_RANGE_MEDIUM:
+
+      if( small )
+      {
+        columnWidthRange = SMALL;
+      }
+      else {
+        columnWidthRange = MEDIUM;
+      }
+      break;
+
+    case WIDTH_RANGE_LARGE:
+
+      if( small )
+      {
+        columnWidthRange = SMALL;
+      }
+      else if( medium ) {
+        columnWidthRange = MEDIUM;
+      }
+      else {
+        columnWidthRange = LARGE;
+      }
+      break;
+
+    case WIDTH_RANGE_XL:
+
+      if( small )
+      {
+        columnWidthRange = SMALL;
+      }
+      else if( medium ) {
+        columnWidthRange = MEDIUM;
+      }
+      else if( large ) {
+        columnWidthRange = LARGE;
+      }
+      else {
+        columnWidthRange = XL;
+      }
+      break;
+
+    case undefined:
+      columnWidthRange = 0;
+      break;
+
+    default:
+      throw new Error(
+        `Invalid value [$screenWidthRange=${$screenWidthRange}]`);
+  }
+
+  let tmp = BREAKPOINTS[ columnWidthRange ];
+
+  outerWidth = ($windowSize).width;
+
+  if( tmp > outerWidth )
+  {
+    columnWidth = outerWidth;
+  }
+  else {
+    columnWidth = tmp;
+  }
+}
 
 </script>
 
-<!-- {rowElemWidth} -->
+{#if columnWidth}
+  <div {...$$restProps}
+       c-single-column-row
+       class="{cssClassNames}"
+       class:x-collapse={collapse}
+       style="width: {outerWidth}px; max-width: {outerWidth}px;"
 
-<!-- <div class="measure-div" bind:clientWidth={rowElemWidth}></div> -->
+       class:x-small={columnWidthRange === SMALL}
+       class:x-medium={columnWidthRange === MEDIUM}
+       class:x-large={columnWidthRange === LARGE}
+       class:x-xl={columnWidthRange === XL}>
 
-<div {...$$restProps}
-     c-single-column-row
-     class="{cssClassNames}"
-     class:x-small={$screenWidthSmall}>
+    <div cc-front
+         class="{colorClassesFront}"
+         style="width: {columnWidth}px; max-width: {columnWidth}px;"
+         class:x-justify-center={centerFront}>
 
-  <div cc-front class="{colorClassesFront}"
-       style={frontStyle}
-       class:x-justify-center={centerFront}>
+      <slot></slot>
 
-    <slot><!-- default slot --></slot>
+    </div>
+
+    <!-- <div class="cc-background {colorClassesBackground}">
+      <slot name="background"></slot>
+    </div> -->
 
   </div>
-
-  <!-- <div class="cc-background {colorClassesBackground}">
-    <slot name="background"></slot>
-  </div> -->
-
-</div>
+{/if}
 
 <style>
-  /*.measure-div { height: 10px; width: 99vw; background-color: red; }*/
-/*  .measure-div { height: 0px; width: 100vw; }*/
-
   :global( [c-single-column-row] )
   {
     display: grid;
@@ -231,33 +239,25 @@ $: {
     grid-template-rows: 1fr;
 
     width: 100%;
+
     overflow-x: hidden;
 
-    /*border: solid 5px green;*/
+    /* border: solid 5px green; */
+
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: 0 !important;
+    margin-right: 0 !important;
   }
 
-  :global( [c-single-column-row] [cc-front] )
+  :global( [c-single-column-row] > [cc-front] )
   {
     grid-column: 1 / span 1;
     grid-row: 1 / span 1;
     z-index: 2;
 
-    /*width: max( 100%, var(--column-width, 100%) );*/
-    /*width: var(--column-width);*/
-
-    max-width: var(--max-front-width, 100%);
-
-    /*max-width: 100%;
-    width: var(--column-width, 100%);*/
-
     display: grid;
     grid-template-columns: 100%;
-    /*grid-template-columns: var(--column-width, 100%);*/
-    /*grid-template-columns: var(--column-width, 100px);*/
-    /*grid-template-columns: 400px;*/
-
-    grid-column-gap: 0px;
-    grid-row-gap: 0px;
 
     grid-template-rows: 1fr;
 
@@ -271,7 +271,6 @@ $: {
 
   :global( [c-single-column-row] > [cc-front] > * )
   {
-    /* prevent row from being too small */
     /* prevent 'too big content' to break out */
     max-width: 100%;
   }

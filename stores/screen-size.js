@@ -1,32 +1,47 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectNotEmptyString } from "@hkd-base/helpers/expect.js";
+import { expectNumber }
+  from "@hkd-base/helpers/expect.js";
 
-import Offs from "@hkd-base/classes/Offs.js";
-import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
+import Offs
+  from "@hkd-base/classes/Offs.js";
+import MediaQuery
+  from "@hkd-fe/classes/MediaQuery.js";
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
-import DerivedStore from "@hkd-base/classes/DerivedStore.js";
+import DedupValueStore
+  from "@hkd-base/classes/DedupValueStore.js";
+
+import DerivedStore
+  from "@hkd-base/classes/DerivedStore.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-const SCREEN_WIDTH_SMALL = 1;
-const SCREEN_WIDTH_MEDIUM = 2;
-const SCREEN_WIDTH_LARGE = 3;
-const SCREEN_WIDTH_EXTRA_LARGE = 4;
+const WIDTH_RANGE_SMALL = 1;
+const WIDTH_RANGE_MEDIUM = 2;
+const WIDTH_RANGE_LARGE = 3;
+const WIDTH_RANGE_XL = 4;
 
-let breakPoints =
+const BREAKPOINTS =
+  [
+    0,
+    600,      // 600px or less => WIDTH_RANGE_SMALL
+    900,      // 900px or less => WIDTH_RANGE_MEDIUM
+    1200,     // 1200px or less => WIDTH_RANGE_LARGE
+    1800      // else WIDTH_RANGE_XL
+  ];
+
+const WIDTH_RANGE_LABELS =
   {
-    [ SCREEN_WIDTH_SMALL ]: "576px",
-    [ SCREEN_WIDTH_MEDIUM ]: "768px",
-    [ SCREEN_WIDTH_LARGE ]: "992px",
-    [ SCREEN_WIDTH_EXTRA_LARGE ]: "1200px"
+    [ WIDTH_RANGE_SMALL ]: "small",
+    [ WIDTH_RANGE_MEDIUM ]: "medium",
+    [ WIDTH_RANGE_LARGE ]: "large",
+    [ WIDTH_RANGE_XL ]: "xl"
   };
 
 let offs;
 
-let screenWidthSize  = new DedupValueStore();
+let screenWidthRange  = new DedupValueStore();
 
 // -----------------------------------------------------------------------------
 
@@ -54,51 +69,38 @@ function enableMediaQueries()
 
   offs = new Offs();
 
-  let previousWidth;
+  const small = BREAKPOINTS[1];
+  const medium = BREAKPOINTS[2];
+  const large = BREAKPOINTS[3];
 
-  for( const label in breakPoints )
+  const queriesByRange =
+    [
+      null,
+      `screen AND (max-width: ${small}px)`,
+      `screen AND (min-width: ${small}px) AND (max-width: ${medium}px)`,
+      `screen AND (min-width: ${medium}px) AND (max-width: ${large}px)`,
+      `screen AND (min-width: ${large}px)`
+    ];
+
+  for( let range = 1; range <= 4; range = range + 1 )
   {
-    const width = breakPoints[ label ];
-
-    expectNotEmptyString( width, "Invalid breakpoint width" );
-
-    let query = "screen AND ";
-
-    if( previousWidth )
-    {
-      query += `(min-width: ${previousWidth}) AND `;
-    }
-
-    query += `(max-width: ${width})`;
-
-    // console.log( query );
-
-    previousWidth = width;
+    const query = queriesByRange[ range ];
 
     const mq = new MediaQuery( query );
 
     offs.register(
       mq.listen( ( MediaQueryListEvent ) =>
         {
-          // if( MediaQueryListEvent.matches )
-          // {
-          //   console.log( "MATCHES",
-          //     MediaQueryListEvent,
-          //     MediaQueryListEvent.matches,
-          //     {
-          //       innerWidth: window.innerWidth,
-          //       innerHeight: window.innerHeight,
-          //       devicePixelRatio: window.devicePixelRatio
-          //     } );
-          // }
+          // console.log(
+          //   WIDTH_RANGE_LABELS[ range ], ": ",
+          //   query, MediaQueryListEvent.matches );
 
           if( MediaQueryListEvent.matches )
           {
-            screenWidthSize.set( label );
+            screenWidthRange.set( range );
           }
         } )
       );
-
   } // end for
 }
 
@@ -107,7 +109,7 @@ function enableMediaQueries()
 /**
  * Automatically enable and disable media queries
  */
-screenWidthSize.hasSubscribers.subscribe(
+screenWidthRange.hasSubscribers.subscribe(
   ( hasSubscribers ) =>
     {
       if( hasSubscribers )
@@ -119,42 +121,30 @@ screenWidthSize.hasSubscribers.subscribe(
       }
     } );
 
-// -----------------------------------------------------------------------------
-
-// let unsubscribeScreenWidthSmall;
-
-// screenWidthSmall.hasSubscribers.subscribe(
-//   ( hasSubscribers ) =>
-//     {
-//       if( hasSubscribers )
-//       {
-//         unsubscribeScreenWidthSmall =
-//           screenWidthSize.subscribe( ( value ) =>
-//             {
-//               if( value <= SCREEN_WIDTH_SMALL )
-//               {
-//                 screenWidthSmall.set( true );
-//               }
-//               else {
-//                 screenWidthSmall.set( false );
-//               }
-//             } );
-//       }
-//       else if( unsubscribeScreenWidthSmall )
-//       {
-//         unsubscribeScreenWidthSmall();
-//         unsubscribeScreenWidthSmall = null;
-//       }
-//     } );
-
 /* ------------------------------------------------------------------ Exports */
 
-export { SCREEN_WIDTH_SMALL,
-         SCREEN_WIDTH_MEDIUM,
-         SCREEN_WIDTH_LARGE,
-         SCREEN_WIDTH_EXTRA_LARGE };
+export { WIDTH_RANGE_SMALL,
+         WIDTH_RANGE_MEDIUM,
+         WIDTH_RANGE_LARGE,
+         WIDTH_RANGE_XL };
 
-export { screenWidthSize };
+export { BREAKPOINTS };
+
+export { screenWidthRange };
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Derived store
+ * - Contains the label the corresponds with the current screen size
+ */
+export let screenWidthRangeLabel =
+  new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
+      {
+        const value = storesMap.getValueFromStore( 0 );
+
+        return WIDTH_RANGE_LABELS[ value ];
+      } );
 
 // -----------------------------------------------------------------------------
 
@@ -163,11 +153,11 @@ export { screenWidthSize };
  * - Contains value true if the screen width is small
  */
 export let screenWidthSmall =
-  new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
+  new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );
 
-        return (value <= SCREEN_WIDTH_SMALL );
+        return (value <= WIDTH_RANGE_SMALL );
       } );
 
 // -----------------------------------------------------------------------------
@@ -177,11 +167,11 @@ export let screenWidthSmall =
  * - Contains value true if the screen width is small
  */
 export let screenWidthSmallOrMedium =
-  new DerivedStore( [ screenWidthSize ], ( storesMap ) =>
+  new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );
 
-        return (value <= SCREEN_WIDTH_MEDIUM );
+        return (value <= WIDTH_RANGE_MEDIUM );
       } );
 
 // -----------------------------------------------------------------------------

@@ -29,6 +29,7 @@ export const MEDIUM_COLUMN_WIDTH = Math.floor(REFERENCE_FULL_WIDTH / 2);
 
 export const SMALL_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH / 1.5);
 export const LARGE_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH * 1.5);
+export const XL_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH * 2);
 
 // -----------------------------------------------------------------------------
 
