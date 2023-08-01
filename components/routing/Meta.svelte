@@ -1,5 +1,9 @@
 <script>
   //
+  // This component adds meta data to the page
+  // - This can be used for SEO, but also to give the browser information
+  //   about the page, such as the page title
+  //
   // About SEO optimalization
   // @see https://www.seobility.net/en/seocheck/
   //

@@ -206,7 +206,7 @@ $: {
 {#if columnWidth}
   <div {...$$restProps}
        c-single-column-row
-       class="{cssClassNames}"
+       class="{colorClassesBackground} {cssClassNames}"
        class:x-collapse={collapse}
        style="width: {outerWidth}px; max-width: {outerWidth}px;"
 
