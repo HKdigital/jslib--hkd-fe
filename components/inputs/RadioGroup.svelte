@@ -23,7 +23,8 @@ import CheckCircle
 // import ChevronRightCircle
 //   from "@hkd-fe/components/icons/hero/solid/ChevronRightCircle.svelte";
 
-import { generateLocalId } from "@hkd-base/helpers/unique.js";
+import { generateLocalId }
+  from "@hkd-base/helpers/unique.js";
 
 // -- Logging
 
@@ -244,95 +245,69 @@ $: {
 </script>
 
 <div c-radio-group
-    class:x-center={center}
-     class="{colorClasses}
-            {cssClassNames}">
+     class:x-center={center}
+     class="{colorClasses} {cssClassNames}">
 
   {#if standardizedValues}
 
     {#each standardizedValues as { displayValue, value }, index }
       {#if selectedIndex < 0 || selectedIndex === index}
+
         <label
+          cc-label
           class="g-no-select"
           class:x-selected={selectedIndex === index}>
 
-          <input type=radio {name} {value}
+          <input
+            cc-input
+            type=radio
+            {name}
+            {value}
             on:click={ () => { handleUserSelect( index ); } } />
 
           <ListIcon
             content={ selectedIndex === index ? CheckCircle : Circle }
             {onColor} />
 
-          <!-- <div icon class="x-radio">
-            <svelte:component
-              this={selectedIndex === index ? CheckCircle : Circle } />
-          </div> -->
-
           <BodyText {onColor}>
             {displayValue !== undefined ? displayValue : value}
-
-           <!-- {#if selectedIndex === index}
-
-              <TertiaryButton
-                {onColor}
-                on:click={ reset }>
-
-                - wijzig
-
-              </TertiaryButton>
-
-            {/if} -->
 
           </BodyText>
 
         </label>
+
       {/if}
     {/each}
-
-    <!-- <BodyText {onColor}>
-      <TertiaryButton
-        {onColor}
-        on:click={ reset }>
-
-        wijzig
-
-      </TertiaryButton>
-    </BodyText> -->
 
   {/if}
 
 </div>
 
 <style>
-[c-radio-group]
-{
-  display: grid;
-  grid-template-columns: auto;
-  justify-content: start;
-}
+  [c-radio-group]
+  {
+    display: grid;
+    grid-template-columns: auto;
+    justify-content: start;
+  }
 
-[c-radio-group].x-center
-{
-  justify-content: center;
-}
+  [c-radio-group].x-center
+  {
+    justify-content: center;
+  }
 
-label
-{
-  display: grid;
-  /*  grid-template-columns: min-content auto;*/
-  grid-template-columns: min-content min-content 1fr;
+  [ cc-label ]
+  {
+    display: grid;
+    grid-template-columns: min-content min-content 1fr;
 
-  justify-content: start;
-  justify-items: start;
+    justify-content: start;
+    justify-items: start;
 
-  align-items: center;
-  cursor: pointer;
+    align-items: center;
+    cursor: pointer;
 
-  max-width: max-content;
-}
-
-/*label.x-center {
-  justify-content: center;
-}*/
+    max-width: max-content;
+  }
 
 </style>

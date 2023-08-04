@@ -174,25 +174,26 @@ $: {
 </script>
 
 <div c-text-edit
-     class="g-bg-{surfaceColor} g-padding-tiny {cssClassNames}"
+     class="g-bg-{surfaceColor} {cssClassNames}"
      class:x-focused={focused}>
-  <BodyText
-    onColor={surfaceColor}
-    class={cssClassNames}>
-    <!-- https://stackoverflow.com/questions/24215428/losing-focus-in-contenteditable-in-safari -->
-    <div contenteditable="true"
-         class="cc-content"
+  <div cc-box>
+    <BodyText
+      onColor={surfaceColor}>
+      <!-- https://stackoverflow.com/questions/24215428/losing-focus-in-contenteditable-in-safari -->
+      <div contenteditable="true"
+         cc-content
          class:x-center={center}
          bind:this={editElement}
          on:focus={doFocus}
          on:blur={doBlur}
          on:keydown={tryPreventNewline}
          on:paste={pasteAsPlainText}>
-      {#if !content && !focused}
-        <div class="cc-placeholder">{placeholder}</div>
-      {/if}
-    </div>
-  </BodyText>
+          {#if !content && !focused}
+            <div cc-placeholder>{placeholder}</div>
+          {/if}
+      </div>
+    </BodyText>
+  </div>
 </div>
 
 <style>
@@ -201,14 +202,14 @@ $: {
     cursor: text;
   }
 
-  .cc-content
+  [ cc-content ]
   {
     /* display: block;*/
     display: grid;
   }
 
-  [contenteditable="true"]:active,
-  [contenteditable="true"]:focus {
+  [ cc-content ]:active,
+  [ cc-content ]:focus {
     border:none;
     outline:none;
   }
