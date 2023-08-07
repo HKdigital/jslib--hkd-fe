@@ -202,14 +202,14 @@ $: {
     cursor: text;
   }
 
-  [ cc-content ]
+  [cc-content]
   {
     /* display: block;*/
     display: grid;
   }
 
-  [ cc-content ]:active,
-  [ cc-content ]:focus {
+  [cc-content]:active,
+  [cc-content]:focus {
     border:none;
     outline:none;
   }

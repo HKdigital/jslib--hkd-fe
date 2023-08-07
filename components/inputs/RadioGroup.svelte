@@ -296,7 +296,7 @@ $: {
     justify-content: center;
   }
 
-  [ cc-label ]
+  [cc-label]
   {
     display: grid;
     grid-template-columns: min-content min-content 1fr;
