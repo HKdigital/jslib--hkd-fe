@@ -306,30 +306,32 @@ export { inputType as type };
        on:click
        on:keydown={(e)=> { if( e.code === "Enter" ) { dispatch("enter"); } }}>
 
-  <div class="cc-label"
-       class:x-hidden={hideLabel}>{label}</div>
+  {#if label}
+    <div cc-label
+         class:x-hidden={hideLabel}>{label}</div>
+  {/if}
 
    <div cc-input-bg></div>
 
    {#if inputType == "number"}
-    <input class="cc-input" type="number" bind:value
+    <input cc-input type="number" bind:value
            on:focus={setFocus}
            on:blur={blur}>
   {:else if inputType === "phone"}
-    <input class="cc-input" type="tel" bind:value
+    <input cc-input type="tel" bind:value
            on:focus={setFocus}
            on:blur={blur}>
   {:else if inputType === "email"}
-    <input class="cc-input" type="email" bind:value
+    <input cc-input type="email" bind:value
            on:focus={setFocus}
            on:blur={blur}>
   {:else}
-    <input class="cc-input" type="text" bind:value
+    <input cc-input type="text" bind:value
            on:focus={setFocus}
            on:blur={blur}>
   {/if}
 
-  <span class="cc-placeholder"
+  <span cc-placeholder
         class:x-hidden={hidePlaceholder||focused}>{placeholderText}</span>
 
   <!-- <span class="cc-error"
@@ -349,7 +351,7 @@ export { inputType as type };
     /*background-color: blue;*/
   }
 
-  .cc-label
+  [cc-label]
   {
     z-index: 1;
 
@@ -357,11 +359,6 @@ export { inputType as type };
     opacity: 1;
     transition: opacity 0.5s;
   }
-
-  /*.cc-label.visible {
-    opacity: 1;
-    transition: opacity 0.5s;
-  }*/
 
   [cc-input-bg]
   {
@@ -373,7 +370,7 @@ export { inputType as type };
     background-color: transparent;
   }
 
-  .cc-placeholder
+  [cc-placeholder]
   {
     z-index: 2;
 
@@ -383,14 +380,14 @@ export { inputType as type };
     justify-self: center;
 
     transition: opacity 0.5s;
+
+    &.x-focused
+    {
+      opacity: 0.5;
+    }
   }
 
-  .cc-placeholder.x-focused
-  {
-    opacity: 0.5;
-  }
-
-  .cc-input
+  [cc-input]
   {
     z-index: 3;
 
@@ -413,17 +410,17 @@ export { inputType as type };
     background-color: transparent;
   }
 
-  .cc-error
-  {
-    z-index: 1;
+  // [cc-error]
+  // {
+  //   z-index: 1;
 
-    grid-row: 3;
-    grid-column: 1;
+  //   grid-row: 3;
+  //   grid-column: 1;
 
-    text-align: center;
+  //   text-align: center;
 
-    transition: opacity 0.5s;
-  }
+  //   transition: opacity 0.5s;
+  // }
 
   .x-hidden
   {
@@ -434,50 +431,5 @@ export { inputType as type };
   {
     display: none;
   }
-
-  /*.placeholder {
-    position: absolute;
-    left: 12px;
-    bottom: 50%;
-    top: 22px;
-
-    height: 100%;
-
-    transform: translateY(-50%);
-
-    left: var(--field-padding);
-    width: calc(100% - (var(--field-padding) * 2));
-
-    color: #aaa;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-
-     transition:
-      top 0.3s ease,
-      color 0.3s ease,
-      font-size 0.3s ease;
-  }
-
-  input:focus + .placeholder {
-    top: -10px;
-    font-size: 10px;
-    color: #222;
-  }
-
-  .error-message {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    padding: 0 8px;
-    font-size: 12px;
-    background: #d30909;
-    color: #fff;
-    height: 24px;
-  }
-
-  .error-message:empty {
-    opacity: 0;
-  }*/
 
 </style>

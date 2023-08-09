@@ -688,16 +688,28 @@ $: {
 //     } );
 // }
 
+let bodyHeight;
+
+import { windowSize }
+  from "@hkd-fe/stores/window.js";
+
+$: {
+  bodyHeight = ($windowSize).height;
+}
+
 </script>
 
 <!-- <svelte:window bind:scrollY={y}/> -->
 
 <!-- {#if !$isLandscapeOnMobile} -->
 
+<!-- Hello {bodyHeight} -->
+
   <div c-app-layout
        class="{cssClassNames}
               {layoutCssClassNames}
-              {layoutBgClassNames}">
+              {layoutBgClassNames}"
+       style="height: {bodyHeight}px;">
 
     {#if backgroundPanelParams}
       <div class="app-layout-grid-background">
@@ -805,6 +817,7 @@ $: {
   <div class="bottomPanel2">Footer2</div>
 </div> -->
 
+
 <style>
   :global( [c-app-layout] )
   {
@@ -812,127 +825,24 @@ $: {
     grid-template-columns: 1fr; /* 1fr=greedy */
 
     width: 100%;
+    height: 100%;
+/*    border: solid 5px green;*/
+
+    /*pointer-events: none;
+    touch-action: none;*/
+
+    /* touch-action: none; */
+/*    border: solid 5px yellow;*/
   }
-
-/*  @keyframes reduce-floc
-  {
-    0% {
-      max-height: 100vh;
-      overflow-y: hidden;
-    }
-
-    99% {
-      max-height: auto;
-      overflow-y: hidden;
-    }
-
-    100% {
-      max-height: auto;
-      overflow-y: hidden;
-    }
-  }
-
-  [cc-panel-content]:not(.x-ready)
-  {
-    animation-duration: 0.1s;
-    animation-name: reduce-floc;
-  }*/
-
-  /*[cc-panel-content]:not(.x-ready)
-  {
-    max-height: 100vh;
-    overflow: hidden;
-  }*/
-
-/* @keyframes reduce-floc
-  {
-    0% {
-      max-height: 100vh;
-      overflow: hidden;
-    }
-
-    99% {
-      max-height: 100vh;
-    overflow: hidden;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  [cc-panel-content]:not(.x-ready)
-  {
-    animation-duration: 0.4s;
-    animation-name: reduce-floc;
-  }
-
-*/
- /* @keyframes reduce-floc
-  {
-    0% {
-      opacity: 0;
-    }
-
-    99% {
-      opacity: 0;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  [cc-panel-content]:not(.x-ready)
-  {
-    animation-duration: 0.4s;
-    animation-name: reduce-floc;
-  }
-*/
-  /*@keyframes reduce-floc
-  {
-    0% {
-      opacity: 0;
-    }
-
-    80% {
-      opacity: 0.5;
-    }
-
-    100% {
-      opacity: 1;
-    }
-  }
-
-  [cc-panel-content]:not(.x-ready)
-  {
-    animation-duration: 0.5s;
-    animation-name: reduce-floc;
-  }*/
-
-/*  [cc-panel-content]
-  {
-    transition: opacity 0.1s
-  }
-
-  [cc-panel-content]:not(.x-ready)
-  {
-    visibility: hidden;
-    opacity: 0;
-  }
-
-  [cc-panel-content].x-ready
-  {
-    visibility: visible;
-    opacity: 1;
-  }*/
 
   .app-layout-grid-background
   {
     /*background-color: blue;*/
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
     z-index: 10;
-    min-height: 100vh;
+    /* min-height: 100vh;*/
+    height: 100%;
+/*    border: solid 5px blue;*/
   }
 
   .app-layout-grid-front
@@ -941,12 +851,26 @@ $: {
     grid-area: 1 / 1 / 2 / 2; /* row-start, col-start, row-end, col-end */
     z-index: 20;
     /*width: 100%;*/
+    pointer-events: auto;
   }
 
   :global( [c-app-layout] [cc-panel-background] )
   {
     width: 100%;
     height: 100%;
+/*    border: solid 5px red;*/
+/*    overflow: hidden;*/
+
+    /*position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;*/
+/*    width: 100%;*/
+
+/*    border: solid 5px red !important;*/
+    /*pointer-events: none;
+    touch-action: none;*/
   }
 
   :global( [c-app-layout] [cc-top-subtop-box] )
@@ -974,6 +898,10 @@ $: {
 
   :global( [c-app-layout] [cc-panel-bottom] )
   {
+    /*border: solid 5px blue;
+    touch-action: none;
+    pointer-events: none;*/
+
     z-index: 50;
 
     position: fixed;

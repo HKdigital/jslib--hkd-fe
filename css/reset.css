@@ -42,8 +42,18 @@ body {
   /*font-size: var(--cb-spec-font-size-base);*/
   /*line-height: var(--cb-spec-line-height-body);*/
 
-  min-height: 100vh;
-  min-height: -webkit-fill-available;
+/*    min-height: 100vh;*/
+  min-height: 100%;
+/*  background: red;*/
+
+   /* height: -webkit-fill-available;*/
+   /* min-height: 100vh;*/
+   /* min-height: -webkit-fill-available;
+      min-height: fill-available;*/
+
+  /*  height: 100vh;*/
+
+
 
   /* prevent horizontal scrollbar of vertical scrollbar appears */
   overflow-x: hidden;
