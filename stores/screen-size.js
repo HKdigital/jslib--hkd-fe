@@ -150,7 +150,7 @@ export let screenWidthRangeLabel =
 
 /**
  * Derived store
- * - Contains value true if the screen width is small
+ * - Contains value true if the screen width is small of less
  */
 export let screenWidthSmall =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
@@ -164,7 +164,7 @@ export let screenWidthSmall =
 
 /**
  * Derived store
- * - Contains value true if the screen width is small
+ * - Contains value true if the screen width is medium or less
  */
 export let screenWidthSmallOrMedium =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
@@ -172,6 +172,20 @@ export let screenWidthSmallOrMedium =
         const value = storesMap.getValueFromStore( 0 );
 
         return (value <= WIDTH_RANGE_MEDIUM );
+      } );
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Derived store
+ * - Contains value true if the screen width is (large or bigger)
+ */
+export let screenWidthLargePlus =
+  new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
+      {
+        const value = storesMap.getValueFromStore( 0 );
+
+        return (value >= WIDTH_RANGE_LARGE );
       } );
 
 // -----------------------------------------------------------------------------

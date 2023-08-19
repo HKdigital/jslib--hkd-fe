@@ -1,9 +1,12 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectObject } from "@hkd-base/helpers/expect.js";
+import { expectNotEmptyString,
+         expectObject }
+  from "@hkd-base/helpers/expect.js";
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DedupValueStore
+  from "@hkd-base/classes/DedupValueStore.js";
 
 // import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 // const cache = new MemoryCache();
@@ -30,14 +33,15 @@ let loadingImages = {};
  *   store
  *
  * --
+ *
  * @example
  *
- * let url = "some-image.jpg";
+ *   let url = "some-image.jpg";
  *
- * let src;
- * src = preload( url, src )
+ *   let srcStore;
+ *   srcStore = preload( url, srcStore )
  *
- * <img src={$src} />
+ *   <img src={$src} />
  *
  * --
  *
@@ -48,6 +52,14 @@ let loadingImages = {};
  */
 export function preload( url, existingSrcStore )
 {
+  if( !url )
+  {
+    return new DedupValueStore(""); // <= "" is an empty url
+  }
+
+  expectNotEmptyString( url,
+    "Missing or invalid parameter [url]" );
+
   let store;
 
   if( existingSrcStore )
@@ -69,6 +81,16 @@ export function preload( url, existingSrcStore )
   }
   else {
     store = new DedupValueStore("");
+  }
+
+  if( url.startsWith("data:") )
+  {
+    //
+    // Data url
+    // => no loading needed
+    //
+    store.set( url );
+    return store;
   }
 
   let img = loadingImages[ url ];

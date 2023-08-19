@@ -1,646 +1,654 @@
 <script>
-  /**
-   * Example data
-   *
-   * route =
-   *  {
-   *     layout: {
-   *       component: AppLayout
-   *     },
-   *
-   *     panels:
-   *     {
-   *       backgroundPanel: {
-   *         backgroundColor: SURFACE_DARK_BLUE
-   *       },
-   *
-   *       topPanel: {
-   *         component: TopPanelWithLogo,
-   *         classNames: "g-something-special"
-   *      },
-   *
-   *       contentPanel: {
-   *         component: ContentPanelHome,
-   *         backgroundColor: SURFACE_DARK_BLUE
-   *       }
-   *
-   *       bottomPanel: {
-   *         component: BottomPanel,
-   *         backgroundColor: SURFACE_DARK
-   *       }
-   *     }
-   *   }
-   */
 
-  /* ---------------------------------------------------------------- Imports */
+/**
+ * Example data
+ *
+ * route =
+ *  {
+ *     layout: {
+ *       component: AppLayout
+ *     },
+ *
+ *     panels:
+ *     {
+ *       backgroundPanel: {
+ *         backgroundColor: SURFACE_DARK_BLUE
+ *       },
+ *
+ *       topPanel: {
+ *         component: TopPanelWithLogo,
+ *         classNames: "g-something-special"
+ *      },
+ *
+ *       contentPanel: {
+ *         component: ContentPanelHome,
+ *         backgroundColor: SURFACE_DARK_BLUE
+ *       }
+ *
+ *       bottomPanel: {
+ *         component: BottomPanel,
+ *         backgroundColor: SURFACE_DARK_GREEN
+ *       }
+ *     }
+ *   }
+ */
 
-  import { onDestroy } from 'svelte';
+/* ------------------------------------------------------------------ Imports */
+
+import { onDestroy } from 'svelte';
 
 
-  import { expectPositiveNumber } from "@hkd-base/helpers/expect.js";
+import { expectPositiveNumber }
+  from "@hkd-base/helpers/expect.js";
 
-  import { equals } from "@hkd-base/helpers/compare.js";
+import { equals }
+  from "@hkd-base/helpers/compare.js";
 
-  import Panel from "@hkd-fe/components/layout/Panel.svelte";
+import Panel
+  from "@hkd-fe/components/layout/Panel.svelte";
 
-  // import Scrollbar from "@hkd-fe/components/scrollbar/Scrollbar.svelte";
+// import Scrollbar
+//   from "@hkd-fe/components/scrollbar/Scrollbar.svelte";
 
-  // import PleaseRotateScreen
-  //   from "$src/views/special-panels/PleaseRotateScreen.svelte";
+// import PleaseRotateScreen
+//   from "$src/views/special-panels/PleaseRotateScreen.svelte";
 
-  import { routeStateStore } from "@hkd-fe/stores/router.js";
+import { routeStateStore }
+  from "@hkd-fe/stores/router.js";
 
-  // import { isLandscapeOnMobile }
-  //   from "$skills-fe/stores/screen-orientation.js";
+// import { isLandscapeOnMobile }
+//   from "$skills-fe/stores/screen-orientation.js";
 
-  // import { debug } from "@hkd-base/helpers/log.js";
+// import { debug } from "@hkd-base/helpers/log.js";
 
-  import { backgroundPanelReady,
-           topPanelReady,
-           subTopPanelReady,
-           contentPanelReady,
-           superBottomPanelReady,
-           bottomPanelReady } from "@hkd-fe/stores/app-layout.js";
+import { backgroundPanelReady,
+         topPanelReady,
+         subTopPanelReady,
+         contentPanelReady,
+         superBottomPanelReady,
+         bottomPanelReady }
+  from "@hkd-fe/stores/app-layout.js";
 
-   import Offs from "@hkd-base/classes/Offs.js";
+import Offs
+  from "@hkd-base/classes/Offs.js";
 
-   import ValueStore from "@hkd-base/classes/ValueStore.js";
+import ValueStore
+  from "@hkd-base/classes/ValueStore.js";
 
-  /* -------------------------------------------------------------- Internals */
+import { SURFACE_1 }
+  from "@hkd-fe/constants/surfaces.js";
 
-  const offs = new Offs();
+/* ---------------------------------------------------------------- Internals */
 
-  //
-  // Disable automatic scroll restauration by browser when navigating back
-  //
-  history.scrollRestoration = 'manual';
+const offs = new Offs();
 
-  // --
+//
+// Disable automatic scroll restauration by browser when navigating back
+//
+history.scrollRestoration = 'manual';
 
-  const SURFACE_COLOR_DEFAULT = "surface1";
+// --
 
-  // --
+let currentRoute = new ValueStore();
+let currentRouteReady = true;
 
-  let currentRoute = new ValueStore();
-  let currentRouteReady = true;
+let readyTimeoutMs = 500;
+let layoutAspect = 0;
 
-  let readyTimeoutMs = 500;
-  let layoutAspect = 0;
+let layoutParams;
 
-  let layoutParams;
+let backgroundPanelParams;
+let topPanelParams;
+let subTopPanelParams;
+let contentPanelParams;
+let superBottomPanelParams;
+let bottomPanelParams;
 
-  let backgroundPanelParams;
-  let topPanelParams;
-  let subTopPanelParams;
-  let contentPanelParams;
-  let superBottomPanelParams;
-  let bottomPanelParams;
+let layoutBgClassNames = "";
 
-  let layoutBgClassNames = "";
+let backgroundPanelBgClassNames = "";
+let topPanelBgClassNames = "";
+let subTopPanelBgClassNames = "";
+let contentPanelBgClassNames = "";
+let superBottomPanelBgClassNames = "";
+let bottomPanelBgClassNames = "";
 
-  let backgroundPanelBgClassNames = "";
-  let topPanelBgClassNames = "";
-  let subTopPanelBgClassNames = "";
-  let contentPanelBgClassNames = "";
-  let superBottomPanelBgClassNames = "";
-  let bottomPanelBgClassNames = "";
+let bgColorLayout;
 
-  let bgColorLayout;
+let bgColorBackgroundPanel;
+let bgColorTopPanel;
+let bgColorSubTopPanel;
+let bgColorContentPanel;
+let bgColorBottomPanel;
+let bgColorSuperBottomPanel;
 
-  let bgColorBackgroundPanel;
-  let bgColorTopPanel;
-  let bgColorSubTopPanel;
-  let bgColorContentPanel;
-  let bgColorBottomPanel;
-  let bgColorSuperBottomPanel;
+let onColorLayout;
 
-  let onColorLayout;
+let onColorBackgroundPanel;
+let onColorTopPanel;
+let onColorSubTopPanel;
+let onColorContentPanel;
+let onColorBottomPanel;
+let onColorSuperBottomPanel;
 
-  let onColorBackgroundPanel;
-  let onColorTopPanel;
-  let onColorSubTopPanel;
-  let onColorContentPanel;
-  let onColorBottomPanel;
-  let onColorSuperBottomPanel;
+let layoutCssClassNames = "";
 
-  let layoutCssClassNames = "";
+let backgroundPanelCssClassNames = "";
+let topPanelCssClassNames = "";
+let subTopPanelCssClassNames = "";
+let contentPanelCssClassNames = "";
+let superBottomPanelCssClassNames = "";
+let bottomPanelCssClassNames = "";
 
-  let backgroundPanelCssClassNames = "";
-  let topPanelCssClassNames = "";
-  let subTopPanelCssClassNames = "";
-  let contentPanelCssClassNames = "";
-  let superBottomPanelCssClassNames = "";
-  let bottomPanelCssClassNames = "";
+let contentPanelElement;
+let contentPanelOuterElem;
 
-  let contentPanelElement;
-  let contentPanelOuterElem;
+let topPanelHeight = -1;
+let bottomPanelHeight = -1;
 
-  let topPanelHeight = -1;
-  let bottomPanelHeight = -1;
+// const documentElement = document.documentElement;
 
-  // const documentElement = document.documentElement;
+// -----------------------------------------------------------------------------
 
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Update internal properties when a route changes
-   *
-   * @param {object} route
-   */
-  function handleRouteUpdate( route )
+/**
+ * Update internal properties when a route changes
+ *
+ * @param {object} route
+ */
+function handleRouteUpdate( route )
+{
+  if( !route )
   {
-    if( !route )
-    {
-      return;
-    }
-
-    // log.debug( ">>>>> route", route );
-
-    if( !equals( currentRoute.get(), route ) )
-    {
-      currentRoute.set( route );
-      currentRouteReady = false;
-
-      // == Layout
-
-      layoutParams = $currentRoute.layout;
-
-      bgColorLayout = layoutParams.backgroundColor;
-      onColorLayout = layoutParams.onColor || bgColorLayout || null;
-
-      layoutCssClassNames = layoutParams.classNames;
-
-      // == Panels
-
-      const currentRoutePanels = $currentRoute.panels;
-
-      // -- Background panel
-
-      backgroundPanelParams = currentRoutePanels.backgroundPanel;
-
-      if( backgroundPanelParams )
-      {
-        bgColorBackgroundPanel = backgroundPanelParams.backgroundColor;
-
-        onColorBackgroundPanel =
-          backgroundPanelParams.onColor || bgColorBackgroundPanel;
-
-        backgroundPanelCssClassNames = backgroundPanelParams.classNames;
-      }
-      else {
-        bgColorBackgroundPanel = null;
-        onColorBackgroundPanel = null;
-
-        backgroundPanelCssClassNames = "";
-      }
-
-      // -- Top panel
-
-      topPanelParams = currentRoutePanels.topPanel;
-
-      if( topPanelParams )
-      {
-        bgColorTopPanel = topPanelParams.backgroundColor;
-
-        onColorTopPanel =
-          topPanelParams.onColor || bgColorTopPanel;
-
-        topPanelCssClassNames = topPanelParams.classNames;
-      }
-      else {
-        bgColorTopPanel = null;
-        onColorTopPanel = null;
-
-        topPanelCssClassNames = "";
-      }
-
-      // -- Sub top panel
-
-      subTopPanelParams = currentRoutePanels.subTopPanel;
-
-      if( subTopPanelParams )
-      {
-        bgColorSubTopPanel = subTopPanelParams.backgroundColor;
-
-        onColorSubTopPanel =
-          subTopPanelParams.onColor || bgColorSubTopPanel;
-
-        subTopPanelCssClassNames = subTopPanelParams.classNames;
-      }
-      else {
-        bgColorSubTopPanel = null;
-        onColorSubTopPanel = null;
-
-        subTopPanelCssClassNames = "";
-      }
-
-      // -- Content panel
-
-      contentPanelParams = currentRoutePanels.contentPanel;
-
-      if( contentPanelParams )
-      {
-        bgColorContentPanel = contentPanelParams.backgroundColor;
-
-        onColorContentPanel =
-          contentPanelParams.onColor || bgColorContentPanel;
-
-        contentPanelCssClassNames = contentPanelParams.classNames;
-      }
-      else {
-        bgColorContentPanel = null;
-        onColorContentPanel = null;
-
-        contentPanelCssClassNames = "";
-      }
-
-      // -- Super bottom panel
-
-      superBottomPanelParams = currentRoutePanels.superBottomPanel;
-
-      if( superBottomPanelParams )
-      {
-        bgColorSuperBottomPanel = superBottomPanelParams.backgroundColor;
-
-        onColorSuperBottomPanel =
-          superBottomPanelParams.onColor || bgColorSuperBottomPanel;
-
-        superBottomPanelCssClassNames = superBottomPanelParams.classNames;
-      }
-      else {
-        bgColorSuperBottomPanel = null;
-        onColorSuperBottomPanel = null;
-
-        superBottomPanelCssClassNames = "";
-      }
-
-      // -- Bottom panel
-
-      bottomPanelParams = currentRoutePanels.bottomPanel;
-
-      if( bottomPanelParams )
-      {
-        bgColorBottomPanel = bottomPanelParams.backgroundColor;
-
-        onColorBottomPanel =
-          bottomPanelParams.onColor || bgColorBottomPanel;
-
-        bottomPanelCssClassNames = bottomPanelParams.classNames;
-      }
-      else {
-        bgColorBottomPanel = null;
-        onColorBottomPanel = null;
-
-        bottomPanelCssClassNames = "";
-      }
-    }
+    return;
   }
 
-  /* ---------------------------------------------------------------- Exports */
+  // log.debug( ">>>>> route", route );
 
-  let cssClassNames = "";
-  export { cssClassNames as class };
+  if( !equals( currentRoute.get(), route ) )
+  {
+    currentRoute.set( route );
+    currentRouteReady = false;
 
-  export let onColor = SURFACE_COLOR_DEFAULT;
+    // == Layout
 
-  /* ------------------------------------------------------------------ Logic */
+    layoutParams = $currentRoute.layout;
 
-  //
-  // React to route changes
-  //
-  $: {
-    if( $routeStateStore.route )
-    {
-      handleRouteUpdate( $routeStateStore.route );
-    }
-  }
+    bgColorLayout = layoutParams.backgroundColor;
+    onColorLayout = layoutParams.onColor || bgColorLayout || null;
 
-  onDestroy( () => { offs.unsubscribeAll(); } );
+    layoutCssClassNames = layoutParams.classNames;
 
-  // ===========================================================================
-  // Ready states
+    // == Panels
 
-  $: {
-    //
-    // If `currentRouteReady` is false
-    // => set panels not ready
-    // => set timeout
-    //
-    if( !currentRouteReady )
-    {
-      const LABEL = "currentRouteReady";
+    const currentRoutePanels = $currentRoute.panels;
 
-      offs.tryUnregister( LABEL );
+    // -- Background panel
 
-      let pathOnStart = $currentRoute.path;
-
-      backgroundPanelReady.set( false );
-      topPanelReady.set( false );
-      subTopPanelReady.set( false );
-      contentPanelReady.set( false );
-      superBottomPanelReady.set( false );
-      bottomPanelReady.set( false );
-
-
-      offs.executeDelayed( LABEL, () =>
-        {
-          const currentPath = currentRoute.get().path;
-
-          if( currentPath === pathOnStart && !currentRouteReady )
-          {
-            currentRouteReady = true;
-          }
-        },
-        readyTimeoutMs );
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-
-  $: {
-    //
-    // Make all panels as ready if `currentRouteReady` (after timeout)
-    //
-    if( currentRouteReady )
-    {
-      backgroundPanelReady.set( true );
-      topPanelReady.set( true );
-      subTopPanelReady.set( true );
-      contentPanelReady.set( true );
-      superBottomPanelReady.set( true );
-      bottomPanelReady.set( true );
-    }
-  }
-
-  // ===========================================================================
-  // Layout component
-
-  $: {
-    //
-    // Process layoutParams
-    //
-    if( layoutParams )
-    {
-      // console.log("layoutParams", layoutParams);
-
-      if( "readyTimeoutMs" in layoutParams )
-      {
-        readyTimeoutMs = layoutParams.readyTimeoutMs;
-
-        expectPositiveNumber( readyTimeoutMs,
-          "Invalid value for layout parameter [readyTimeoutMs]" );
-      }
-
-      if( "aspect" in layoutParams )
-      {
-        layoutAspect = layoutParams.aspect; // e.g. 16 / 9
-
-        expectPositiveNumber( layoutAspect,
-          "Invalid value for layout parameter [aspect]" );
-      }
-      else if( layoutAspect )
-      {
-        layoutAspect = 0;
-      }
-    }
-  }
-
-  // ===========================================================================
-  // Scroll restauration
-
-  //
-  // Restore or reset scroll on navigation change
-  //
-  // FIXME: somehow $contentPanelReady is not triggered by SVELTE, using
-  //        manual subscribe and unsubscribe as workaround
-  //
-  // {
-  //   let unsubscribeFn;
-
-  //   let currentPath = null;
-
-  //   onMount( () => {
-  //     unsubscribeFn =
-  //       contentPanelReady
-  //         .subscribe( ( ready ) => {
-  //           if( ready )
-  //           {
-  //             if( currentPath !== currentState.path )
-  //             {
-  //               // console.log("RESTORE SCROLL", currentState);
-
-  //               if( "documentScrollTop" in currentState  )
-  //               {
-  //                 defer( () => {
-  //                   documentElement.scrollTop = currentState.documentScrollTop; } );
-  //               }
-  //               else {
-  //                 documentElement.scrollTop = 0;
-  //               }
-
-  //               currentPath = currentState.path;
-  //             }
-  //           }
-  //         } );
-  //   } );
-
-  //   onDestroy( () => {
-  //     unsubscribeFn();
-  //   } );
-  // }
-
-  $: {
-    if( currentRouteReady )
-    {
-      // document.body.style.overflow="hidden";
-      document.documentElement.scrollTop = 0;
-
-      // console.log( "currentRouteReady: restore scroll" );
-
-      // const setDocumentVisible = () =>
-      // {
-      //   if( 0 === document.documentElement.scrollTop )
-      //   {
-      //     console.log("show");
-      //     document.body.style.visibility = "visible";
-      //   }
-      // };
-
-      // if( document.documentElement.scrollTop > 0 )
-      // {
-      //   console.log("restore scroll");
-      //   document.body.style.visibility = "hidden";
-      //   document.addEventListener("scroll", setDocumentVisible );
-      //   document.documentElement.scrollTop = 0;
-      // }
-
-
-      // FIXME: Restore scroll does not work well
-
-      // if( "documentScrollTop" in currentState )
-      // {
-      //   defer( () => {
-      //     document.documentElement.scrollTop = currentState.documentScrollTop; } );
-      // }
-      // else {
-      //   document.documentElement.scrollTop = 0;
-      // }
-    }
-  }
-
-  // ===========================================================================
-  // Background CSS classes
-
-  $: {
-    //
-    // Update layout background classNames
-    //
-
-    if( bgColorLayout )
-    {
-      layoutBgClassNames =
-        `g-bg-${bgColorLayout}`;
-    }
-    else {
-      layoutBgClassNames = "";
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-
-  $: {
-    //
-    // Update backgroundPanel background CSS
-    //
+    backgroundPanelParams = currentRoutePanels.backgroundPanel;
 
     if( backgroundPanelParams )
     {
-      if( bgColorBackgroundPanel )
-      {
-        backgroundPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
-      }
-      else {
-        backgroundPanelBgClassNames = "";
-      }
+      bgColorBackgroundPanel = backgroundPanelParams.backgroundColor;
+
+      onColorBackgroundPanel =
+        backgroundPanelParams.onColor || bgColorBackgroundPanel;
+
+      backgroundPanelCssClassNames = backgroundPanelParams.classNames;
     }
-  }
+    else {
+      bgColorBackgroundPanel = null;
+      onColorBackgroundPanel = null;
 
-  // ---------------------------------------------------------------------------
+      backgroundPanelCssClassNames = "";
+    }
 
-  $: {
-    //
-    // Update topPanel background CSS
-    //
+    // -- Top panel
+
+    topPanelParams = currentRoutePanels.topPanel;
 
     if( topPanelParams )
     {
-      if( bgColorBackgroundPanel )
-      {
-        topPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
-      }
-      else {
-        topPanelBgClassNames = "";
-      }
+      bgColorTopPanel = topPanelParams.backgroundColor;
+
+      onColorTopPanel =
+        topPanelParams.onColor || bgColorTopPanel;
+
+      topPanelCssClassNames = topPanelParams.classNames;
     }
-  }
+    else {
+      bgColorTopPanel = null;
+      onColorTopPanel = null;
 
-  // ---------------------------------------------------------------------------
+      topPanelCssClassNames = "";
+    }
 
-  $: {
-    //
-    // Update subTopPanel background CSS
-    //
+    // -- Sub top panel
+
+    subTopPanelParams = currentRoutePanels.subTopPanel;
 
     if( subTopPanelParams )
     {
-      if( bgColorBackgroundPanel )
-      {
-        subTopPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
-      }
-      else {
-        subTopPanelBgClassNames = "";
-      }
+      bgColorSubTopPanel = subTopPanelParams.backgroundColor;
+
+      onColorSubTopPanel =
+        subTopPanelParams.onColor || bgColorSubTopPanel;
+
+      subTopPanelCssClassNames = subTopPanelParams.classNames;
     }
-  }
+    else {
+      bgColorSubTopPanel = null;
+      onColorSubTopPanel = null;
 
-  // ---------------------------------------------------------------------------
+      subTopPanelCssClassNames = "";
+    }
 
-  $: {
-    //
-    // Update contentPanel background CSS
-    //
+    // -- Content panel
+
+    contentPanelParams = currentRoutePanels.contentPanel;
 
     if( contentPanelParams )
     {
-      if( bgColorBackgroundPanel )
-      {
-        contentPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
-      }
-      else {
-        contentPanelBgClassNames = "";
-      }
+      bgColorContentPanel = contentPanelParams.backgroundColor;
+
+      onColorContentPanel =
+        contentPanelParams.onColor || bgColorContentPanel;
+
+      contentPanelCssClassNames = contentPanelParams.classNames;
     }
-  }
+    else {
+      bgColorContentPanel = null;
+      onColorContentPanel = null;
 
-  // ---------------------------------------------------------------------------
+      contentPanelCssClassNames = "";
+    }
 
-  $: {
-    //
-    // Update superBottomPanel background CSS
-    //
+    // -- Super bottom panel
+
+    superBottomPanelParams = currentRoutePanels.superBottomPanel;
 
     if( superBottomPanelParams )
     {
-      if( bgColorBackgroundPanel )
-      {
-        superBottomPanelBgClassNames =
-          `g-bg-${bgColorBackgroundPanel}`;
-      }
-      else {
-        superBottomPanelBgClassNames = "";
-      }
+      bgColorSuperBottomPanel = superBottomPanelParams.backgroundColor;
+
+      onColorSuperBottomPanel =
+        superBottomPanelParams.onColor || bgColorSuperBottomPanel;
+
+      superBottomPanelCssClassNames = superBottomPanelParams.classNames;
     }
-  }
+    else {
+      bgColorSuperBottomPanel = null;
+      onColorSuperBottomPanel = null;
 
-  // ---------------------------------------------------------------------------
+      superBottomPanelCssClassNames = "";
+    }
 
-  $: {
-    //
-    // Update bottomPanel background CSS
-    //
+    // -- Bottom panel
+
+    bottomPanelParams = currentRoutePanels.bottomPanel;
 
     if( bottomPanelParams )
     {
-      if( bgColorBottomPanel )
-      {
-        bottomPanelBgClassNames =
-          `g-bg-${bgColorBottomPanel}`;
-      }
-      else {
-        bottomPanelBgClassNames = "";
-      }
+      bgColorBottomPanel = bottomPanelParams.backgroundColor;
 
+      onColorBottomPanel =
+        bottomPanelParams.onColor || bgColorBottomPanel;
+
+      bottomPanelCssClassNames = bottomPanelParams.classNames;
+    }
+    else {
+      bgColorBottomPanel = null;
+      onColorBottomPanel = null;
+
+      bottomPanelCssClassNames = "";
     }
   }
+}
 
-  // ---------------------------------------------------------------------------
+/* ------------------------------------------------------------------ Exports */
 
-  // $: {
-  //   // - FIXME: apply aspect to layout element (e.g. for fixed size displays)
+let cssClassNames = "";
+export { cssClassNames as class };
 
-  //   if( layoutAspect )
-  //   {
-  //     heightStyle = `height: ${panelWidth / layoutAspect}px`;
-  //     // console.log( "CHECK", panelWidth, panelHeight );
-  //   }
-  //   else {
-  //     heightStyle = "";
-  //   }
-  // }
+export let onColor = SURFACE_1;
+
+/* ----------------------------------------------------------------- Reactive */
+
+//
+// React to route changes
+//
+$: {
+  if( $routeStateStore.route )
+  {
+    handleRouteUpdate( $routeStateStore.route );
+  }
+}
+
+onDestroy( () => { offs.unsubscribeAll(); } );
+
+// =============================================================================
+// Ready states
+
+$: {
+  //
+  // If `currentRouteReady` is false
+  // => set panels not ready
+  // => set timeout
+  //
+  if( !currentRouteReady )
+  {
+    const LABEL = "currentRouteReady";
+
+    offs.tryUnregister( LABEL );
+
+    let pathOnStart = $currentRoute.path;
+
+    backgroundPanelReady.set( false );
+    topPanelReady.set( false );
+    subTopPanelReady.set( false );
+    contentPanelReady.set( false );
+    superBottomPanelReady.set( false );
+    bottomPanelReady.set( false );
+
+
+    offs.executeDelayed( LABEL, () =>
+      {
+        const currentPath = currentRoute.get().path;
+
+        if( currentPath === pathOnStart && !currentRouteReady )
+        {
+          currentRouteReady = true;
+        }
+      },
+      readyTimeoutMs );
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Make all panels as ready if `currentRouteReady` (after timeout)
+  //
+  if( currentRouteReady )
+  {
+    backgroundPanelReady.set( true );
+    topPanelReady.set( true );
+    subTopPanelReady.set( true );
+    contentPanelReady.set( true );
+    superBottomPanelReady.set( true );
+    bottomPanelReady.set( true );
+  }
+}
+
+// =============================================================================
+// Layout component
+
+$: {
+  //
+  // Process layoutParams
+  //
+  if( layoutParams )
+  {
+    // console.log("layoutParams", layoutParams);
+
+    if( "readyTimeoutMs" in layoutParams )
+    {
+      readyTimeoutMs = layoutParams.readyTimeoutMs;
+
+      expectPositiveNumber( readyTimeoutMs,
+        "Invalid value for layout parameter [readyTimeoutMs]" );
+    }
+
+    if( "aspect" in layoutParams )
+    {
+      layoutAspect = layoutParams.aspect; // e.g. 16 / 9
+
+      expectPositiveNumber( layoutAspect,
+        "Invalid value for layout parameter [aspect]" );
+    }
+    else if( layoutAspect )
+    {
+      layoutAspect = 0;
+    }
+  }
+}
+
+// =============================================================================
+// Scroll restauration
+
+//
+// Restore or reset scroll on navigation change
+//
+// FIXME: somehow $contentPanelReady is not triggered by SVELTE, using
+//        manual subscribe and unsubscribe as workaround
+//
+// {
+//   let unsubscribeFn;
+
+//   let currentPath = null;
+
+//   onMount( () => {
+//     unsubscribeFn =
+//       contentPanelReady
+//         .subscribe( ( ready ) => {
+//           if( ready )
+//           {
+//             if( currentPath !== currentState.path )
+//             {
+//               // console.log("RESTORE SCROLL", currentState);
+
+//               if( "documentScrollTop" in currentState  )
+//               {
+//                 defer( () => {
+//                   documentElement.scrollTop = currentState.documentScrollTop; } );
+//               }
+//               else {
+//                 documentElement.scrollTop = 0;
+//               }
+
+//               currentPath = currentState.path;
+//             }
+//           }
+//         } );
+//   } );
+
+//   onDestroy( () => {
+//     unsubscribeFn();
+//   } );
+// }
+
+$: {
+  if( currentRouteReady )
+  {
+    // document.body.style.overflow="hidden";
+    document.documentElement.scrollTop = 0;
+
+    // console.log( "currentRouteReady: restore scroll" );
+
+    // const setDocumentVisible = () =>
+    // {
+    //   if( 0 === document.documentElement.scrollTop )
+    //   {
+    //     console.log("show");
+    //     document.body.style.visibility = "visible";
+    //   }
+    // };
+
+    // if( document.documentElement.scrollTop > 0 )
+    // {
+    //   console.log("restore scroll");
+    //   document.body.style.visibility = "hidden";
+    //   document.addEventListener("scroll", setDocumentVisible );
+    //   document.documentElement.scrollTop = 0;
+    // }
+
+
+    // FIXME: Restore scroll does not work well
+
+    // if( "documentScrollTop" in currentState )
+    // {
+    //   defer( () => {
+    //     document.documentElement.scrollTop = currentState.documentScrollTop; } );
+    // }
+    // else {
+    //   document.documentElement.scrollTop = 0;
+    // }
+  }
+}
+
+// =============================================================================
+// Background CSS classes
+
+$: {
+  //
+  // Update layout background classNames
+  //
+
+  if( bgColorLayout )
+  {
+    layoutBgClassNames =
+      `g-bg-${bgColorLayout}`;
+  }
+  else {
+    layoutBgClassNames = "";
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update backgroundPanel background CSS
+  //
+
+  if( backgroundPanelParams )
+  {
+    if( bgColorBackgroundPanel )
+    {
+      backgroundPanelBgClassNames =
+        `g-bg-${bgColorBackgroundPanel}`;
+    }
+    else {
+      backgroundPanelBgClassNames = "";
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update topPanel background CSS
+  //
+
+  if( topPanelParams )
+  {
+    if( bgColorBackgroundPanel )
+    {
+      topPanelBgClassNames =
+        `g-bg-${bgColorBackgroundPanel}`;
+    }
+    else {
+      topPanelBgClassNames = "";
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update subTopPanel background CSS
+  //
+
+  if( subTopPanelParams )
+  {
+    if( bgColorBackgroundPanel )
+    {
+      subTopPanelBgClassNames =
+        `g-bg-${bgColorBackgroundPanel}`;
+    }
+    else {
+      subTopPanelBgClassNames = "";
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update contentPanel background CSS
+  //
+
+  if( contentPanelParams )
+  {
+    if( bgColorBackgroundPanel )
+    {
+      contentPanelBgClassNames =
+        `g-bg-${bgColorBackgroundPanel}`;
+    }
+    else {
+      contentPanelBgClassNames = "";
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update superBottomPanel background CSS
+  //
+
+  if( superBottomPanelParams )
+  {
+    if( bgColorBackgroundPanel )
+    {
+      superBottomPanelBgClassNames =
+        `g-bg-${bgColorBackgroundPanel}`;
+    }
+    else {
+      superBottomPanelBgClassNames = "";
+    }
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+$: {
+  //
+  // Update bottomPanel background CSS
+  //
+
+  if( bottomPanelParams )
+  {
+    if( bgColorBottomPanel )
+    {
+      bottomPanelBgClassNames =
+        `g-bg-${bgColorBottomPanel}`;
+    }
+    else {
+      bottomPanelBgClassNames = "";
+    }
+
+  }
+}
+
+// -----------------------------------------------------------------------------
+
+// $: {
+//   // - FIXME: apply aspect to layout element (e.g. for fixed size displays)
+
+//   if( layoutAspect )
+//   {
+//     heightStyle = `height: ${panelWidth / layoutAspect}px`;
+//     // console.log( "CHECK", panelWidth, panelHeight );
+//   }
+//   else {
+//     heightStyle = "";
+//   }
+// }
 
 // -----------------------------------------------------------------------------
 

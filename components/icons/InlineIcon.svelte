@@ -14,11 +14,13 @@ export let onColor = null;
 
 </script>
 
-<div c-inline-icon class="x-on-{onColor} {cssClassNames}">
-<svelte:component this={content} />
+<div c-inline-icon
+     {...$$restProps}
+     class="x-on-{onColor} {cssClassNames}">
+  <svelte:component this={content} />
 </div>
 
-<style lang="scss">
+<style>
   [c-inline-icon] {
     display: inline-flex;
     align-self: center;

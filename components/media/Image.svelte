@@ -2,9 +2,10 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { preload } from "@hkd-fe/helpers/image.js";
-
 import { fade } from 'svelte/transition';
+
+import { preload }
+  from "@hkd-fe/helpers/image.js";
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -52,7 +53,15 @@ export let fadeIn = 0;
 
 /* ----------------------------------------------------------------- Reactive */
 
-$: srcStore = preload( src, srcStore );
+$: {
+  //
+  // Preload image into store
+  // - Creates new store object if empty
+  //
+  srcStore = preload( src, srcStore );
+}
+
+// -----------------------------------------------------------------------------
 
 $: {
   //
@@ -93,6 +102,9 @@ img
   /* Using + 0.5px to round up to prevent last pixel errors */
   width: calc( 100% + 0.5px );
   height: calc( 100% + 0.5px );
+
+  max-width: 100%;
+  max-height: 100%;
 
   /*object-fit: cover;
   object-position: center top;*/

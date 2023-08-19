@@ -7,8 +7,10 @@ import {
   expectObject,
   expectArrayBuffer } from "@hkd-base/helpers/expect.js";
 
-import { HkPromise,
-         doNothing } from "@hkd-base/helpers/promises.js";
+import { HkPromise } from "@hkd-base/helpers/promises.js";
+
+import { noop }
+  from "@hkd-base/helpers/function.js";
 
 import { tiffTagsByCode,
          gpsTagsByCode } from "@hkd-fe/constants/exif.js";
@@ -17,31 +19,32 @@ import { tiffTagsByCode,
 
 /**
  * Create an Image object from an image File object
+ * - Converts image File objects to a base64 encoded data url
  *
- * @note No EXIF orientation is taken into account (in case of JPG)
+ * @param {(string|File)} urlOrImageFile
+ *   URL of the image or Image file to load
  *
- * @param {string|File} urlOrImageFile
- *   Url of the image or Image file to load
- *
- * @returns {Image} Image object
+ * @returns {Promise<Image>} Image object
  */
 export /*async*/ function loadImage( urlOrImageFile )
 {
   let url;
-  let tryRevokeObjectUrlFn;
+  // let tryRevokeObjectUrlFn;
 
   const img = new Image();
 
+  const promise = new HkPromise();
+
   if( urlOrImageFile instanceof File )
   {
-    url = URL.createObjectURL( urlOrImageFile );
+    // Create object URL
+    // url = URL.createObjectURL( urlOrImageFile );
 
-    // Store information about the file as properties of the image object
+    // -- Store information about the file as properties of the image object
 
-    if( urlOrImageFile.name )
-    {
-      img.fileName = urlOrImageFile.name;
-    }
+    let fileName = urlOrImageFile.name || null;
+
+    img.fileName = urlOrImageFile.name;
 
     if( urlOrImageFile.size )
     {
@@ -53,48 +56,57 @@ export /*async*/ function loadImage( urlOrImageFile )
       img.fileType = urlOrImageFile.type;
     }
 
-    // urlOrImageFile
+    const reader = new FileReader();
 
-    tryRevokeObjectUrlFn = () => { URL.revokeObjectURL( url ); };
+    // console.log(`Load image from file [${fileName}]`);
+
+    reader.addEventListener( "load", ( e ) =>
+      {
+        img.src = e.target.result;
+
+        // console.log( `Loaded image from file [${fileName}]`);
+
+        promise.resolve( img );
+      } );
+
+    reader.addEventListener( "error", promise.reject.bind( promise ) );
+
+    reader.readAsDataURL( urlOrImageFile );
+
   }
   else if( typeof urlOrImageFile === "string" )
   {
     url = urlOrImageFile;
-    tryRevokeObjectUrlFn = doNothing;
+    // tryRevokeObjectUrlFn = noop;
+
+    img.crossOrigin = "Anonymous";
+
+    img.addEventListener( "load",
+      () => {
+        const imgWidth = img.width;
+        const imgHeight = img.height;
+
+        if( 0 === imgWidth || 0 === imgHeight )
+        {
+          promise.reject( new Error("Image width or height is 0") );
+          return;
+        }
+
+        promise.resolve( img );
+
+        // tryRevokeObjectUrlFn();
+      } );
+
+    img.addEventListener( "error", promise.reject.bind( promise ) );
+
+    // console.log("Load", url);
+
+    img.src = url;
   }
   else {
     throw new Error(
       "Invalid parameter [urlOrImageFile] (expected url or image File)");
   }
-
-  const promise = new HkPromise();
-
-  img.crossOrigin = "Anonymous";
-
-  img.addEventListener( "load",
-    () => {
-      tryRevokeObjectUrlFn();
-
-      const imgWidth = img.width;
-      const imgHeight = img.height;
-
-      if( 0 === imgWidth || 0 === imgHeight )
-      {
-        promise.reject( new Error("Image width or height is 0") );
-        return;
-      }
-
-      promise.resolve( img );
-    } );
-
-  img.addEventListener( "error",
-    ( e ) => {
-      tryRevokeObjectUrlFn();
-
-      promise.reject( e );
-    } );
-
-  img.src = url;
 
   return promise;
 }

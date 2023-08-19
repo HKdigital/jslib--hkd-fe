@@ -14,8 +14,6 @@ const dispatch = createEventDispatcher();
 
 /* ---------------------------------------------------------------- Internals */
 
-let cssClassNames = "";
-
 let colorClasses = "";
 
 let hideLabel = false;
@@ -70,8 +68,9 @@ function blur()
 /* ------------------------------------------------------------------ Exports */
 
 /**
- * CSS classes to add to the element
+ * CSS class names to add to the element
  */
+let cssClassNames = "";
 export { cssClassNames as class };
 
 /**

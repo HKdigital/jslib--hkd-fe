@@ -6,7 +6,8 @@
 
 /* ------------------------------------------------------------------ Exports */
 
-export const SURFACE_COLOR_NONE = "none";
+export { SURFACE_NONE }
+  from "@hkd-fe/constants/surfaces.js";
 
 // ---------------------------------------------------------------------- Method
 
@@ -19,7 +20,6 @@ export const SURFACE_COLOR_NONE = "none";
 export function expectValidColor( colorName )
 {
   // FIXME
-
 
   // if( typeof colors[ colorName ] !== "string" )
   // {

@@ -11,7 +11,7 @@ import BodyText
 
 // -- Constants
 
-import { SURFACE_1 }
+import { SURFACE_NONE }
   from "@hkd-fe/constants/surfaces.js";
 
 import { UPDATE_EVENT }
@@ -139,7 +139,9 @@ function pasteAsPlainText( e )
 let cssClassNames = "";
 export { cssClassNames as class };
 
-export let surfaceColor = SURFACE_1;
+export let onColor;
+export let surfaceColor = SURFACE_NONE;
+
 
 /* Center the element (element should have a width) */
 export let center = false;
@@ -167,6 +169,15 @@ $: {
   }
 }
 
+// -----------------------------------------------------------------------------
+
+$: {
+  if( surfaceColor !== SURFACE_NONE && !onColor )
+  {
+    onColor = surfaceColor;
+  }
+}
+
 // $: {
 //   log.debug( { content } );
 // }
@@ -178,7 +189,7 @@ $: {
      class:x-focused={focused}>
   <div cc-box>
     <BodyText
-      onColor={surfaceColor}>
+      {onColor}>
       <!-- https://stackoverflow.com/questions/24215428/losing-focus-in-contenteditable-in-safari -->
       <div contenteditable="true"
          cc-content

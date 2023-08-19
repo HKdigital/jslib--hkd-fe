@@ -1,9 +1,6 @@
 
 /* ------------------------------------------------------------------ Exports */
 
-export const SURFACE_COLOR_NONE = "none";
-export const SURFACE_COLOR_DEFAULT = "surface-default";
-
 // ---------------------------------------------------------------------- Method
 
 /**
