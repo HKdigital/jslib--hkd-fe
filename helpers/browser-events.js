@@ -31,8 +31,6 @@ async function dom_content_loaded()
 
   // -- Call all onload functions
 
-  // console.log( "onLoadFunctions", onLoadFunctions );
-
   for( const { fn } of onLoadFunctions )
   {
     try {
@@ -40,6 +38,7 @@ async function dom_content_loaded()
     }
     catch( e )
     {
+      console.error(e);
       throw new Error( "Exception in [onload] callback", { cause: e } );
     }
   }
