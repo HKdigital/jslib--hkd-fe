@@ -230,7 +230,13 @@ class BackendService extends Base
    *
    * @returns {object} backend response
    */
-  async jsonPost( { uri, body, tokenName=null }={} )
+  async jsonPost(
+    {
+      uri,
+      body,
+      tokenName=null,
+      requestHandler
+    }={} )
   {
     const remoteConfig =
       {
@@ -264,7 +270,8 @@ class BackendService extends Base
           {
             uri,
             body,
-            config: remoteConfig
+            config: remoteConfig,
+            requestHandler
           } );
 
       return response;
@@ -293,7 +300,13 @@ class BackendService extends Base
    *
    * @returns {object} backend response
    */
-  async jsonGet( { uri, urlSearchParams, tokenName=null }={} )
+  async jsonGet(
+    {
+      uri,
+      urlSearchParams,
+      tokenName=null,
+      requestHandler
+    }={} )
   {
     const remoteConfig =
       {
@@ -329,7 +342,8 @@ class BackendService extends Base
           {
             uri,
             urlSearchParams,
-            config: remoteConfig
+            config: remoteConfig,
+            requestHandler
           } );
 
       return response;
