@@ -235,7 +235,8 @@ class BackendService extends Base
       uri,
       body,
       tokenName=null,
-      requestHandler
+      requestHandler,
+      timeoutMs
     }={} )
   {
     const remoteConfig =
@@ -271,7 +272,8 @@ class BackendService extends Base
             uri,
             body,
             config: remoteConfig,
-            requestHandler
+            requestHandler,
+            timeoutMs
           } );
 
       return response;
@@ -305,7 +307,8 @@ class BackendService extends Base
       uri,
       urlSearchParams,
       tokenName=null,
-      requestHandler
+      requestHandler,
+      timeoutMs
     }={} )
   {
     const remoteConfig =
@@ -343,7 +346,8 @@ class BackendService extends Base
             uri,
             urlSearchParams,
             config: remoteConfig,
-            requestHandler
+            requestHandler,
+            timeoutMs
           } );
 
       return response;
