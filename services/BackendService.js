@@ -230,7 +230,14 @@ class BackendService extends Base
    *
    * @returns {object} backend response
    */
-  async jsonPost( { uri, body, tokenName=null }={} )
+  async jsonPost(
+    {
+      uri,
+      body,
+      tokenName=null,
+      requestHandler,
+      timeoutMs
+    }={} )
   {
     const remoteConfig =
       {
@@ -264,7 +271,9 @@ class BackendService extends Base
           {
             uri,
             body,
-            config: remoteConfig
+            config: remoteConfig,
+            requestHandler,
+            timeoutMs
           } );
 
       return response;
@@ -274,6 +283,114 @@ class BackendService extends Base
       throw new Error(
         `${this.serviceName()}.jsonPost failed`, { cause: e } );
     }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Send GET request to the backend
+   * - Decodes the returned JSON response
+   *
+   * @param {string} _.uri
+   *
+   * @param {object} [urlSearchParams]
+   *   Parameters that should be added to the request url
+   *
+   * @param {string} [_.tokenName]
+   *   Name of the token to use (should be defined in service property
+   *   `tokens`), e.g. IDENTITY_TOKEN_NAME or ACCESS_TOKEN_NAME
+   *
+   * @returns {object} backend response
+   */
+  async jsonGet(
+    {
+      uri,
+      urlSearchParams,
+      tokenName=null,
+      requestHandler,
+      timeoutMs
+    }={} )
+  {
+    const remoteConfig =
+      {
+        origin: this.config.origin,
+        apiPrefix: this.config.apiPrefix
+      };
+
+    expectNotEmptyString( remoteConfig.origin,
+        "Missing or invalid configuration property [origin]" );
+
+    expectString( remoteConfig.apiPrefix,
+        "Missing or invalid configuration property [apiPrefix]" );
+
+    if( tokenName )
+    {
+      const token = this.tryGetToken( tokenName );
+
+      if( !token )
+      {
+        throw new Error(`The token [${tokenName}] has not been set.`);
+      }
+
+      remoteConfig.token = token;
+    }
+
+    // this.log.debug(
+    //   `${this.serviceName()}.jsonGet`,
+    //   { uri, urlSearchParams }, remoteConfig);
+
+    try {
+      const response =
+        await jsonApiGet(
+          {
+            uri,
+            urlSearchParams,
+            config: remoteConfig,
+            requestHandler,
+            timeoutMs
+          } );
+
+      return response;
+    }
+    catch( e )
+    {
+      throw new Error(
+        `${this.serviceName()}.jsonGet failed`, { cause: e } );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Send POST request to the backend that includes the identity token service
+   * property.
+   *
+   * @param {string} _.uri
+   * @param {object|null} _.body
+   *
+   * @returns {object} backend response
+   */
+  async jsonPostWithIdentity( { uri, body }={} )
+  {
+    return this.jsonPost(
+      { uri, body, tokenName: IDENTITY_TOKEN_NAME } );
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
+   * Send POST request to the backend that includes the access token service
+   * property.
+   *
+   * @param {string} _.uri
+   * @param {object|null} _.body
+   *
+   * @returns {object} backend response
+   */
+  async jsonPostWithAccess( { uri, body }={} )
+  {
+    return this.jsonPost(
+      { uri, body, tokenName: ACCESS_TOKEN_NAME } );
   }
 
   // ---------------------------------------------------------------------------
@@ -337,105 +454,6 @@ class BackendService extends Base
       throw new Error(
         `${this.serviceName()}.jsonPost failed`, { cause: e } );
     }
-  }
-
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Send GET request to the backend
-   * - Decodes the returned JSON response
-   *
-   * @param {string} _.uri
-   *
-   * @param {object} [urlSearchParams]
-   *   Parameters that should be added to the request url
-   *
-   * @param {string} [_.tokenName]
-   *   Name of the token to use (should be defined in service property
-   *   `tokens`), e.g. IDENTITY_TOKEN_NAME or ACCESS_TOKEN_NAME
-   *
-   * @returns {object} backend response
-   */
-  async jsonGet( { uri, urlSearchParams, tokenName=null }={} )
-  {
-    const remoteConfig =
-      {
-        origin: this.config.origin,
-        apiPrefix: this.config.apiPrefix
-      };
-
-    expectNotEmptyString( remoteConfig.origin,
-        "Missing or invalid configuration property [origin]" );
-
-    expectString( remoteConfig.apiPrefix,
-        "Missing or invalid configuration property [apiPrefix]" );
-
-    if( tokenName )
-    {
-      const token = this.tryGetToken( tokenName );
-
-      if( !token )
-      {
-        throw new Error(`The token [${tokenName}] has not been set.`);
-      }
-
-      remoteConfig.token = token;
-    }
-
-    // this.log.debug(
-    //   `${this.serviceName()}.jsonGet`,
-    //   { uri, urlSearchParams }, remoteConfig);
-
-    try {
-      const response =
-        await jsonApiGet(
-          {
-            uri,
-            urlSearchParams,
-            config: remoteConfig
-          } );
-
-      return response;
-    }
-    catch( e )
-    {
-      throw new Error(
-        `${this.serviceName()}.jsonGet failed`, { cause: e } );
-    }
-  }
-
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Send POST request to the backend that includes the identity token service
-   * property.
-   *
-   * @param {string} _.uri
-   * @param {object|null} _.body
-   *
-   * @returns {object} backend response
-   */
-  async jsonPostWithIdentity( { uri, body }={} )
-  {
-    return this.jsonPost(
-      { uri, body, tokenName: IDENTITY_TOKEN_NAME } );
-  }
-
-  // ---------------------------------------------------------------------------
-
-  /**
-   * Send POST request to the backend that includes the access token service
-   * property.
-   *
-   * @param {string} _.uri
-   * @param {object|null} _.body
-   *
-   * @returns {object} backend response
-   */
-  async jsonPostWithAccess( { uri, body }={} )
-  {
-    return this.jsonPost(
-      { uri, body, tokenName: ACCESS_TOKEN_NAME } );
   }
 
   // ---------------------------------------------------------------------------
