@@ -199,22 +199,47 @@ export const filedrop = function( node, options )
   {
     e.preventDefault();
 
-    if( !e.dataTransfer || !e.dataTransfer.files || disabled )
+    console.log( "handleDrop", e );
+
+    let files = e.dataTransfer?.files || e.detail?.files || [];
+
+    if( !files.length || disabled )
     {
       return;
     }
 
-    const files = Array.from(e.dataTransfer.files);
+    dispatch( "filedrop", { files: Array.from(files) } );
+
+    updateFileOver( false );
 
     //
     // Reset input element
     // => Otherwise uploading the same file will not trigger a new change event
     //
     inputElement.value = "";
+  }
 
-    dispatch( "filedrop", { files: Array.from(files) } );
+  // ---------------------------------------------------------------------------
 
-    updateFileOver( false );
+  /**
+   * Handle an input change
+   * - Emitted when a file is selected
+   *
+   * @param { { target: { files: File[] } } } e - event
+   */
+  async function handleInputChange( e )
+  {
+    e.preventDefault();
+
+    const files = e.target.files;
+
+    dispatch( "drop", { files: Array.from(files) } );
+
+    //
+    // Reset input element
+    // => Otherwise uploading the same file will not trigger a new change event
+    //
+    inputElement.value = "";
   }
 
   // ---------------------------------------------------------------------------
@@ -240,24 +265,6 @@ export const filedrop = function( node, options )
 
   // ---------------------------------------------------------------------------
 
-  /**
-   * Handle an input change
-   * - Emitted when a file is selected
-   *
-   * @param { { target: { files: File[] } } } e - event
-   */
-  function handleInputChange( e )
-  {
-    e.preventDefault();
-
-    const files = e.target.files;
-
-    inputElement.value = ""; //reset input element
-
-    dispatch( "drop", { files: Array.from(files) } );
-  }
-
-  // ---------------------------------------------------------------------------
 
   /**
    * Update file over
