@@ -913,12 +913,14 @@ class BackendService extends Base
   // ---------------------------------------------------------------------------
 
   /**
-   * Try to remove an expired token
+   * Remove a token if it has expired
+   * - Removes token from session storage
+   * - Sets the token in `this.tokens` to `null`
    *
    * @param {string} tokenName
    * @param {string} [token]
    *
-   * @returns {boolean} true if the token has expired (and has been removed)
+   * @returns {boolean} true if the token has expired and has been removed
    */
   _tryRemoveExpiredToken( { tokenName, token=null } )
   {

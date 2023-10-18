@@ -29,7 +29,19 @@ const log = getModuleLogger( "AccountGuard.svelte" );
 
 let enableContent = false;
 
+/**
+ * Redirect to the login page
+ */
+function redirectToLogin()
+{
+
+  // TODO routeOptions: returnUrl?
+  redirectToRoute( routeLogin, { replaceCurrent: true} );
+}
+
 /* ------------------------------------------------------------------ Exports */
+
+export let routeLogin = ROUTE_LOGIN;
 
 /* ----------------------------------------------------------------- Reactive */
 
@@ -40,6 +52,8 @@ $: {
   //
   if( null === $identityTokenStore )
   {
+    console.log("No $identityTokenStore");
+
     // token has been set to null (expired or it does not exists)
     // -> redirect
 
@@ -47,12 +61,20 @@ $: {
       `AccountGuard: condition failed (missing or expired identity token) ` +
       `at [${getCurrentPath()}]. Redirecting to [${ROUTE_LOGIN}]`);
 
-    // TODO routeOptions: returnUrl?
-    redirectToRoute( ROUTE_LOGIN, { replaceCurrent: true} );
+    redirectToLogin();
   }
 }
 
+// ---- ----
+
 $: {
+  //
+  // If $accountAndIdentityStore has data
+  // => show Content
+  //
+  // Else if $accountAndIdentityStore has been set to `null`
+  // => redirect to login
+  //
   if( $accountAndIdentityStore )
   {
     if( $accountAndIdentityStore.account._id )
@@ -63,6 +85,11 @@ $: {
       // No userProfile => redirect
       redirectToRoute( ROUTE_CONFIRM_ACCOUNT ); // TODO routeOptions: returnUrl?
     }
+  }
+  else if( null === $accountAndIdentityStore )
+  {
+    console.log("AccountGuard: condition failed (missing account)");
+    redirectToLogin();
   }
 }
 
