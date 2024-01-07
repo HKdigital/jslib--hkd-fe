@@ -1,9 +1,11 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectError } from "@hkd-base/helpers/expect.js";
+import { expectError }
+  from "@hkd-base/helpers/expect.js";
 
-import ValueStore from "@hkd-base/classes/ValueStore.js";
+import ValueStore
+  from "@hkd-base/classes/ValueStore.js";
 
 /* ------------------------------------------------------------------ Exports */
 
