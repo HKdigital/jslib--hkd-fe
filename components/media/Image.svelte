@@ -139,15 +139,15 @@ state
       from: EMPTY,
       to: LOADED,
       transition: transitionLoad,
-      onStart: () => { console.log(`Start load [${src}]`); },
-      onEnded: () => { console.log(`Loaded [${src}]!`); }
+      // onStart: () => { console.log(`Start load [${src}]`); },
+      // onEnded: () => { console.log(`Loaded [${src}]!`); }
     } )
   .addTransition(
     {
       from: LOADED,
       to: SHOW,
       transition: transitionIn,
-      onStart: () => { console.log(`Show image [${src}]`); }
+      // onStart: () => { console.log(`Show image [${src}]`); }
     } );
 
 // -----------------------------------------------------------------------------
