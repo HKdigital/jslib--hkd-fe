@@ -52,6 +52,8 @@ const notFoundLabel$ = Symbol();
 
 const offs$ = Symbol();
 
+const beforeRedirectFns$ = Symbol();
+
 // const HISTORY_STORAGE_LABEL = "frontend-router/history";
 
 const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
@@ -114,6 +116,8 @@ class FrontendRouter extends LogBase
     router = this;
 
     router[ offs$ ] = {};
+
+    router[ beforeRedirectFns$ ] = [];
 
     // -- Create path matcher (used to match routes)
 
@@ -517,6 +521,33 @@ class FrontendRouter extends LogBase
   // ---------------------------------------------------------------------------
 
   /**
+   * Add a listener that will be called just before the redirect action
+   * (pushState of replaceState) will be preformed by the browser.
+   *
+   * @param {function} fn
+   *
+   * @returns {function} unsubscribe function
+   */
+  addOnBeforeRedirectListener( fn )
+  {
+    const fns = router[ beforeRedirectFns$ ];
+
+    fns.push( fn );
+
+    return () => {
+      for( let j = fns.length - 1; j >= 0; j = j - 1 )
+      {
+        if( fns[j] === fn )
+        {
+          fns.slice( j, 1 );
+        }
+      }
+    };
+  }
+
+  // ---------------------------------------------------------------------------
+
+  /**
    * Get a store that outputs the state for the current route only
    * - When the route path changes, values in the store will no longer be
    *   updated. This prevents state changes that are meant for other routes
@@ -680,6 +711,15 @@ class FrontendRouter extends LogBase
 
     // console.log(`redirectTo [path=${path}]`, options);
 
+    //
+    // Call before redirect fns
+    //
+
+    for( const fn of this[ beforeRedirectFns$ ] )
+    {
+      fn();
+    }
+
     if( !_defer )
     {
       if( replaceCurrent )
@@ -715,6 +755,7 @@ class FrontendRouter extends LogBase
    *
    * @param {object} [options.stateData] - Data for the state to set
    * @param {object} [options.vars] - Route variables
+   *
    */
   redirectToRoute( label, options )
   {
@@ -1216,6 +1257,14 @@ class FrontendRouter extends LogBase
    *   prevent that behaviour
    *
    * @param {object} vars - Key-value pairs to apply as route variables
+   *
+   * @param {boolean} [options.replaceCurrent=false]
+   * @param {object} [options.stateData] - Data for the state to set
+   * @param {object} [options.returnState]
+   *   Return state, can be used by the current route to redirect
+   *   `back` to a return state.
+   * @param {boolean} [options.defer=false]
+   *   Use defer to make redirect async
    */
   routePath( label, lang=null, options )
   {

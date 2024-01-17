@@ -2,11 +2,18 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectNotEmptyString,
-         expectObject }
+         expectObject,
+         expectArray }
   from "@hkd-base/helpers/expect.js";
 
 import DedupValueStore
   from "@hkd-base/classes/DedupValueStore.js";
+
+import HkPromise
+  from "@hkd-base/classes/HkPromise.js";
+
+// import { waitForStoreValue }
+//   from "@hkd-base/helpers/store.js";
 
 // import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 // const cache = new MemoryCache();
@@ -24,6 +31,110 @@ let loadingImages = {};
 // const log = getModuleLogger( "image-helper" );
 
 /* ------------------------------------------------------------------ Exports */
+
+/**
+ * Wait for all images to be preloaded
+ *
+ * @param {string[]} urls
+ */
+export async function waitForPreloadAll( urls )
+{
+  expectArray( urls );
+
+  const promises = [];
+
+  for( const url of urls )
+  {
+    promises.push( waitForPreload( { url } ) );
+  }
+
+  await Promise.all( promises );
+}
+
+/**
+ * Wait until an image has been preloaded
+ *
+ * @param {object} _ *
+ * @param {string} _.url
+ *
+ * @returns {Promise<string|Image>}
+ */
+export async function waitForPreload( { url } )
+{
+  expectNotEmptyString( url );
+
+  // const store = preload( url );
+
+  // await waitForStoreValue( { store, value: url, timeout } );
+
+  let img = loadingImages[ url ];
+
+  let promise;
+
+  if( img )
+  {
+    // image already loading
+    promise = new HkPromise();
+  }
+  else {
+    img =
+      loadingImages[ url ] = new Image();
+
+    img.srcStores = []; // for compatibility with `preload()`
+  }
+
+  img.onerror = () => {
+    console.log(`Image [${url}] failed to load`);
+
+    //
+    // Update url for all registered src stores
+    //
+    for( const store of img.srcStores )
+    {
+      store.set( "" ); // <= empty url
+    }
+
+    img = null;
+    delete loadingImages[ url ];
+
+    if( promise )
+    {
+      promise.reject();
+    }
+  };
+
+  img.onload = () => {
+    // console.log(`Image [${url}] loaded`);
+
+    //
+    // Update url for all registered src stores
+    //
+    for( const store of img.srcStores )
+    {
+      store.set( url );
+    }
+
+    img = null;
+    delete loadingImages[ url ];
+
+    if( promise )
+    {
+      promise.resolve();
+    }
+  };
+
+  // -- Start loading
+
+  img.src = url;
+
+  // Return image
+
+  await promise;
+
+  return img;
+}
+
+// -----------------------------------------------------------------------------
 
 /**
  * Preload the image from the location specified by `src`

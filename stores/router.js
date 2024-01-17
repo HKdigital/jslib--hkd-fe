@@ -95,6 +95,8 @@ export const {
   routeStateStore,
   routeLabelStore,
 
+  addOnBeforeRedirectListener,
+
   redirectTo,
   redirectToRoute,
 
