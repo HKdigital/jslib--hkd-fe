@@ -29,7 +29,7 @@ import StateMachine
 import StateTransition
   from "@hkd-base/classes/StateTransition.js";
 
-import { preload }
+import { preloadSrcStore }
   from "@hkd-fe/helpers/image.js";
 
 import { EMPTY,
@@ -162,7 +162,7 @@ $: {
 
     state.gotoState( LOADED );
 
-    srcStore = preload( src, srcStore );
+    srcStore = preloadSrcStore( src, srcStore );
   }
 }
 

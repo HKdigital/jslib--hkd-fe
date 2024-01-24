@@ -51,6 +51,8 @@ export async function waitForPreloadAll( urls )
   await Promise.all( promises );
 }
 
+// -----------------------------------------------------------------------------
+
 /**
  * Wait until an image has been preloaded
  *
@@ -67,20 +69,28 @@ export async function waitForPreload( { url } )
 
   // await waitForStoreValue( { store, value: url, timeout } );
 
-  let img = loadingImages[ url ];
+  // let img = loadingImages[ url ];
 
-  let promise;
+  let promise = new HkPromise();
 
-  if( img )
+  // if( !img )
+  // {
+  //   img =
+  //     loadingImages[ url ] = new Image();
+
+  //   img.srcStores = []; // for compatibility with `preload()`
+  // }
+
+  let img = new Image();
+
+  if( url.startsWith("data:") )
   {
-    // image already loading
-    promise = new HkPromise();
-  }
-  else {
-    img =
-      loadingImages[ url ] = new Image();
-
-    img.srcStores = []; // for compatibility with `preload()`
+    //
+    // Data url
+    // => no loading needed
+    //
+    img.src = url;
+    return img;
   }
 
   img.onerror = () => {
@@ -89,18 +99,19 @@ export async function waitForPreload( { url } )
     //
     // Update url for all registered src stores
     //
-    for( const store of img.srcStores )
-    {
-      store.set( "" ); // <= empty url
-    }
+    // for( const store of img.srcStores )
+    // {
+    //   store.set( "" ); // <= empty url
+    // }
 
+    img.onload = null;
+    img.onerror = null;
     img = null;
-    delete loadingImages[ url ];
 
-    if( promise )
-    {
-      promise.reject();
-    }
+    // delete loadingImages[ url ];
+
+    // console.log("reject", url);
+    promise.reject();
   };
 
   img.onload = () => {
@@ -109,25 +120,23 @@ export async function waitForPreload( { url } )
     //
     // Update url for all registered src stores
     //
-    for( const store of img.srcStores )
-    {
-      store.set( url );
-    }
+    // for( const store of img.srcStores )
+    // {
+    //   store.set( url );
+    // }
 
-    img = null;
-    delete loadingImages[ url ];
+    img.onload = null;
+    img.onerror = null;
 
-    if( promise )
-    {
-      promise.resolve();
-    }
+    // delete loadingImages[ url ];
+
+    // console.log("resolve", url);
+    promise.resolve();
   };
 
   // -- Start loading
 
   img.src = url;
-
-  // Return image
 
   await promise;
 
@@ -150,7 +159,7 @@ export async function waitForPreload( { url } )
  *   let url = "some-image.jpg";
  *
  *   let srcStore;
- *   srcStore = preload( url, srcStore )
+ *   srcStore = preloadSrcStore( url, srcStore )
  *
  *   <img src={$src} />
  *
@@ -161,7 +170,7 @@ export async function waitForPreload( { url } )
  *
  * @returns {object} url store
  */
-export function preload( url, existingSrcStore )
+export function preloadSrcStore( url, existingSrcStore )
 {
   if( !url )
   {
