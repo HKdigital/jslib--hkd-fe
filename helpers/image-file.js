@@ -1,19 +1,23 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import {
-  expectString,
-  expectNumber,
-  expectObject,
-  expectArrayBuffer } from "@hkd-base/helpers/expect.js";
+import { expectString,
+         expectNotEmptyString,
+         expectNumber,
+         expectPositiveNumber,
+         expectObject,
+         expectArrayBuffer }
+  from "@hkd-base/helpers/expect.js";
 
-import { HkPromise } from "@hkd-base/helpers/promises.js";
-
-import { noop }
-  from "@hkd-base/helpers/function.js";
+import { HkPromise }
+  from "@hkd-base/helpers/promises.js";
 
 import { tiffTagsByCode,
-         gpsTagsByCode } from "@hkd-fe/constants/exif.js";
+         gpsTagsByCode }
+  from "@hkd-fe/constants/exif.js";
+
+import { IMAGE_PNG }
+  from "@hkd-base/constants/mime-types.js";
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -42,7 +46,7 @@ export /*async*/ function loadImage( urlOrImageFile )
 
     // -- Store information about the file as properties of the image object
 
-    let fileName = urlOrImageFile.name || null;
+    // let fileName = urlOrImageFile.name || null;
 
     img.fileName = urlOrImageFile.name;
 
@@ -538,6 +542,98 @@ export function convertExifToMetaTags( exifTags )
   // hk.debug( { normalizedTags } );
 
   return normalizedTags;
+}
+
+// -----------------------------------------------------------------------------
+
+/**
+ * Convert canvas to ImageFile
+ * - For image formats, see @hkd-base/constants/mime-types.js
+ *
+ * About canvas.toBlob()
+ * @see https://developer.mozilla.org/en-US/docs/
+ *      Web/API/HTMLCanvasElement/toBlob
+ *
+ * A Blob is file-like object of immutable, raw data
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/Blob
+ *
+ * A File is a specific kind of Blob
+ * @see https://developer.mozilla.org/en-US/docs/Web/API/File
+ *
+ *
+ * --
+ *
+ * @param {object} _.canvas
+ * @param {string} [_.type="image/png"]
+ * @param {number} [_.quality] - 1 for PNG, 0.9 otherwise
+ * @param {string} [fileName="image.png"]
+ *
+ *  --
+ *
+ * @returns {Promise<File>}
+ */
+export async function canvasToImageFile(
+  {
+    canvas,
+    type=IMAGE_PNG,
+    quality,
+    fileName="image.png"
+  } )
+{
+  const promise = new HkPromise();
+
+  expectObject( canvas,
+    "Missing or invalid parameter [canvas]" );
+
+  expectNotEmptyString( type,
+    "Missing or invalid parameter [type]" );
+
+  if( quality )
+  {
+    expectPositiveNumber( quality,
+      "Missing or invalid parameter [quality]" );
+  }
+  else {
+    if( type === IMAGE_PNG )
+    {
+      quality = 1;
+    }
+    else {
+      quality = 0.9;
+    }
+  }
+
+  expectNotEmptyString( fileName,
+    "Missing or invalid parameter [fileName]" );
+
+  try {
+    canvas.toBlob( ( blob ) =>
+      {
+        try {
+          const file =
+            new File(
+              blob,
+              fileName,
+              {
+                type,
+                lastModified: Date.now()
+              }
+            );
+
+          promise.resolve( file );
+        }
+        catch( e )
+        {
+          promise.reject( e );
+        }
+      } );
+  }
+  catch( e )
+  {
+    promise.reject( e );
+  }
+
+  return promise;
 }
 
 /* ---------------------------------------------------------------- Internals */

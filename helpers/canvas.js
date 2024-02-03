@@ -293,6 +293,7 @@ export /* async */ function canvasToWebP( canvas, options={} )
   }
 
   // -- Get canvas scale and original File info
+  //    (set if the canvas was created using `createCanvasImage()`)
 
   const info = canvasImageInfo.get( canvas );
 
@@ -312,7 +313,7 @@ export /* async */ function canvasToWebP( canvas, options={} )
     }
   }
 
-  console.log( { info } );
+  // console.log( { info } );
 
   if( !baseFileName )
   {
@@ -385,11 +386,11 @@ export /* async */ function canvasToWebP( canvas, options={} )
   const file =
     new File( [arr], fileName, { type: "image/webp", lastModified } );
 
-  console.log(
-    {
-      ofgFileSize: info.originalFileSize,
-      newFileSize: file.size
-    } );
+  // console.log(
+  //   {
+  //     ofgFileSize: info?.originalFileSize || '?',
+  //     newFileSize: file.size
+  //   } );
 
   return file;
 }

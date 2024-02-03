@@ -263,7 +263,8 @@ class BackendService extends Base
       remoteConfig.token = token;
     }
 
-    // this.log.debug(`${this.serviceName()}.jsonPost`, { uri, body }, remoteConfig);
+    this.log.debug(
+      `${this.serviceName()}.jsonPost`, { uri, body }, remoteConfig);
 
     try {
       const response =
@@ -281,7 +282,8 @@ class BackendService extends Base
     catch( e )
     {
       throw new Error(
-        `${this.serviceName()}.jsonPost failed`, { cause: e } );
+        `${this.serviceName()}.jsonPost to ` +
+        `remote [${remoteConfig.origin}] failed`, { cause: e } );
     }
   }
 
