@@ -5,15 +5,15 @@ import {
   expectString,
   expectNumber,
   expectObject,
-  expectArrayBuffer } from "@hkd-base/helpers/expect.js";
+  expectArrayBuffer } from '@hkd-base/helpers/expect.js';
 
-import { HkPromise } from "@hkd-base/helpers/promises.js";
+import { HkPromise } from '@hkd-base/helpers/promises.js';
 
-import { noop }
-  from "@hkd-base/helpers/function.js";
+// import { noop }
+//   from '@hkd-base/helpers/function.js';
 
 import { tiffTagsByCode,
-         gpsTagsByCode } from "@hkd-fe/constants/exif.js";
+         gpsTagsByCode } from '@hkd-fe/constants/exif.js';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -42,7 +42,7 @@ export /*async*/ function loadImage( urlOrImageFile )
 
     // -- Store information about the file as properties of the image object
 
-    let fileName = urlOrImageFile.name || null;
+    // const fileName = urlOrImageFile.name || null;
 
     img.fileName = urlOrImageFile.name;
 
@@ -60,7 +60,7 @@ export /*async*/ function loadImage( urlOrImageFile )
 
     // console.log(`Load image from file [${fileName}]`);
 
-    reader.addEventListener( "load", ( e ) =>
+    reader.addEventListener( 'load', ( e ) =>
       {
         img.src = e.target.result;
 
@@ -69,26 +69,26 @@ export /*async*/ function loadImage( urlOrImageFile )
         promise.resolve( img );
       } );
 
-    reader.addEventListener( "error", promise.reject.bind( promise ) );
+    reader.addEventListener( 'error', promise.reject.bind( promise ) );
 
     reader.readAsDataURL( urlOrImageFile );
 
   }
-  else if( typeof urlOrImageFile === "string" )
+  else if( typeof urlOrImageFile === 'string' )
   {
     url = urlOrImageFile;
     // tryRevokeObjectUrlFn = noop;
 
-    img.crossOrigin = "Anonymous";
+    img.crossOrigin = 'Anonymous';
 
-    img.addEventListener( "load",
+    img.addEventListener( 'load',
       () => {
         const imgWidth = img.width;
         const imgHeight = img.height;
 
         if( 0 === imgWidth || 0 === imgHeight )
         {
-          promise.reject( new Error("Image width or height is 0") );
+          promise.reject( new Error('Image width or height is 0') );
           return;
         }
 
@@ -97,7 +97,7 @@ export /*async*/ function loadImage( urlOrImageFile )
         // tryRevokeObjectUrlFn();
       } );
 
-    img.addEventListener( "error", promise.reject.bind( promise ) );
+    img.addEventListener( 'error', promise.reject.bind( promise ) );
 
     // console.log("Load", url);
 
@@ -105,7 +105,7 @@ export /*async*/ function loadImage( urlOrImageFile )
   }
   else {
     throw new Error(
-      "Invalid parameter [urlOrImageFile] (expected url or image File)");
+      'Invalid parameter [urlOrImageFile] (expected url or image File)');
   }
 
   return promise;
@@ -125,16 +125,16 @@ export /* async */ function getMetaDataFromJpgFile( jpgFile )
 {
   if( !(jpgFile instanceof File) )
   {
-    throw new Error("Invalid parameter [jpgFile] (expected File object)");
+    throw new Error('Invalid parameter [jpgFile] (expected File object)');
   }
 
   const promise = new HkPromise();
 
   const reader = new FileReader();
 
-  reader.addEventListener( "error", promise.reject );
+  reader.addEventListener( 'error', promise.reject );
 
-  reader.addEventListener( "load",
+  reader.addEventListener( 'load',
     () => {
       const exifTags = readExifTags( reader.result );
 
@@ -168,7 +168,7 @@ export /* async */ function getMetaDataFromJpgFile( jpgFile )
  */
 export function readExifTags( buffer )
 {
-  expectArrayBuffer( buffer, "Missing or invalid parameter [buffer]" );
+  expectArrayBuffer( buffer, 'Missing or invalid parameter [buffer]' );
 
   const offset = _findExifDataOffset( buffer );
 
@@ -179,7 +179,7 @@ export function readExifTags( buffer )
 
   // First four bytes should be (ASCII) "Exif"
 
-  if( "Exif" !== _readAsciiStringFromBuffer( buffer, offset, 4 ) )
+  if( 'Exif' !== _readAsciiStringFromBuffer( buffer, offset, 4 ) )
   {
     // Invalid EXIF data
     return null;
@@ -189,7 +189,7 @@ export function readExifTags( buffer )
 
   // -- Define tiff data offset
 
-  let tiffOffset = offset + 6;
+  const tiffOffset = offset + 6;
 
   // --- Detect first IDF offset
 
@@ -302,13 +302,13 @@ export function readExifTags( buffer )
     {
       const value = gpsData[ tag ];
 
-      if( "GPSVersionID" === tag )
+      if( 'GPSVersionID' === tag )
       {
         tags[ tag ] =
           value[0] +
-          "." + value[1] +
-          "." + value[2] +
-          "." + value[3];
+          '.' + value[1] +
+          '.' + value[2] +
+          '.' + value[3];
       }
       else {
         tags[ tag ] = gpsData[ tag ];
@@ -342,7 +342,7 @@ export function readExifTags( buffer )
  */
 export function convertExifToMetaTags( exifTags )
 {
-  expectObject( exifTags, "Missing or invalid parameter [exifTags]" );
+  expectObject( exifTags, 'Missing or invalid parameter [exifTags]' );
 
   // -- Create empty normalizedTags
 
@@ -353,7 +353,7 @@ export function convertExifToMetaTags( exifTags )
   // -- Normalized known tags
 
   {
-    const key = "Orientation";
+    const key = 'Orientation';
     const value = exifTags[ key ];
 
     if( value !== undefined )
@@ -364,7 +364,7 @@ export function convertExifToMetaTags( exifTags )
   }
 
   {
-    const key = "DateTime";
+    const key = 'DateTime';
     const value = exifTags[ key ];
 
     if( value !== undefined )
@@ -375,95 +375,95 @@ export function convertExifToMetaTags( exifTags )
   }
 
   {
-    const key = "Make";
+    const key = 'Make';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
       delete normalizedTags[ key ];
-      normalizedTags.manufacturer = "" + value;
+      normalizedTags.manufacturer = '' + value;
     }
   }
 
   {
-    const key = "Model";
+    const key = 'Model';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
       delete normalizedTags[ key ];
-      normalizedTags.model = "" + value;
+      normalizedTags.model = '' + value;
     }
   }
 
   {
-    const key = "Software";
+    const key = 'Software';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
       delete normalizedTags[ key ];
-      normalizedTags.softwareVersion = "" + value;
+      normalizedTags.softwareVersion = '' + value;
     }
   }
   {
     // @note speed will be stored in KM/H
 
-    const key = "GPSSpeed";
+    const key = 'GPSSpeed';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
-      switch( exifTags["GPSSpeedRef"] || "K" )
+      switch( exifTags['GPSSpeedRef'] || 'K' )
       {
-        case "K": // Kilometers per hour
+        case 'K': // Kilometers per hour
           normalizedTags.speed = 0 + value;
           break;
 
-        case "M": // Miles per hour
+        case 'M': // Miles per hour
           normalizedTags.speed = 0 + value * 1.609344;
           break;
 
-        case "N": // Knots
+        case 'N': // Knots
           normalizedTags.speed = 0 + value * 1.852001;
           break;
       }
 
-      delete normalizedTags["GPSSpeed"];
-      delete normalizedTags["GPSSpeedRef"];
+      delete normalizedTags['GPSSpeed'];
+      delete normalizedTags['GPSSpeedRef'];
     }
   }
 
   {
-    const key = "GPSImgDirection";
+    const key = 'GPSImgDirection';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
-      const ref = exifTags["GPSImgDirectionRef"] || "T";
+      const ref = exifTags['GPSImgDirectionRef'] || 'T';
       normalizedTags.direction = value.toFixed(4) + ref;
 
-      delete normalizedTags["GPSImgDirection"];
-      delete normalizedTags["GPSImgDirectionRef"];
+      delete normalizedTags['GPSImgDirection'];
+      delete normalizedTags['GPSImgDirectionRef'];
     }
   }
 
   {
-    const key = "GPSDestBearing";
+    const key = 'GPSDestBearing';
     const value = exifTags[ key ];
 
     if( value !== undefined )
     {
-      const ref = exifTags["GPSDestBearingRef"] || "T";
+      const ref = exifTags['GPSDestBearingRef'] || 'T';
       normalizedTags.bearing = value.toFixed(4) + ref;
 
-      delete normalizedTags["GPSDestBearing"];
-      delete normalizedTags["GPSDestBearingRef"];
+      delete normalizedTags['GPSDestBearing'];
+      delete normalizedTags['GPSDestBearingRef'];
     }
   }
 
   {
-    const key = "GPSAltitude";
+    const key = 'GPSAltitude';
     const value = exifTags[ key ];
 
     if( value !== undefined )
@@ -479,40 +479,40 @@ export function convertExifToMetaTags( exifTags )
         altitude = value.numerator / denominator;
       }
 
-      const sign = exifTags["GPSAltitudeRef"] || 0;
+      const sign = exifTags['GPSAltitudeRef'] || 0;
 
       if( 0 !== altitude &&
-         (1 === sign || "-" === "sign") )
+         (1 === sign || '-' === 'sign') )
       {
         // 1 or "-" means Below Sea Level -> negate value
         altitude = -altitude;
       }
       normalizedTags.altitude = altitude.toFixed(8);
 
-      delete normalizedTags["GPSAltitude"];
-      delete normalizedTags["GPSAltitudeRef"];
+      delete normalizedTags['GPSAltitude'];
+      delete normalizedTags['GPSAltitudeRef'];
     }
   }
 
   // hk.debug( "ExifTagKeys",  Object.keys( exifTags ) );
 
-  if( exifTags["GPSLatitude"] &&
-      exifTags["GPSLatitudeRef"] &&
-      exifTags["GPSLongitude"] &&
-      exifTags["GPSLongitudeRef"] )
+  if( exifTags['GPSLatitude'] &&
+      exifTags['GPSLatitudeRef'] &&
+      exifTags['GPSLongitude'] &&
+      exifTags['GPSLongitudeRef'] )
   {
-    delete normalizedTags["GPSLatitude"];
-    delete normalizedTags["GPSLatitudeRef"];
-    delete normalizedTags["GPSLongitude"];
-    delete normalizedTags["GPSLongitudeRef"];
+    delete normalizedTags['GPSLatitude'];
+    delete normalizedTags['GPSLatitudeRef'];
+    delete normalizedTags['GPSLongitude'];
+    delete normalizedTags['GPSLongitudeRef'];
 
     {
-      const [ latDegree, latMinute, latSeconds ] = exifTags["GPSLatitude"];
+      const [ latDegree, latMinute, latSeconds ] = exifTags['GPSLatitude'];
 
       // Convert to decimal degree
       let latitude = latDegree + latMinute / 60 + latSeconds / 3600;
 
-      if( "S" === exifTags["GPSLatitudeRef"] )
+      if( 'S' === exifTags['GPSLatitudeRef'] )
       {
         latitude = -latitude;
       }
@@ -521,12 +521,12 @@ export function convertExifToMetaTags( exifTags )
     }
 
     {
-      const [ longDegree, longMinute, longSeconds ] = exifTags["GPSLongitude"];
+      const [ longDegree, longMinute, longSeconds ] = exifTags['GPSLongitude'];
 
       // Convert to decimal degree
       let longitude = longDegree + longMinute / 60 + longSeconds / 3600;
 
-      if( "W" === exifTags["GPSLongitudeRef"] )
+      if( 'W' === exifTags['GPSLongitudeRef'] )
       {
         longitude = -longitude;
       }
@@ -552,7 +552,7 @@ export function convertExifToMetaTags( exifTags )
  */
 function _findExifDataOffset( buffer )
 {
-  expectArrayBuffer( buffer, "Missing or invalid parameter [buffer]" );
+  expectArrayBuffer( buffer, 'Missing or invalid parameter [buffer]' );
 
   const dataView = new DataView( buffer );
 
@@ -615,16 +615,16 @@ function _readTags(
   }={}  )
 {
   expectArrayBuffer( buffer,
-    "Missing or invalid parameter [buffer]" );
+    'Missing or invalid parameter [buffer]' );
 
   expectNumber( tiffOffset,
-    "Missing or invalid parameter [tiffOffset]" );
+    'Missing or invalid parameter [tiffOffset]' );
 
   expectNumber( dirOffset,
-    "Missing or invalid parameter [dirOffset]" );
+    'Missing or invalid parameter [dirOffset]' );
 
   expectObject( tagsByCode,
-    "Missing or invalid parameter [tagsByCode]" );
+    'Missing or invalid parameter [tagsByCode]' );
 
   const dataView = new DataView( buffer );
 
@@ -688,19 +688,19 @@ function _readTagValue(
   }={} )
 {
   expectArrayBuffer( buffer,
-    "Missing or invalid parameter [buffer]" );
+    'Missing or invalid parameter [buffer]' );
 
   expectNumber( entryOffset,
-    "Missing or invalid parameter [entryOffset]" );
+    'Missing or invalid parameter [entryOffset]' );
 
   expectNumber( tiffOffset,
-    "Missing or invalid parameter [tiffOffset]" );
+    'Missing or invalid parameter [tiffOffset]' );
 
   expectNumber( dirOffset,
-    "Missing or invalid parameter [dirOffset]" );
+    'Missing or invalid parameter [dirOffset]' );
 
   expectObject( tagsByCode,
-    "Missing or invalid parameter [tagsByCode]" );
+    'Missing or invalid parameter [tagsByCode]' );
 
   const dataView = new DataView( buffer );
 
@@ -885,11 +885,11 @@ function _readTagValue(
  */
 function _parseExifDateTime( value )
 {
-  expectString( value, "Missing or invald parameter [value]");
+  expectString( value, 'Missing or invald parameter [value]');
 
   if( 19 !== value.length )
   {
-    throw new Error("Invalid parameter [value] (expected length [19])");
+    throw new Error('Invalid parameter [value] (expected length [19])');
   }
 
   const year = value.slice( 0, 4 );
@@ -921,22 +921,22 @@ function _parseExifDateTime( value )
  */
 function _readAsciiStringFromBuffer( buffer, offset=0, numberOfbytes )
 {
-  expectArrayBuffer( buffer, "Missing or invalid parameter [buffer]" );
+  expectArrayBuffer( buffer, 'Missing or invalid parameter [buffer]' );
 
   expectNumber( offset,
-    "Missing or invalid parameter [offset]" );
+    'Missing or invalid parameter [offset]' );
 
   if( !numberOfbytes )
   {
     numberOfbytes = buffer.byteLength - offset;
   }
   else {
-    expectNumber( offset, "Invalid parameter [offset]" );
+    expectNumber( offset, 'Invalid parameter [offset]' );
   }
 
   const dataView = new DataView( buffer );
 
-  let str = "";
+  let str = '';
 
   for( let j = offset, n = offset + numberOfbytes; j < n; j = j + 1 )
   {

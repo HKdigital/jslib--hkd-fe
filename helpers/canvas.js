@@ -3,7 +3,7 @@
 
 import {
   expectNotEmptyString,
-  expectNumber } from "@hkd-base/helpers/expect.js";
+  expectNumber } from '@hkd-base/helpers/expect.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -76,7 +76,7 @@ export function createCanvasImage( img, options={} )
   if( !(img instanceof Image) &&
       !(img instanceof HTMLCanvasElement) )
   {
-    throw new Error("Invalid parameter [img] (expected Image)");
+    throw new Error('Invalid parameter [img] (expected Image)');
   }
 
   const {
@@ -96,14 +96,14 @@ export function createCanvasImage( img, options={} )
     if( !(canvas instanceof HTMLCanvasElement) )
     {
       throw new Error(
-        "Invalid parameter [options.canvas] (expected HTMLCanvasElement)");
+        'Invalid parameter [options.canvas] (expected HTMLCanvasElement)');
     }
   }
   else {
-    canvas = document.createElement("canvas");
+    canvas = document.createElement('canvas');
   }
 
-  const ctx = canvas.getContext("2d");
+  const ctx = canvas.getContext('2d');
 
   const imgWidth = img.width;
   const imgHeight = img.height;
@@ -115,7 +115,7 @@ export function createCanvasImage( img, options={} )
   if( imgWidth < minWidth )
   {
     err = new Error(
-      "Invalid parameter [img] (img.width < options.minWidth)");
+      'Invalid parameter [img] (img.width < options.minWidth)');
 
     err.imageTooSmall = 1;
   }
@@ -123,7 +123,7 @@ export function createCanvasImage( img, options={} )
   if( imgHeight < minHeight )
   {
     err = new Error(
-      "Invalid parameter [img] (img.height < options.minHeight)");
+      'Invalid parameter [img] (img.height < options.minHeight)');
 
     err.imageTooSmall = 1;
   }
@@ -284,11 +284,11 @@ export /* async */ function canvasToWebP( canvas, options={} )
   if( undefined !== quality )
   {
     expectNumber( quality,
-      "Missing or invalid parameter [quality]" );
+      'Missing or invalid parameter [quality]' );
 
     if( quality < 0 || quality > 1 )
     {
-      throw new Error("Invalid value for parameter [quality]");
+      throw new Error('Invalid value for parameter [quality]');
     }
   }
 
@@ -300,7 +300,7 @@ export /* async */ function canvasToWebP( canvas, options={} )
   {
     switch( info.originalFileType )
     {
-      case "image/jpeg":
+      case 'image/jpeg':
         quality = DEFAULT_QUALITY_JPG;
         break;
 
@@ -321,7 +321,7 @@ export /* async */ function canvasToWebP( canvas, options={} )
       baseFileName = info.originalFileName;
     }
     else {
-      baseFileName = "untitled";
+      baseFileName = 'untitled';
     }
   }
   else {
@@ -332,14 +332,14 @@ export /* async */ function canvasToWebP( canvas, options={} )
   }
 
   expectNotEmptyString( baseFileName,
-    "Missing or invalid parameter [baseFileName]" );
+    'Missing or invalid parameter [baseFileName]' );
 
   expectNumber( lastModified,
-    "Missing or invalid parameter [lastModified]" );
+    'Missing or invalid parameter [lastModified]' );
 
   // const promise = new HkPromise();
 
-  const type = "image/webp";
+  const type = 'image/webp';
 
   let dataUrl;
 
@@ -351,16 +351,16 @@ export /* async */ function canvasToWebP( canvas, options={} )
     dataUrl = canvas.toDataURL( type, quality );
   }
 
-  if( "data:," === dataUrl )
+  if( 'data:,' === dataUrl )
   {
-    throw new Error("Canvas size 0 or exceeds maximum canvas size");
+    throw new Error('Canvas size 0 or exceeds maximum canvas size');
   }
 
-  const from = dataUrl.indexOf(",");
+  const from = dataUrl.indexOf(',');
 
   if( -1 === from )
   {
-    throw new Error("Invalid output from [canvas.toDataURL()]");
+    throw new Error('Invalid output from [canvas.toDataURL()]');
   }
 
   const binaryString = atob( dataUrl.slice( from + 1 ) );
@@ -383,7 +383,7 @@ export /* async */ function canvasToWebP( canvas, options={} )
   //       so wrap the ArrayBuffer data in an array first
   //
   const file =
-    new File( [arr], fileName, { type: "image/webp", lastModified } );
+    new File( [arr], fileName, { type: 'image/webp', lastModified } );
 
   console.log(
     {

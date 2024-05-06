@@ -6,7 +6,7 @@
 //   expectArray,
 //   expectObject } from "@hkd-base/helpers/expect.js";
 
-import ValueStream from "@hkd-base/classes/ValueStream.js";
+import ValueStream from '@hkd-base/classes/ValueStream.js';
 
 /* ------------------------------------------------------------------ Exports */
 

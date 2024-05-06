@@ -9,7 +9,7 @@
 
   import { createObserver } from './utils/observer';
 
-  import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
+  import { expectValidSurfaceColor } from '@hkd-fe/helpers/colors.js';
 
   /* ---------------------------------------------------------------- Exports */
 
@@ -33,7 +33,7 @@
   const heightReducer = showArrows ? 40 : 0;
 
   let thumbElem;
-  let thumbElemStyle = "height: 0px; top: 0px";
+  let thumbElemStyle = 'height: 0px; top: 0px';
 
   let noScroll = true;
   let pos = { top: 0, y: 0 };
@@ -146,12 +146,12 @@
 
     wrapperElem.addEventListener('scroll', () => {
       updateThumbHeightAndTop();
-      dispatch("scroll");
+      dispatch('scroll');
     } );
 
     window.addEventListener('resize', initTrackBar);
 
-    let observerElem =
+    const observerElem =
       observerTarget.$$ ? observerTarget.happyObserverTarget() : observerTarget;
 
     unsubscribeObserver =

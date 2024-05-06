@@ -1,10 +1,10 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import ValueStore from "@hkd-base/classes/ValueStore.js";
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import ValueStore from '@hkd-base/classes/ValueStore.js';
+import DedupValueStore from '@hkd-base/classes/DedupValueStore.js';
 
-import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
+import MediaQuery from '@hkd-fe/classes/MediaQuery.js';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -20,7 +20,7 @@ export const isLandscapeOnMobile = new DedupValueStore();
  * - Has `navigator.maxTouchPoints > 0` (more than a single touch point)
  */
 export const looksLikeMobileDevice =
-    ( ("orientation" in window) && navigator.maxTouchPoints > 0 );
+    ( ('orientation' in window) && navigator.maxTouchPoints > 0 );
      /* && window.screenX !== 0 */
 
 // IDEA: @media (hover: none) and (pointer: coarse)
@@ -66,7 +66,7 @@ window.addEventListener('DOMContentLoaded', () =>
 
   // -- Use media query to detect if the screen orientation changes
 
-  const query = "(orientation: landscape)";
+  const query = '(orientation: landscape)';
 
   const mq = new MediaQuery( query );
 

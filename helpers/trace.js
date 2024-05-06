@@ -1,9 +1,7 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectArray } from "@hkd-base/helpers/expect.js";
-
-import log from "@hkd-base/helpers/log.js";
+import log from '@hkd-base/helpers/log.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -22,16 +20,16 @@ import log from "@hkd-base/helpers/log.js";
  *
  * @returns {object[]} stack(trace)
  */
-export function getStack( skipFirst=3, skipLast=0 )
+export function getStack( /*skipFirst=3, skipLast=0*/ )
 {
-  let orig = Error.prepareStackTrace;
+  // const orig = Error.prepareStackTrace;
 
   Error.prepareStackTrace = function( _, stack )
     {
       return stack;
     };
 
-  let err = new Error();
+  const err = new Error();
 
   // Error.captureStackTrace( err );
 

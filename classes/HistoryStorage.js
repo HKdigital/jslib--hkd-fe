@@ -4,15 +4,15 @@
 import { expectNotEmptyString,
          expectPositiveNumber,
          expectArray,
-         expectObject } from "@hkd-base/helpers/expect.js";
+         expectObject } from '@hkd-base/helpers/expect.js';
 
-import { equals } from "@hkd-base/helpers/compare.js";
+import { equals } from '@hkd-base/helpers/compare.js';
 
-import LogBase from "@hkd-base/classes/LogBase.js";
+import LogBase from '@hkd-base/classes/LogBase.js';
 
 /* ---------------------------------------------------------------- Internals */
 
-const DEFAULT_STORAGE_LABEL = "history";
+const DEFAULT_STORAGE_LABEL = 'history';
 const DEFAULT_MAX_HISTORY_LENGTH = 15;
 
 /* ------------------------------------------------------------------ Exports */
@@ -41,22 +41,22 @@ export default class HistoryStorage extends LogBase
     super();
 
     expectNotEmptyString( storageLabel,
-      "Invalid parameter [storageLabel]" );
+      'Invalid parameter [storageLabel]' );
 
     expectPositiveNumber( maxHistoryLength,
-      "Invalid parameter [maxHistoryLength]" );
+      'Invalid parameter [maxHistoryLength]' );
 
     expectObject( storage,
-      "Invalid parameter [storage]" );
+      'Invalid parameter [storage]' );
 
-    if( typeof storage.getItem !== "function" )
+    if( typeof storage.getItem !== 'function' )
     {
-      throw new Error( `Invalid storage. [storage.getItem] is not a function`);
+      throw new Error( 'Invalid storage. [storage.getItem] is not a function');
     }
 
-    if( typeof storage.setItem !== "function" )
+    if( typeof storage.setItem !== 'function' )
     {
-      throw new Error( `Invalid storage. [storage.setItem] is not a function`);
+      throw new Error( 'Invalid storage. [storage.setItem] is not a function');
     }
 
     this.storage = storage;
@@ -143,7 +143,7 @@ export default class HistoryStorage extends LogBase
    */
   push( newItem, expectDifferentItem=true )
   {
-    expectObject( newItem, "Missing or invalid parameter [newItem]" );
+    expectObject( newItem, 'Missing or invalid parameter [newItem]' );
 
     let history = this._getHistoryFromStorage();
 
@@ -157,7 +157,7 @@ export default class HistoryStorage extends LogBase
       if( equals( newItem, lastItem ) )
       {
         throw new Error(
-          "Cannot push new item to history (same as current latest item)");
+          'Cannot push new item to history (same as current latest item)');
       }
     }
 
@@ -185,7 +185,7 @@ export default class HistoryStorage extends LogBase
    */
   replace( newItem )
   {
-    expectObject( newItem, "Missing or invalid parameter [newItem]" );
+    expectObject( newItem, 'Missing or invalid parameter [newItem]' );
 
     const history = this._getHistoryFromStorage();
 
@@ -229,7 +229,7 @@ export default class HistoryStorage extends LogBase
     const { storage,
             storageLabel } = this;
 
-    let historyJson = storage.getItem( storageLabel );
+    const historyJson = storage.getItem( storageLabel );
 
     let history;
 
@@ -238,13 +238,13 @@ export default class HistoryStorage extends LogBase
       try {
         history = JSON.parse( historyJson );
 
-        expectArray( history, "Invalid history in storage" );
+        expectArray( history, 'Invalid history in storage' );
 
         history = this._limitHistorySize( history );
       }
       catch( e )
       {
-        this.log.warning("Clearing invalid history data in storage");
+        this.log.warning('Clearing invalid history data in storage');
         this.clear();
 
         return [];
@@ -263,7 +263,7 @@ export default class HistoryStorage extends LogBase
    */
   _setHistoryInStorage( history )
   {
-    expectArray( history, "Missing or invvalid parameter [history]" );
+    expectArray( history, 'Missing or invvalid parameter [history]' );
 
     // TODO: more checks?
 
@@ -287,11 +287,11 @@ export default class HistoryStorage extends LogBase
    */
   _limitHistorySize( history, maxSize )
   {
-    expectArray( history, "Missing or invvalid parameter [history]" );
+    expectArray( history, 'Missing or invvalid parameter [history]' );
 
     if( undefined !== maxSize )
     {
-      expectPositiveNumber( maxSize, "Invalid parameter [maxSize]" );
+      expectPositiveNumber( maxSize, 'Invalid parameter [maxSize]' );
     }
     else {
       maxSize = this.maxHistoryLength;

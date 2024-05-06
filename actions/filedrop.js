@@ -47,12 +47,12 @@ export const filedrop = function( node, options )
 
     if( disabled )
     {
-      node.classList.add("x-disabled");
+      node.classList.add('x-disabled');
       stop();
       return;
     }
     else {
-      node.classList.remove("x-disabled");
+      node.classList.remove('x-disabled');
     }
 
 
@@ -75,17 +75,17 @@ export const filedrop = function( node, options )
 
     // -- Add event listeners to node
 
-    node.addEventListener( "dragenter", handleDragEnter );
-    node.addEventListener( "dragleave", handleDragLeave );
-    node.addEventListener( "dragover", handleDragOver );
-    node.addEventListener( "drop", handleDrop );
+    node.addEventListener( 'dragenter', handleDragEnter );
+    node.addEventListener( 'dragleave', handleDragLeave );
+    node.addEventListener( 'dragover', handleDragOver );
+    node.addEventListener( 'drop', handleDrop );
 
-    node.addEventListener( "click", handleClick );
-    node.addEventListener( "keydown", handleKeyDown );
+    node.addEventListener( 'click', handleClick );
+    node.addEventListener( 'keydown', handleKeyDown );
 
     // -- Add event listeners to input element
 
-    inputElement.addEventListener( "change", handleInputChange );
+    inputElement.addEventListener( 'change', handleInputChange );
 
     configured = true;
   }
@@ -102,17 +102,17 @@ export const filedrop = function( node, options )
       return;
     }
 
-    node.removeEventListener( "dragenter", handleDragEnter );
-    node.removeEventListener( "dragleave", handleDragLeave );
-    node.removeEventListener( "dragover", handleDragOver );
-    node.removeEventListener( "drop", handleDrop );
+    node.removeEventListener( 'dragenter', handleDragEnter );
+    node.removeEventListener( 'dragleave', handleDragLeave );
+    node.removeEventListener( 'dragover', handleDragOver );
+    node.removeEventListener( 'drop', handleDrop );
 
-    node.removeEventListener( "click", handleClick );
-    node.removeEventListener( "keydown", handleKeyDown );
+    node.removeEventListener( 'click', handleClick );
+    node.removeEventListener( 'keydown', handleKeyDown );
 
     // -- Remove event listeners from the input element
 
-    inputElement.removeEventListener( "change", handleInputChange );
+    inputElement.removeEventListener( 'change', handleInputChange );
   }
 
   // ---------------------------------------------------------------------------
@@ -128,11 +128,11 @@ export const filedrop = function( node, options )
   {
     if( !inputElement )
     {
-      inputElement = document.createElement("input");
-      inputElement.setAttribute("type", "file");
-      inputElement.style.display = "none";
+      inputElement = document.createElement('input');
+      inputElement.setAttribute('type', 'file');
+      inputElement.style.display = 'none';
       inputElement.tabIndex = -1;
-      inputElement.autocomplete = "off";
+      inputElement.autocomplete = 'off';
     }
 
     return node.appendChild( inputElement );
@@ -199,16 +199,16 @@ export const filedrop = function( node, options )
   {
     e.preventDefault();
 
-    console.log( "handleDrop", e );
+    console.log( 'handleDrop', e );
 
-    let files = e.dataTransfer?.files || e.detail?.files || [];
+    const files = e.dataTransfer?.files || e.detail?.files || [];
 
     if( !files.length || disabled )
     {
       return;
     }
 
-    dispatch( "filedrop", { files: Array.from(files) } );
+    dispatch( 'filedrop', { files: Array.from(files) } );
 
     updateFileOver( false );
 
@@ -216,7 +216,7 @@ export const filedrop = function( node, options )
     // Reset input element
     // => Otherwise uploading the same file will not trigger a new change event
     //
-    inputElement.value = "";
+    inputElement.value = '';
   }
 
   // ---------------------------------------------------------------------------
@@ -233,13 +233,13 @@ export const filedrop = function( node, options )
 
     const files = e.target.files;
 
-    dispatch( "drop", { files: Array.from(files) } );
+    dispatch( 'drop', { files: Array.from(files) } );
 
     //
     // Reset input element
     // => Otherwise uploading the same file will not trigger a new change event
     //
-    inputElement.value = "";
+    inputElement.value = '';
   }
 
   // ---------------------------------------------------------------------------
@@ -277,10 +277,10 @@ export const filedrop = function( node, options )
   {
     if( isOver )
     {
-      node.classList.add("x-over");
+      node.classList.add('x-over');
     }
     else {
-      node.classList.remove("x-over");
+      node.classList.remove('x-over');
     }
 
     dispatch('over', { isOver } );
@@ -320,19 +320,19 @@ export const filedrop = function( node, options )
   {
     if( !accept )
     {
-      return "";
+      return '';
     }
 
     if( Array.isArray( accept ) )
     {
-      return accept.join(",");
+      return accept.join(',');
     }
-    else if( typeof accept === "string" )
+    else if( typeof accept === 'string' )
     {
       return accept;
     }
 
-    throw new Error(`Invalid value for option [accept]`);
+    throw new Error('Invalid value for option [accept]');
   }
 
   // ---------------------------------------------------------------------------

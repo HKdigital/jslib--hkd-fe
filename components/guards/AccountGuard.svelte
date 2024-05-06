@@ -4,26 +4,26 @@
 
 import { getCurrentPath,
          redirectToRoute }
-  from "@hkd-fe/stores/router.js";
+  from '@hkd-fe/stores/router.js';
 
 // -- Constants
 
 import { ROUTE_LOGIN,
          ROUTE_CONFIRM_ACCOUNT }
-  from "@src/constants/route-labels.js";
+  from '@src/constants/route-labels.js';
 
 // -- Stores
 
 import { identityTokenStore,
          accountAndIdentityStore }
-  from "@src/stores/account-and-identity.js";
+  from '@src/stores/account-and-identity.js';
 
 // -- Logging
 
 import { getModuleLogger }
-  from "@hkd-base/helpers/log.js";
+  from '@hkd-base/helpers/log.js';
 
-const log = getModuleLogger( "AccountGuard.svelte" );
+const log = getModuleLogger( 'AccountGuard.svelte' );
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -52,13 +52,13 @@ $: {
   //
   if( null === $identityTokenStore )
   {
-    console.log("No $identityTokenStore");
+    console.log('No $identityTokenStore');
 
     // token has been set to null (expired or it does not exists)
     // -> redirect
 
     log.debug(
-      `AccountGuard: condition failed (missing or expired identity token) ` +
+      'AccountGuard: condition failed (missing or expired identity token) ' +
       `at [${getCurrentPath()}]. Redirecting to [${ROUTE_LOGIN}]`);
 
     redirectToLogin();
@@ -88,7 +88,7 @@ $: {
   }
   else if( null === $accountAndIdentityStore )
   {
-    console.log("AccountGuard: condition failed (missing account)");
+    console.log('AccountGuard: condition failed (missing account)');
     redirectToLogin();
   }
 }

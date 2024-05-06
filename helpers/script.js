@@ -8,9 +8,9 @@
  */
 export /*async*/ function loadJavaScript( url )
 {
-  if( typeof url !== "string" )
+  if( typeof url !== 'string' )
   {
-    throw new Error("Missing or invalid parameter [url]");
+    throw new Error('Missing or invalid parameter [url]');
   }
 
   if( !loadJavaScript._promises )
@@ -20,7 +20,7 @@ export /*async*/ function loadJavaScript( url )
 
   const scriptLoadingPromises = loadJavaScript._promises;
 
-  let existingPromise = scriptLoadingPromises[ url ];
+  const existingPromise = scriptLoadingPromises[ url ];
 
   if( existingPromise )
   {
@@ -41,7 +41,7 @@ export /*async*/ function loadJavaScript( url )
         } );
 
   const domElement = document.createElement('script');
-  domElement.type = "module";
+  domElement.type = 'module';
   domElement.src = url;
 
   domElement.onload = resolve.bind( null, true );

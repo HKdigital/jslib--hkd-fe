@@ -5,7 +5,7 @@
 // -- Routing
 
 import { redirectToRoute }
-  from "@hkd-fe/stores/router.js";
+  from '@hkd-fe/stores/router.js';
 
 // // -- Stores
 
@@ -14,7 +14,7 @@ import { redirectToRoute }
 
 /* ---------------------------------------------------------------- Internals */
 
-let cssClassNames = "";
+let cssClassNames = '';
 
 // -----------------------------------------------------------------------------
 
@@ -42,11 +42,11 @@ function tryRedirect( node )
     }
   };
 
-  node.addEventListener("click", handleClick, true);
+  node.addEventListener('click', handleClick, true);
 
   return {
     destroy() {
-      node.removeEventListener("click", handleClick, true);
+      node.removeEventListener('click', handleClick, true);
     }
   };
 }
@@ -70,7 +70,10 @@ export let routeOptions = { replaceCurrent: false };
      {...$$restProps}
      class="x-on-{onColor} {cssClassNames}"
      use:tryRedirect
-     on:click >
+     on:click
+     on:keypress
+     role="button"
+     tabindex="0">
   <svelte:component this={content} />
 </div>
 

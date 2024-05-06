@@ -1,2 +1,2 @@
 
-export const BACKEND_SERVICE_NAME = "BackendService";
+export const BACKEND_SERVICE_NAME = 'BackendService';

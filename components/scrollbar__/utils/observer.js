@@ -17,7 +17,9 @@ export function createObserver(elem, callback) {
   if( trueObserverSupported )
   {
     const ro = new ResizeObserver( (entries) => {
-      for( const entry of entries )
+
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      for( const _ of entries )
       {
         callback();
       }

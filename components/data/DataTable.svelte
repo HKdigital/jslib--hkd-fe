@@ -2,18 +2,18 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectValidSurfaceColor } from "@hkd-fe/helpers/theme.js";
+import { expectValidSurfaceColor } from '@hkd-fe/helpers/theme.js';
 
 import BodyText
-  from "@hkd-fe/components/text/BodyText.svelte";
+  from '@hkd-fe/components/text/BodyText.svelte';
 
-import { text } from "@hkd-base/helpers/translate.js";
-import { NO_DATA } from "@hkd-fe/lang/messages.js";
+import { text } from '@hkd-base/helpers/translate.js';
+import { NO_DATA } from '@hkd-fe/lang/messages.js';
 
 /* ---------------------------------------------------------------- Internals */
 
-let displayRows = [];
-let cssClassNames = "";
+const displayRows = [];
+let cssClassNames = '';
 
 /* ------------------------------------------------------------------ Exports */
 

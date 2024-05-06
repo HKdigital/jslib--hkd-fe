@@ -4,7 +4,7 @@
 import {
   expectString,
   expectArray,
-  expectObject } from "@hkd-base/helpers/expect.js";
+  expectObject } from '@hkd-base/helpers/expect.js';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -44,7 +44,7 @@ export default class MenuTree
    */
   getMenu( label )
   {
-    expectString( label, "Missing or invalid parameter [label]" );
+    expectString( label, 'Missing or invalid parameter [label]' );
 
     return this._menusBylabel[ label ] || null;
   }
@@ -59,11 +59,11 @@ export default class MenuTree
   _configureMenus( menusBylabel )
   {
     expectObject( menusBylabel,
-      "Missing or invalid parameter [menusBylabel]" );
+      'Missing or invalid parameter [menusBylabel]' );
 
-    if( !("main" in menusBylabel) )
+    if( !('main' in menusBylabel) )
     {
-      throw new Error( "Missing or invalid menu item [menusBylabel.main]" );
+      throw new Error( 'Missing or invalid menu item [menusBylabel.main]' );
     }
 
     for( const menuLabel in menusBylabel )
@@ -110,10 +110,10 @@ export default class MenuTree
 
     // -- Check menu properties
 
-    expectObject( menu, "Missing or invalid parameter [menu]" );
+    expectObject( menu, 'Missing or invalid parameter [menu]' );
 
     expectString( menuLabel,
-      "Missing or invalid parameter [menuLabel]" );
+      'Missing or invalid parameter [menuLabel]' );
 
     // Add [label] to menu
     menu.label = menuLabel;
@@ -139,27 +139,27 @@ export default class MenuTree
       const { title, icon, routeTo, subMenuLabel } = menuItem;
 
       expectString( title,
-        `Missing or invalid property [title] ` +
+        'Missing or invalid property [title] ' +
         `in menu item of menu [${menuLabel}]` );
 
       if( icon )
       {
         expectString( icon,
-          `Invalid property [icon] in menu item ` +
+          'Invalid property [icon] in menu item ' +
           `[${title}] of menu [${menuLabel}]` );
       }
 
       if( routeTo )
       {
         expectString( routeTo,
-          `Invalid property [routeTo] in menu item ` +
+          'Invalid property [routeTo] in menu item ' +
           `[${title}] of menu [${menuLabel}]` );
       }
 
       if( subMenuLabel )
       {
         expectString( subMenuLabel,
-          `Invalid property [subMenuLabel] in menu item ` +
+          'Invalid property [subMenuLabel] in menu item ' +
           `[${title}] of menu [${menuLabel}]` );
 
         // Remember from which menu the subMenu has been linked
@@ -167,9 +167,9 @@ export default class MenuTree
         if( this._parentLabelsBySubMenuLabels[ subMenuLabel ] )
         {
           throw new Error(
-            `Invalid value for property [subMenuLabel] in menu item ` +
+            'Invalid value for property [subMenuLabel] in menu item ' +
            `[${title}] of menu [${menuLabel}]. A sub menu label may ` +
-           `only be used once`);
+           'only be used once');
         }
 
         this._parentLabelsBySubMenuLabels[ subMenuLabel ] = menuLabel;

@@ -3,13 +3,13 @@
 
 import { expectPositiveNumber,
          expectFunction }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 import { sortByKeyValue }
-  from "@hkd-base/helpers/array.js";
+  from '@hkd-base/helpers/array.js';
 
 import { largestFirst }
-  from "@hkd-base/helpers/compare.js";
+  from '@hkd-base/helpers/compare.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -27,7 +27,7 @@ async function dom_content_loaded()
 {
   // -- Sort onLoadFunctions based on property prio
 
-  sortByKeyValue( onLoadFunctions, "priority", largestFirst );
+  sortByKeyValue( onLoadFunctions, 'priority', largestFirst );
 
   // -- Call all onload functions
 
@@ -39,7 +39,7 @@ async function dom_content_loaded()
     catch( e )
     {
       console.error(e);
-      throw new Error( "Exception in [onload] callback", { cause: e } );
+      throw new Error( 'Exception in [onload] callback', { cause: e } );
     }
   }
 
@@ -65,13 +65,13 @@ document.addEventListener('visibilitychange', () => {
 
   switch( document.visibilityState )
   {
-    case "hidden":
+    case 'hidden':
       // console.log("app hidden");
       // fires when user switches tabs, apps, goes to homescreen, etc.
 
       break;
 
-    case "visible":
+    case 'visible':
       // fires when app transitions from prerender, user returns to
       // the app / tab.
       // console.log("app visible");
@@ -95,9 +95,9 @@ export const PRIORITY_NORMAL = 50;
  */
 export function onLoad( fn, priority=PRIORITY_NORMAL )
 {
-  expectFunction( fn, "Invalid parameter [fn]" );
+  expectFunction( fn, 'Invalid parameter [fn]' );
 
-  expectPositiveNumber( priority, "Invalid parameter [priority]" );
+  expectPositiveNumber( priority, 'Invalid parameter [priority]' );
 
   onLoadFunctions.push( { fn, priority } );
 }
@@ -125,28 +125,28 @@ export function onBeforeUnload( fnOrOffs )
     }
   }
   else {
-    expectFunction( fnOrOffs, "Missing or invalid parameter [fnOrOffs]" );
+    expectFunction( fnOrOffs, 'Missing or invalid parameter [fnOrOffs]' );
   }
 
   // -- Unload wrapper
 
-  async function unload()
-  {
-    window.removeEventListener( "beforeunload", unload );
+  // async function unload()
+  // {
+  //   window.removeEventListener( 'beforeunload', unload );
 
-    if( fnOrOffs instanceof Object )
-    {
-      for( const key in fnOrOffs )
-      {
-        const fn = fnOrOffs[ key ];
+  //   if( fnOrOffs instanceof Object )
+  //   {
+  //     for( const key in fnOrOffs )
+  //     {
+  //       const fn = fnOrOffs[ key ];
 
-        await fn();
-      }
-    }
-    else {
-      await fnOrOffs();
-    }
-  }
+  //       await fn();
+  //     }
+  //   }
+  //   else {
+  //     await fnOrOffs();
+  //   }
+  // }
 
   // -- Register event listener
 

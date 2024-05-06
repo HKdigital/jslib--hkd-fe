@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import MenuTree from "@hkd-fe/classes/MenuTree.js";
+import MenuTree from '@hkd-fe/classes/MenuTree.js';
 
-import ValueStore from "@hkd-base/classes/ValueStore.js";
+import ValueStore from '@hkd-base/classes/ValueStore.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -12,7 +12,7 @@ import ValueStore from "@hkd-base/classes/ValueStore.js";
 //
 // Store instance that contains the main menu tree
 //
-export let menuTree = new ValueStore();
+export const menuTree = new ValueStore();
 
 // -----------------------------------------------------------------------------
 

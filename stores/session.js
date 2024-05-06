@@ -48,20 +48,20 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectString } from "@hkd-base/helpers/expect.js";
+import { expectString } from '@hkd-base/helpers/expect.js';
 
-import { randomStringBase58 } from "@hkd-base/helpers/unique.js";
+import { randomStringBase58 } from '@hkd-base/helpers/unique.js';
 
-import { getGlobalConfig } from "@hkd-base/helpers/global-config.js";
+import { getGlobalConfig } from '@hkd-base/helpers/global-config.js';
 
-import Feed from "@hkd-fe/classes/Feed.js";
+import Feed from '@hkd-fe/classes/Feed.js';
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
-import DerivedStore from "@hkd-base/classes/DerivedStore.js";
+import DedupValueStore from '@hkd-base/classes/DedupValueStore.js';
+import DerivedStore from '@hkd-base/classes/DerivedStore.js';
 
-import { onLoad, onBeforeUnload } from "@hkd-fe/helpers/browser-events.js";
+import { onLoad, onBeforeUnload } from '@hkd-fe/helpers/browser-events.js';
 
-import { backendJsonGet } from "@hkd-fe/helpers/http.js";
+import { backendJsonGet } from '@hkd-fe/helpers/http.js';
 
 /* ------------------------------------------------------------- First export */
 
@@ -73,9 +73,9 @@ const offs = {};
 
 onBeforeUnload( offs );
 
-const CONFIG_LABEL = "session-backend";
+const CONFIG_LABEL = 'session-backend';
 
-const AUTH_REQUEST_PATH = "/session/request";
+const AUTH_REQUEST_PATH = '/session/request';
 
 /**
  * Get the url that can be used to request session authentication
@@ -88,7 +88,7 @@ const AUTH_REQUEST_PATH = "/session/request";
  */
 function getRequestAuthenticationUrl( { username, accessCode } )
 {
-  const { origin, apiPrefix="" } = getGlobalConfig( CONFIG_LABEL );
+  const { origin, apiPrefix='' } = getGlobalConfig( CONFIG_LABEL );
 
   expectString( origin,
     `Missing or invalid config [${CONFIG_LABEL}].origin` );
@@ -100,14 +100,14 @@ function getRequestAuthenticationUrl( { username, accessCode } )
 
   if( username )
   {
-    url.searchParams.append( "username", JSON.stringify( username ) );
+    url.searchParams.append( 'username', JSON.stringify( username ) );
   }
   else if( accessCode )
   {
-    url.searchParams.append( "ac", JSON.stringify( accessCode ) );
+    url.searchParams.append( 'ac', JSON.stringify( accessCode ) );
   }
   else {
-    throw new Error("Missing parameter [username] or [accessCode]");
+    throw new Error('Missing parameter [username] or [accessCode]');
   }
 
   return url; // .toString();
@@ -124,7 +124,7 @@ function getFeedUrl()
 {
   const csid = getClientSessionId();
 
-  const { origin, apiPrefix="" } = getGlobalConfig( CONFIG_LABEL, {} );
+  const { origin, apiPrefix='' } = getGlobalConfig( CONFIG_LABEL, {} );
 
   return `${origin}${apiPrefix}/session/feed?csid=${csid}`;
 }
@@ -159,7 +159,7 @@ function processor( eventOrError )
 
   if( !event.data )
   {
-    console.log( "event.data is empty", event );
+    console.log( 'event.data is empty', event );
     return null; // Clear session data
   }
 
@@ -170,8 +170,8 @@ function processor( eventOrError )
   }
   catch( e )
   {
-    console.log( "event.data", event.data );
-    throw new Error( "Failed to parse [event.data]", { cause: e } );
+    console.log( 'event.data', event.data );
+    throw new Error( 'Failed to parse [event.data]', { cause: e } );
   }
 
   if( !eventData )
@@ -181,7 +181,7 @@ function processor( eventOrError )
 
   if( eventData.ping )
   {
-    console.log("Received ping", eventData);
+    console.log('Received ping', eventData);
     return;
   }
 
@@ -197,7 +197,7 @@ function processor( eventOrError )
   const result = { ...eventData };
 
   // if( "userAccountKey" in eventData )
-  if( "username" in eventData )
+  if( 'username' in eventData )
   // if( eventData.groups && eventData.groups.length )
   {
     result.isGuest = false;
@@ -241,7 +241,7 @@ onLoad( () => {
 export function getClientSessionId( autoGenerate=true )
 {
   // let csid = null;
-  let csid = localStorage.getItem( "session/csid" );
+  let csid = localStorage.getItem( 'session/csid' );
 
   if( !csid )
   {
@@ -254,7 +254,7 @@ export function getClientSessionId( autoGenerate=true )
 
     csid = randomStringBase58( CSID_LENGTH );
 
-    localStorage.setItem( "session/csid", csid );
+    localStorage.setItem( 'session/csid', csid );
   }
 
   return csid;
@@ -269,7 +269,7 @@ export function getClientSessionId( autoGenerate=true )
  */
 export async function tryLoginConfirmByEmail( username )
 {
-  expectString( username, "Missing or invalid parameter [username]" );
+  expectString( username, 'Missing or invalid parameter [username]' );
 
   const url = getRequestAuthenticationUrl( { username } );
 
@@ -303,7 +303,7 @@ export async function tryLoginConfirmByEmail( username )
  */
 export async function tryLoginUsingAccessCode( accessCode )
 {
-  expectString( accessCode, "Missing or invalid parameter [accessCode]" );
+  expectString( accessCode, 'Missing or invalid parameter [accessCode]' );
 
   const url = getRequestAuthenticationUrl( { accessCode } );
 
@@ -317,7 +317,7 @@ export async function tryLoginUsingAccessCode( accessCode )
 
   if( response.error && response.error.invalidAccessCode )
   {
-    const error = Error("Invalid access code");
+    const error = Error('Invalid access code');
     error.invalidAccessCode = true;
 
     throw error;
@@ -336,10 +336,10 @@ export async function tryLoginUsingAccessCode( accessCode )
  */
 export async function logout()
 {
-  console.log("logout");
+  console.log('logout');
 
   // Remove client session id from local storage
-  localStorage.removeItem( "session/csid" );
+  localStorage.removeItem( 'session/csid' );
 
   // Create new session id in local storage
   getClientSessionId();

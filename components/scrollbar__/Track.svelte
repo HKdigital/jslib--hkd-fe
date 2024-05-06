@@ -5,7 +5,7 @@
   import Thumb from './Thumb.svelte';
   import ScrollButton from './ScrollButton.svelte';
 
-  import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
+  import { expectValidSurfaceColor } from '@hkd-fe/helpers/colors.js';
 
   /* ---------------------------------------------------------------- Exports */
 
@@ -100,6 +100,7 @@
 </script>
 
 {#if wrapperElem}
+  <!-- eslint-disable-next-line svelte/valid-compile -->
   <div bind:this="{trackElem}"
       class:x-idle={idle}
       class="g-scrollbar-track g-scrollbar-track-on-{onColor}

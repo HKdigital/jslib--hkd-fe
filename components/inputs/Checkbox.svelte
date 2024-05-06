@@ -29,18 +29,18 @@ import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 
 import BodyText
-  from "@hkd-fe/components/text/BodyText.svelte";
+  from '@hkd-fe/components/text/BodyText.svelte';
 
-import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
+import ListIcon from '@hkd-fe/components/icons/ListIcon.svelte';
 
 import Box
-  from "@hkd-fe/components/icons/hero/outline/Box.svelte";
+  from '@hkd-fe/components/icons/hero/outline/Box.svelte';
 
 import Checkbox
-  from "@hkd-fe/components/icons/hero/solid/Checkbox.svelte";
+  from '@hkd-fe/components/icons/hero/solid/Checkbox.svelte';
 
 import Check
-  from "@hkd-fe/components/icons/hero/outline/Check.svelte";
+  from '@hkd-fe/components/icons/hero/outline/Check.svelte';
 
 // import Empty
 //   from "@hkd-fe/components/icons/hero/solid/Empty.svelte";
@@ -49,18 +49,18 @@ import Check
 
 // -- Logging
 
-import { getModuleLogger }
-  from "@hkd-base/helpers/log.js";
+// import { getModuleLogger }
+//   from '@hkd-base/helpers/log.js';
 
-const log = getModuleLogger( "Checkbox.svelte" );
+// const log = getModuleLogger( 'Checkbox.svelte' );
 
 /* ---------------------------------------------------------------- Internals */
 
 // let name = generateLocalId();
 
-let cssClassNames = "";
+let cssClassNames = '';
 
-let colorClasses = "";
+// let colorClasses = '';
 
 let initialValueCopied = false;
 
@@ -141,19 +141,19 @@ export { check };
 
 /* ----------------------------------------------------------------- Reactive */
 
-$: {
-  //
-  // If onColor has been set
-  // - add color class `x-on-<surface color>`
-  //
-  if( onColor )
-  {
-    colorClasses = `x-on-${onColor}`;
-  }
-  else {
-    colorClasses = "";
-  }
-}
+// $: {
+//   //
+//   // If onColor has been set
+//   // - add color class `x-on-<surface color>`
+//   //
+//   if( onColor )
+//   {
+//     colorClasses = `x-on-${onColor}`;
+//   }
+//   else {
+//     colorClasses = '';
+//   }
+// }
 
 // -----------------------------------------------------------------------------
 
@@ -189,7 +189,7 @@ $: {
   {
     previousValue = value;
 
-    dispatch( "update", { checked: value } );
+    dispatch( 'update', { checked: value } );
   }
 }
 
@@ -223,11 +223,14 @@ $: {
 
 {#if iconContent}
   <div c-checkbox
-       on:click={toggle}
        class="g-no-select {cssClassNames}"
        class:x-center={center}
        class:x-pointer={allowEdit}
-       on:keydown>
+       on:click={toggle}
+       on:keydown
+       role="checkbox"
+       aria-checked={value}
+       tabindex="0">
 
       <ListIcon
         content={iconContent}

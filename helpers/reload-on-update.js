@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { httpGet } from "@hkd-base/helpers/http.js";
-import { delay } from "@hkd-base/helpers/time.js";
-import { defer } from "@hkd-base/helpers/process.js";
+import { httpGet } from '@hkd-base/helpers/http.js';
+import { delay } from '@hkd-base/helpers/time.js';
+import { defer } from '@hkd-base/helpers/process.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -16,7 +16,7 @@ let lastCheckedAt = 0;
 const ORIGIN = location.origin;
 const ORIGIN_ASSETS_PREFIX = `${ORIGIN}/assets`;
 
-let RELOAD_MESSAGE = "Update available. Reload page?";
+const RELOAD_MESSAGE = 'Update available. Reload page?';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -29,9 +29,9 @@ export async function enableCheckForUpdates()
 {
   // == Check if app becomes visible
 
-  document.addEventListener("visibilitychange", () => {
+  document.addEventListener('visibilitychange', () => {
 
-    if( "visible" === document.visibilityState )
+    if( 'visible' === document.visibilityState )
     {
       tryAutoUpdate();
     }
@@ -62,7 +62,7 @@ async function checkLoop()
   try {
     await delay( MIN_CHECK_LOOP_DELAY, MIN_CHECK_LOOP_DELAY * 1.2 );
 
-    if( "visible" === document.visibilityState && navigator.onLine !== false )
+    if( 'visible' === document.visibilityState && navigator.onLine !== false )
     {
       tryAutoUpdate();
     }
@@ -95,7 +95,7 @@ async function tryAutoUpdate()
   try {
     // == Get list of current SCRIPT assets on the page
 
-    let assetSources = [];
+    const assetSources = [];
 
     const scripts = document.scripts;
 
@@ -111,7 +111,7 @@ async function tryAutoUpdate()
 
         assetSources.push( path );
 
-        const index = path.indexOf("assets/index.");
+        const index = path.indexOf('assets/index.');
 
         if( index >= 0 /*&& path.endsWith(".js")*/ )
         {
@@ -147,7 +147,7 @@ async function tryAutoUpdate()
         if( !content.includes( src ) )
         {
           console.log(
-            "New site version is available",
+            'New site version is available',
             { reason: src }
             /*,content*/ );
 
@@ -164,6 +164,6 @@ async function tryAutoUpdate()
   }
   catch( e )
   {
-    console.log(`Failed to check for latest index.html`, { e } );
+    console.log('Failed to check for latest index.html', { e } );
   }
 }

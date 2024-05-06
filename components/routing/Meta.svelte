@@ -12,7 +12,7 @@
 
   /* ---------------------------------------------------------------- Imports */
 
-  import { onDestroy } from "svelte";
+  import { onDestroy } from 'svelte';
 
   /* -------------------------------------------------------------- Internals */
 
@@ -128,7 +128,7 @@
 
     if( img )
     {
-      img.src = "";
+      img.src = '';
       img = null;
     }
   } );

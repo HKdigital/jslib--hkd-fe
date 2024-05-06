@@ -1,7 +1,7 @@
 <script>
 /* ------------------------------------------------------------------ Imports */
 
-import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
+import { expectValidSurfaceColor } from '@hkd-fe/helpers/colors.js';
 
 /* ------------------------------------------------------------------ Exports */
 

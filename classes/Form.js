@@ -5,34 +5,34 @@ import {
   expectString,
   expectNotEmptyString,
   expectDefined,
-  expectObject } from "@hkd-base/helpers/expect.js";
+  expectObject } from '@hkd-base/helpers/expect.js';
 
-import { equals } from "@hkd-base/helpers/compare.js";
+import { equals } from '@hkd-base/helpers/compare.js';
 
-import ValueStore from "@hkd-base/classes/ValueStore.js";
+import ValueStore from '@hkd-base/classes/ValueStore.js';
 
-import LogBase from "@hkd-base/classes/LogBase.js";
+import LogBase from '@hkd-base/classes/LogBase.js';
 
-import ObjectSchema from "@hkd-base/classes/ObjectSchema.js";
+import ObjectSchema from '@hkd-base/classes/ObjectSchema.js';
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DedupValueStore from '@hkd-base/classes/DedupValueStore.js';
 
 import {
   TYPE_STRING,
   TYPE_NUMBER,
   TYPE_BOOLEAN,
   TYPE_NAME,
-  TYPE_EMAIL } from "@hkd-base/types/schema-types.js";
+  TYPE_EMAIL } from '@hkd-base/types/schema-types.js';
 
 /* ---------------------------------------------------------------- Internals */
 
 const defaultsByType =
   {
-    [ TYPE_STRING ]: "",
+    [ TYPE_STRING ]: '',
     [ TYPE_NUMBER ]: 0,
     [ TYPE_BOOLEAN ]: false,
-    [ TYPE_NAME ]: "",
-    [ TYPE_EMAIL ]: ""
+    [ TYPE_NAME ]: '',
+    [ TYPE_EMAIL ]: ''
   };
 
 /* ------------------------------------------------------------------ Exports */
@@ -53,7 +53,7 @@ export default class Form extends LogBase
     super( ...arguments );
 
     expectObject( schema,
-      "Missing or invalid parameter [schema]" );
+      'Missing or invalid parameter [schema]' );
 
     if( !(schema instanceof ObjectSchema ) )
     {
@@ -61,7 +61,7 @@ export default class Form extends LogBase
     }
 
     expectObject( initialValues,
-      "Missing or invalid parameter [initialValues]" );
+      'Missing or invalid parameter [initialValues]' );
 
     this._schema = schema;
     this._initialValues = initialValues;
@@ -95,7 +95,7 @@ export default class Form extends LogBase
         continue;
       }
 
-      if( flags && ("default" in flags) )
+      if( flags && ('default' in flags) )
       {
         initialValues[ key ] = flags.default;
       }
@@ -145,9 +145,9 @@ export default class Form extends LogBase
    */
   getInitialValue( key )
   {
-    expectString( key, "Missing or invalid parameter [key]" );
+    expectString( key, 'Missing or invalid parameter [key]' );
 
-    let initialValues = this._initialValues;
+    const initialValues = this._initialValues;
 
     if( key in initialValues )
     {
@@ -192,7 +192,7 @@ export default class Form extends LogBase
    */
   propertyParser( key )
   {
-    expectString( key, "Missing or invalid parameter [key]" );
+    expectString( key, 'Missing or invalid parameter [key]' );
 
     return this._parseProperty.bind( this, key );
   }
@@ -211,12 +211,12 @@ export default class Form extends LogBase
    */
   updateHandler( key )
   {
-    expectString( key, "Missing or invalid parameter [key]" );
+    expectString( key, 'Missing or invalid parameter [key]' );
 
     if( !this._values[ key ] )
     {
       throw new Error(
-        `Cannot get update handler. ` +
+        'Cannot get update handler. ' +
         `Form property [${key}] has not been defined` );
     }
 
@@ -236,25 +236,25 @@ export default class Form extends LogBase
       // console.log( "formPropertyUpdate", {key, ...detail } );
 
       expectObject( detail,
-        "Missing or invalid parameter [event.detail]" );
+        'Missing or invalid parameter [event.detail]' );
 
       let updatedValue;
 
-      if( "updatedValue" in detail )
+      if( 'updatedValue' in detail )
       {
         updatedValue = detail.updatedValue;
       }
-      else if( "value" in detail )
+      else if( 'value' in detail )
       {
         updatedValue = detail.value;
       }
       else {
         throw new Error(
-          "Missing property [updatedValue] or [value] in [event.detail]");
+          'Missing property [updatedValue] or [value] in [event.detail]');
       }
 
       expectDefined( updatedValue,
-        "Missing or invalid parameter [event.detail.updatedValue]" );
+        'Missing or invalid parameter [event.detail.updatedValue]' );
 
       this.setValue( key, updatedValue );
     };
@@ -279,10 +279,10 @@ export default class Form extends LogBase
   setValue( key, updatedValue )
   {
     expectString( key,
-      "Missing or invalid parameter [key]" );
+      'Missing or invalid parameter [key]' );
 
     expectDefined( updatedValue,
-      "Missing or invalid parameter [updatedValue]" );
+      'Missing or invalid parameter [updatedValue]' );
 
     const { value,
             error,
@@ -352,7 +352,7 @@ export default class Form extends LogBase
   getValueStore( key )
   {
     expectNotEmptyString( key,
-      "Missing or invalid parameter [key]" );
+      'Missing or invalid parameter [key]' );
 
     return this._values[ key ];
   }
@@ -369,11 +369,11 @@ export default class Form extends LogBase
   isOptional( key )
   {
     expectNotEmptyString( key,
-      "Missing or invalid parameter [key]" );
+      'Missing or invalid parameter [key]' );
 
     // return !this._schema._required.includes( key );
 
-    return this._flags[ key ].presence === "optional";
+    return this._flags[ key ].presence === 'optional';
   }
 
   // -------------------------------------------------------------------- Method
@@ -388,7 +388,7 @@ export default class Form extends LogBase
   inputType( key )
   {
     expectNotEmptyString( key,
-      "Missing or invalid parameter [key]" );
+      'Missing or invalid parameter [key]' );
 
     const properties = this._schema._keys[ key ];
 
@@ -397,7 +397,7 @@ export default class Form extends LogBase
       throw new Error(`Form property [${key}] does not exist`);
     }
 
-    return properties.type || "text";
+    return properties.type || 'text';
   }
 
   // -------------------------------------------------------------------- Method
@@ -440,7 +440,7 @@ export default class Form extends LogBase
     {
       // This should not happen
       throw new Error(
-        "Cannot export form data, validation failed", { cause: error } );
+        'Cannot export form data, validation failed', { cause: error } );
     }
     return { valid, formData };
   }
@@ -460,7 +460,7 @@ export default class Form extends LogBase
   peek( key )
   {
     expectNotEmptyString( key,
-      "Missing or invalid value for parameter [key]" );
+      'Missing or invalid value for parameter [key]' );
 
     const values = this._values;
 
@@ -487,7 +487,7 @@ export default class Form extends LogBase
     else {
       result.valid = true;
 
-      if( !("finalValue" in result) )
+      if( !('finalValue' in result) )
       {
         result.finalValue = result.value;
       }
@@ -526,7 +526,7 @@ export default class Form extends LogBase
    */
   clearValue( key )
   {
-    expectString( key, "Missing or invalid parameter [key]" );
+    expectString( key, 'Missing or invalid parameter [key]' );
 
     const initialValue = this.getInitialValue( key );
 
@@ -547,7 +547,7 @@ export default class Form extends LogBase
    */
   _parseProperty( key, value )
   {
-    expectString( key, "Missing or invalid parameter [key]" );
+    expectString( key, 'Missing or invalid parameter [key]' );
 
     const schema = this._schema;
     const values = this._values;
@@ -567,7 +567,7 @@ export default class Form extends LogBase
     if( !values[ key ] )
     {
       throw new Error(
-        `Cannot parse property. ` +
+        'Cannot parse property. ' +
         `Form property [${key}] has not been defined` );
     }
 
@@ -580,7 +580,7 @@ export default class Form extends LogBase
       output = schema.validateProperty( values, key );
     }
     else {
-      throw new Error("Schema should have a method [validateProperty]");
+      throw new Error('Schema should have a method [validateProperty]');
       //output = schema.validate( values, { abortEarly: false } );
     }
 

@@ -56,13 +56,13 @@
 import { expectString,
          expectNotEmptyString,
          expectArray }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 import { Base }
-  from "@hkd-base/helpers/services.js";
+  from '@hkd-base/helpers/services.js';
 
 import DedupValueStore
-  from "@hkd-base/classes/DedupValueStore.js";
+  from '@hkd-base/classes/DedupValueStore.js';
 
 import {
   STOPPED,
@@ -71,26 +71,25 @@ import {
   STOPPING,
   /* UNAVAILABLE, */
   /* ERROR */ }
-  from "@hkd-base/helpers/service-states.js";
+  from '@hkd-base/helpers/service-states.js';
 
 import { jsonApiGet,
          jsonApiPost }
-  from "@hkd-base/helpers/json-api.js";
+  from '@hkd-base/helpers/json-api.js';
 
-import { httpApiPost,
-         httpApiGet }
-  from "@hkd-base/helpers/http-api.js";
+import { httpApiPost }
+  from '@hkd-base/helpers/http-api.js';
 
 import { decodePayload }
-  from "@hkd-base/helpers/jwt-info.js";
+  from '@hkd-base/helpers/jwt-info.js';
 
 import MemoryCache
-  from "@hkd-base/classes/MemoryCache.js";
+  from '@hkd-base/classes/MemoryCache.js';
 
 import { clearHistoryStorage,
          userHash,
          goHome }
-  from "@hkd-fe/stores/router.js";
+  from '@hkd-fe/stores/router.js';
 
 /* ------------------------------------------------------------------ Helpers */
 
@@ -101,8 +100,8 @@ const TOKEN_EXPIRED_MARGIN_MS = 300000; // 300 seconds = 5 minutes
 
 /* ------------------------------------------------------------------ Exports */
 
-export const IDENTITY_TOKEN_NAME = "jwt-idy";
-export const ACCESS_TOKEN_NAME = "jwt-xs";
+export const IDENTITY_TOKEN_NAME = 'jwt-idy';
+export const ACCESS_TOKEN_NAME = 'jwt-xs';
 
 /* ------------------------------------------------------------ Service class */
 
@@ -130,10 +129,10 @@ class BackendService extends Base
         // const displayConfig = config;
 
         expectNotEmptyString( config.origin,
-          "Missing or invalid parameter [config.origin]" );
+          'Missing or invalid parameter [config.origin]' );
 
         expectString( config.apiPrefix,
-          "Missing or invalid parameter [config.apiPrefix]" );
+          'Missing or invalid parameter [config.apiPrefix]' );
 
         // -- Setup identity token
 
@@ -142,7 +141,7 @@ class BackendService extends Base
           const tokenNames = config.tokenNames;
 
           expectArray( config.tokenNames,
-            "Missing or invalid parameter [config.tokenNames]" );
+            'Missing or invalid parameter [config.tokenNames]' );
 
           for( const tokenName of tokenNames )
           {
@@ -246,10 +245,10 @@ class BackendService extends Base
       };
 
     expectNotEmptyString( remoteConfig.origin,
-        "Missing or invalid configuration property [origin]" );
+        'Missing or invalid configuration property [origin]' );
 
     expectString( remoteConfig.apiPrefix,
-        "Missing or invalid configuration property [apiPrefix]" );
+        'Missing or invalid configuration property [apiPrefix]' );
 
     if( tokenName )
     {
@@ -318,10 +317,10 @@ class BackendService extends Base
       };
 
     expectNotEmptyString( remoteConfig.origin,
-        "Missing or invalid configuration property [origin]" );
+        'Missing or invalid configuration property [origin]' );
 
     expectString( remoteConfig.apiPrefix,
-        "Missing or invalid configuration property [apiPrefix]" );
+        'Missing or invalid configuration property [apiPrefix]' );
 
     if( tokenName )
     {
@@ -418,10 +417,10 @@ class BackendService extends Base
       };
 
     expectNotEmptyString( remoteConfig.origin,
-        "Missing or invalid configuration property [origin]" );
+        'Missing or invalid configuration property [origin]' );
 
     expectString( remoteConfig.apiPrefix,
-        "Missing or invalid configuration property [apiPrefix]" );
+        'Missing or invalid configuration property [apiPrefix]' );
 
     if( tokenName )
     {
@@ -530,10 +529,10 @@ class BackendService extends Base
   setToken( { tokenName, token } )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid item in service config [tokenName]" );
+      'Missing or invalid item in service config [tokenName]' );
 
     expectNotEmptyString( token,
-      "Missing or invalid item in service config [token]" );
+      'Missing or invalid item in service config [token]' );
 
     if( this._tryRemoveExpiredToken( { tokenName, token } ) )
     {
@@ -579,7 +578,7 @@ class BackendService extends Base
   getTokenStore( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid parameter [tokenName]" );
+      'Missing or invalid parameter [tokenName]' );
 
     const tokenStore = this.tokens[ tokenName ];
 
@@ -634,7 +633,7 @@ class BackendService extends Base
   tryGetToken( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid parameter [tokenName]" );
+      'Missing or invalid parameter [tokenName]' );
 
     const tokenStore = this.tokens[ tokenName ];
 
@@ -668,13 +667,13 @@ class BackendService extends Base
   tryGetDecodedToken( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid parameter [tokenName]" );
+      'Missing or invalid parameter [tokenName]' );
 
     const token = this.tryGetToken( IDENTITY_TOKEN_NAME );
 
     if( !token )
     {
-      throw new Error("The identity token (service property) has been set");
+      throw new Error('The identity token (service property) has been set');
     }
 
     return this.decodeToken( token );
@@ -728,7 +727,7 @@ class BackendService extends Base
     catch( e )
     {
       this.log.debug(
-        `Failed to remove token(s) from session storage`);
+        'Failed to remove token(s) from session storage');
     }
 
     // -- Remove history from session storage
@@ -753,7 +752,7 @@ class BackendService extends Base
    */
   decodeToken( token )
   {
-    expectNotEmptyString( token, "Missing or invalid parameter [token]" );
+    expectNotEmptyString( token, 'Missing or invalid parameter [token]' );
 
     let decodedToken = this.cache.get( token );
 
@@ -780,7 +779,7 @@ class BackendService extends Base
   tryUseTokenFromUrl( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid item in service config [tokenName]" );
+      'Missing or invalid item in service config [tokenName]' );
 
     let token;
 
@@ -819,7 +818,7 @@ class BackendService extends Base
         {
           const decodedToken = this.decodeToken( token );
 
-          this.log.debug( "Got token from URL", decodedToken );
+          this.log.debug( 'Got token from URL', decodedToken );
 
           return token;
         }
@@ -827,13 +826,13 @@ class BackendService extends Base
         //
         // FIXME: this also remove other parts of the hash (if any)
         //
-        this.log.debug("clear hash");
-        location.hash = "";
+        this.log.debug('clear hash');
+        location.hash = '';
       }
     }
     catch( e )
     {
-      this.log.debug(`Invalid token in url`, { cause: e } );
+      this.log.debug('Invalid token in url', { cause: e } );
     }
 
     return null;
@@ -852,7 +851,7 @@ class BackendService extends Base
   tryUseTokenFromSessionStorage( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid item in service config [tokenName]" );
+      'Missing or invalid item in service config [tokenName]' );
 
     const token = window.sessionStorage.getItem( tokenName );
 
@@ -864,7 +863,7 @@ class BackendService extends Base
       }
       catch( e )
       {
-        this.log.debug( `Remove token from storage`, e );
+        this.log.debug( 'Remove token from storage', e );
 
         window.sessionStorage.removeItem( tokenName );
 
@@ -900,7 +899,7 @@ class BackendService extends Base
   _ensureTokenStore( tokenName )
   {
     expectNotEmptyString( tokenName,
-      "Missing or invalid item in service config [tokenName]" );
+      'Missing or invalid item in service config [tokenName]' );
 
     if( !this.tokens[ tokenName ] )
     {
@@ -942,7 +941,7 @@ class BackendService extends Base
 
     const decodedToken = this.decodeToken( token );
 
-    if( "exp" in decodedToken )
+    if( 'exp' in decodedToken )
     {
       const expiresAtMs = decodedToken.exp * 1000;
 
@@ -952,7 +951,7 @@ class BackendService extends Base
         // => remove from session storage
         // => remove from this.tokens
 
-        this.log.debug(`Token [tokenName] has expired -> remove`);
+        this.log.debug('Token [tokenName] has expired -> remove');
 
         window.sessionStorage.removeItem( tokenName );
 

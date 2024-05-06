@@ -3,10 +3,10 @@
 
 import { expectNotEmptyString,
          expectObject }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 import DedupValueStore
-  from "@hkd-base/classes/DedupValueStore.js";
+  from '@hkd-base/classes/DedupValueStore.js';
 
 // import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 // const cache = new MemoryCache();
@@ -16,7 +16,7 @@ import DedupValueStore
 //
 // Images that are currently loading
 //
-let loadingImages = {};
+const loadingImages = {};
 
 // import { getModuleLogger }
 //   from "@hkd-base/helpers/log.js";
@@ -54,20 +54,20 @@ export function preload( url, existingSrcStore )
 {
   if( !url )
   {
-    return new DedupValueStore(""); // <= "" is an empty url
+    return new DedupValueStore(''); // <= "" is an empty url
   }
 
   expectNotEmptyString( url,
-    "Missing or invalid parameter [url]" );
+    'Missing or invalid parameter [url]' );
 
   let store;
 
   if( existingSrcStore )
   {
     expectObject( existingSrcStore,
-      "Invalid value for property [existingSrcStore]" );
+      'Invalid value for property [existingSrcStore]' );
 
-    let currentUrl = existingSrcStore.get();
+    const currentUrl = existingSrcStore.get();
 
     if( url === currentUrl )
     {
@@ -80,10 +80,10 @@ export function preload( url, existingSrcStore )
     store = existingSrcStore;
   }
   else {
-    store = new DedupValueStore("");
+    store = new DedupValueStore('');
   }
 
-  if( url.startsWith("data:") )
+  if( url.startsWith('data:') )
   {
     //
     // Data url
@@ -117,7 +117,7 @@ export function preload( url, existingSrcStore )
     //
     for( const store of img.srcStores )
     {
-      store.set( "" ); // <= empty url
+      store.set( '' ); // <= empty url
     }
 
     img = null;

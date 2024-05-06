@@ -6,41 +6,41 @@ import {
   expectNotEmptyString,
   expectArray,
   expectObject }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 import { defer }
-  from "@hkd-base/helpers/process.js";
+  from '@hkd-base/helpers/process.js';
 
 import { equals }
-  from "@hkd-base/helpers/compare.js";
+  from '@hkd-base/helpers/compare.js';
 
 import { clone, updateObject }
-  from "@hkd-base/helpers/object.js";
+  from '@hkd-base/helpers/object.js';
 
 import { generateLocalId }
-  from "@hkd-base/helpers/unique.js";
+  from '@hkd-base/helpers/unique.js';
 
 import ValueStore
-  from "@hkd-base/classes/ValueStore.js";
+  from '@hkd-base/classes/ValueStore.js';
 
 import DerivedStore
-  from "@hkd-base/classes/DerivedStore.js";
+  from '@hkd-base/classes/DerivedStore.js';
 
 import { currentLanguage,
          LANG_DEFAULT }
-  from "@hkd-base/stores/language.js";
+  from '@hkd-base/stores/language.js';
 
 import PathMatcher
-  from "@hkd-fe/classes/PathMatcher.js";
+  from '@hkd-fe/classes/PathMatcher.js';
 
 import LogBase
-  from "@hkd-base/classes/LogBase.js";
+  from '@hkd-base/classes/LogBase.js';
 
 import RouteStateStore
-  from "@hkd-fe/classes/RouteStateStore.js";
+  from '@hkd-fe/classes/RouteStateStore.js';
 
 import HistoryStorage
-  from "@hkd-fe/classes/HistoryStorage.js";
+  from '@hkd-fe/classes/HistoryStorage.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -54,10 +54,10 @@ const offs$ = Symbol();
 
 // const HISTORY_STORAGE_LABEL = "frontend-router/history";
 
-const ALLOWED_STATE_PROPERTIES = new Set( ["data", "id", "path"] );
+const ALLOWED_STATE_PROPERTIES = new Set( ['data', 'id', 'path'] );
 
-const DEFAULT_ROUTE_HOME = "/";
-const DEFAULT_ROUTE_NOT_FOUND = "not-found";
+const DEFAULT_ROUTE_HOME = '/';
+const DEFAULT_ROUTE_NOT_FOUND = 'not-found';
 
 // -----------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ const DEFAULT_ROUTE_NOT_FOUND = "not-found";
  */
 function stripHash( path )
 {
-  let index = path.indexOf("#");
+  const index = path.indexOf('#');
 
   if( index > -1 )
   {
@@ -102,7 +102,7 @@ class FrontendRouter extends LogBase
 
     if( router )
     {
-      throw new Error("Variable [router] has already been assigned");
+      throw new Error('Variable [router] has already been assigned');
     }
 
     //
@@ -152,16 +152,16 @@ class FrontendRouter extends LogBase
     routeStateStore.configureEventListener(
       {
         target: window,
-        eventName: "popstate",
+        eventName: 'popstate',
         callbackFn: ( /* e, { target, stream } */ ) =>
           {
-            router.log.debug("Popstate");
+            router.log.debug('Popstate');
 
             //
             // @note popstate only fires if the page has been interacted with
             //
 
-            let stateFromHistory = router.historyStorage.tryGoBack();
+            const stateFromHistory = router.historyStorage.tryGoBack();
 
             // router.log.debug( "popstate", { href: location.href, stateFromHistory } );
 
@@ -205,7 +205,7 @@ class FrontendRouter extends LogBase
 
               window.history.replaceState( null, '', path );
 
-              let newState = router._stateFromLocationHref();
+              const newState = router._stateFromLocationHref();
 
               // newState[ "userHash" ] = userHash;
               // console.log( "newState, hash", newState, hash );
@@ -223,7 +223,7 @@ class FrontendRouter extends LogBase
     routeStateStore.configureStoreSubscriber(
       {
         store: currentLanguage,
-        callbackFn: ( value, { store, stream } ) =>
+        callbackFn: ( /*value, { store, stream }*/ ) =>
           {
             //
             // An update of the current language might cause a route change
@@ -313,7 +313,7 @@ class FrontendRouter extends LogBase
   {
     // router.log.debug("configureRoutes");
 
-    expectArray( routes, "Missing or invalid configuration [routes]" );
+    expectArray( routes, 'Missing or invalid configuration [routes]' );
 
     router[ pathMatcher$ ] = new PathMatcher();
 
@@ -323,26 +323,26 @@ class FrontendRouter extends LogBase
     for( const route of routes )
     {
       expectObject( route,
-        "Invalid configuration [routes] (items should be objects)" );
+        'Invalid configuration [routes] (items should be objects)' );
 
       // -- Process property `label`
 
       const label = route.label;
 
       expectString( label,
-        "Invalid configuration [routes] " +
-        "(missing or invalid property item.label)" );
+        'Invalid configuration [routes] ' +
+        '(missing or invalid property item.label)' );
 
       // -- Process property `isHome`
 
-      if( "isHome" in route )
+      if( 'isHome' in route )
       {
         homeLabel = label;
       }
 
       // -- Process property `isNotFound`
 
-      if( "isNotFound" in route )
+      if( 'isNotFound' in route )
       {
         notFoundLabel = label;
       }
@@ -354,8 +354,8 @@ class FrontendRouter extends LogBase
       if( language )
       {
         expectString( language,
-          "Invalid configuration [routes] " +
-          "(invalid property item.language)" );
+          'Invalid configuration [routes] ' +
+          '(invalid property item.language)' );
       }
       else {
         language = LANG_DEFAULT;
@@ -365,7 +365,7 @@ class FrontendRouter extends LogBase
 
       let path;
 
-      if( "path" in route )
+      if( 'path' in route )
       {
         path = route.path;
       }
@@ -373,7 +373,7 @@ class FrontendRouter extends LogBase
         //
         // No path defined for route: generate path from label
         //
-        if( "/" !== label.charAt(0) )
+        if( '/' !== label.charAt(0) )
         {
           // Prepend a slash (to make it a path)
           path = `/${label}`;
@@ -386,8 +386,8 @@ class FrontendRouter extends LogBase
       }
 
       expectString( path,
-        "Invalid configuration [routes] " +
-        "(missing or invalid property item.path)" );
+        'Invalid configuration [routes] ' +
+        '(missing or invalid property item.path)' );
 
       // -- Process property `layout`
 
@@ -395,12 +395,12 @@ class FrontendRouter extends LogBase
       {
         try {
           router._normalizeLayoutOrPanelParams(
-            route.layout, { routePartName: "layout", label } );
+            route.layout, { routePartName: 'layout', label } );
         }
         catch( e )
         {
           throw new Error(
-            "Invalid configuration [layout]", { cause: e } );
+            'Invalid configuration [layout]', { cause: e } );
         }
       }
       else {
@@ -414,7 +414,7 @@ class FrontendRouter extends LogBase
         const panels = route.panels;
 
         expectObject( panels,
-          "Invalid configuration (missing or invalid property [item.panels])" );
+          'Invalid configuration (missing or invalid property [item.panels])' );
 
         for( const key in panels )
         {
@@ -440,8 +440,8 @@ class FrontendRouter extends LogBase
       if( route.redirectToRoute )
       {
         expectString( route.redirectToRoute,
-          "Invalid configuration " +
-          "(invalid property [route.redirectToRoute])" );
+          'Invalid configuration ' +
+          '(invalid property [route.redirectToRoute])' );
       }
 
       // -- Add route to path matcher
@@ -487,7 +487,7 @@ class FrontendRouter extends LogBase
       // and components might not be ready yet
       //
 
-      let currentState = router.historyStorage.getLatest();
+      const currentState = router.historyStorage.getLatest();
 
       if( !router._isValidCurrentState( currentState ) )
       {
@@ -499,7 +499,7 @@ class FrontendRouter extends LogBase
 
         window.history.replaceState( null, '', path );
 
-        let newState = router._stateFromLocationHref();
+        const newState = router._stateFromLocationHref();
 
         // newState[ "userHash" ] = userHash;
         // console.log( "newState, hash", newState, hash );
@@ -619,11 +619,11 @@ class FrontendRouter extends LogBase
    */
   redirectTo( path, options )
   {
-    expectString( path, "Missing or invalid parameter [path]" );
+    expectString( path, 'Missing or invalid parameter [path]' );
 
     // router.log.debug("redirectTo", path, options );
 
-    let plainPath = router._stripPath( path );
+    const plainPath = router._stripPath( path );
 
     const route = router[ pathMatcher$ ].matchOne( plainPath );
 
@@ -644,7 +644,7 @@ class FrontendRouter extends LogBase
 
     // -- Navigate [window.history] and update [stateHistory]
 
-    let {
+    const {
       stateData,
       returnState,
       replaceCurrent=false,
@@ -657,7 +657,7 @@ class FrontendRouter extends LogBase
     if( stateData )
     {
       expectObject( stateData,
-        "Invalid value for parameter [stateData]" );
+        'Invalid value for parameter [stateData]' );
 
       newState.data = stateData;
     }
@@ -720,13 +720,13 @@ class FrontendRouter extends LogBase
   {
     // router.log.debug("redirectToRoute", label);
 
-    expectString( label, "Missing or invalid parameter [label]" );
+    expectString( label, 'Missing or invalid parameter [label]' );
 
     let path;
 
     if( options )
     {
-      expectObject( options, "Missing or invalid parameter [options]" );
+      expectObject( options, 'Missing or invalid parameter [options]' );
 
       path = router.routePath( label, options.lang );
     }
@@ -767,10 +767,10 @@ class FrontendRouter extends LogBase
   applyPathVars( { path, vars }={} )
   {
     expectString( path,
-      "Missing or invalid parameter [path]" );
+      'Missing or invalid parameter [path]' );
 
     expectObject( vars,
-      "Missing or invalid parameter [vars]" );
+      'Missing or invalid parameter [vars]' );
 
     if( vars )
     {
@@ -795,7 +795,7 @@ class FrontendRouter extends LogBase
 
     // -- Check if all route variables have been set
 
-    if( path.includes(":") )
+    if( path.includes(':') )
     {
       throw new Error( `Missing route variables in path [${path}]` );
     }
@@ -913,7 +913,7 @@ class FrontendRouter extends LogBase
 
     const currentStateData = currentState.data;
 
-    let updatedData =
+    const updatedData =
       router._cloneAndUpdate( currentStateData, updateData );
 
     if( equals( currentStateData, updatedData ) )
@@ -954,7 +954,7 @@ class FrontendRouter extends LogBase
       return;
     }
 
-    let path =
+    const path =
       router._stripPath(
         location.href, { includeSearch: false, includeHash: true } );
 
@@ -982,7 +982,7 @@ class FrontendRouter extends LogBase
 
     if( !currentState.data || !currentState.data.returnState )
     {
-      throw new Error(`Missing [currentState.data.returnState]`);
+      throw new Error('Missing [currentState.data.returnState]');
     }
 
     const newState = currentState;
@@ -991,7 +991,7 @@ class FrontendRouter extends LogBase
     {
       const returnState = newState.data.returnState;
 
-      let updatedReturnStateData =
+      const updatedReturnStateData =
         router._cloneAndUpdate( returnState.data, updateData );
 
       newState.data.returnState.data = updatedReturnStateData;
@@ -1032,7 +1032,7 @@ class FrontendRouter extends LogBase
 
     if( !returnState )
     {
-      throw new Error("Missing [currentState.data.returnState]");
+      throw new Error('Missing [currentState.data.returnState]');
     }
 
     if( updateData )
@@ -1135,7 +1135,7 @@ class FrontendRouter extends LogBase
 
     if( !router[ pathMatcher$ ] )
     {
-      throw new Error(`Not configured yet (call configureRoutes first)`);
+      throw new Error('Not configured yet (call configureRoutes first)');
     }
 
     // -- State
@@ -1146,9 +1146,9 @@ class FrontendRouter extends LogBase
 
     const path = currentState.path;
 
-    expectString( path, "Missing or invalid parameter [path]" );
+    expectString( path, 'Missing or invalid parameter [path]' );
 
-    let plainPath = router._stripPath( path );
+    const plainPath = router._stripPath( path );
 
     let route = router[ pathMatcher$ ].matchOne( plainPath );
 
@@ -1192,7 +1192,7 @@ class FrontendRouter extends LogBase
   getRouteVar( label )
   {
     expectNotEmptyString( label,
-      "Missing or invalid parameter [label]" );
+      'Missing or invalid parameter [label]' );
 
     const { route } = router.getRouteAndState();
 
@@ -1228,7 +1228,7 @@ class FrontendRouter extends LogBase
 
     const { noFollowRedirect=false, vars } = options || {};
 
-    if( !noFollowRedirect && ("redirectToRoute" in route) )
+    if( !noFollowRedirect && ('redirectToRoute' in route) )
     {
       return router.routePath( route.redirectToRoute, lang );
     }
@@ -1259,18 +1259,18 @@ class FrontendRouter extends LogBase
    */
   getRoute( label, lang )
   {
-    expectString( label, "Missing or invalid parameter [label]" );
+    expectString( label, 'Missing or invalid parameter [label]' );
 
     if( !lang )
     {
       lang = currentLanguage.get();
 
       expectString( label,
-        "Missing or invalid value [currentLanguage]" );
+        'Missing or invalid value [currentLanguage]' );
     }
     else {
       expectString( label,
-        "Missing or invalid parameter [label]" );
+        'Missing or invalid parameter [label]' );
     }
 
     const route = router[ routesByLangAndLabel$ ][ `${lang}:${label}` ];
@@ -1496,7 +1496,7 @@ class FrontendRouter extends LogBase
    */
   _tryCurrentRouteIsRedirect()
   {
-    let plainPath = router._stripPath( location.href );
+    const plainPath = router._stripPath( location.href );
 
     const route = router[ pathMatcher$ ].matchOne( plainPath );
 
@@ -1678,7 +1678,7 @@ class FrontendRouter extends LogBase
 
     if( location.search.length > 1 )
     {
-      let searchParams = new URLSearchParams( location.search.substring(1) );
+      const searchParams = new URLSearchParams( location.search.substring(1) );
 
       const search = {};
 
@@ -1704,12 +1704,12 @@ class FrontendRouter extends LogBase
    */
   _isValidState( state )
   {
-    if( !(state instanceof Object) || typeof state.path !== "string" )
+    if( !(state instanceof Object) || typeof state.path !== 'string' )
     {
       return false;
     }
 
-    if( state.data && typeof state.id !== "string" )
+    if( state.data && typeof state.id !== 'string' )
     {
       return false;
     }
@@ -1729,7 +1729,7 @@ class FrontendRouter extends LogBase
    */
   _stateChanged( state )
   {
-    expectObject( state, "Missing or invalid parameter [state]" );
+    expectObject( state, 'Missing or invalid parameter [state]' );
 
     const currentState = router._getCurrentState();
 
@@ -1772,20 +1772,20 @@ class FrontendRouter extends LogBase
 
     // -- Check input parameters
 
-    expectObject( state, "Missing or invalid value for parameter [state]" );
+    expectObject( state, 'Missing or invalid value for parameter [state]' );
 
     router._ensureOnlyAllowedStateProperties( state );
 
-    let { path, data } = state;
+    const { path, data } = state;
 
     if( path )
     {
-      expectString( path, "Invalid value for parameter [path]" );
+      expectString( path, 'Invalid value for parameter [path]' );
     }
 
     if( data )
     {
-      expectObject( data, "Invalid value for parameter [data]" );
+      expectObject( data, 'Invalid value for parameter [data]' );
     }
     else {
       delete state.id;
@@ -1841,7 +1841,7 @@ class FrontendRouter extends LogBase
    */
   _normalizeLayoutOrPanelParams( routePart, { routePartName, label } )
   {
-    expectObject( routePart, "Missing or invalid parameter [routePart]" );
+    expectObject( routePart, 'Missing or invalid parameter [routePart]' );
 
     const {
       component,
@@ -1862,7 +1862,7 @@ class FrontendRouter extends LogBase
         `[${routePartName}.classNames]` );
     }
     else {
-      routePart.classNames = "";
+      routePart.classNames = '';
     }
 
     if( backgroundColor )
@@ -1898,7 +1898,7 @@ class FrontendRouter extends LogBase
       obj = {};
     }
     else {
-      expectObject( obj, "Missing or invalid parameter [obj]");
+      expectObject( obj, 'Missing or invalid parameter [obj]');
     }
 
 
@@ -1931,7 +1931,7 @@ class FrontendRouter extends LogBase
    */
   _stripPath( path, options )
   {
-    expectString( path, "Missing or invalid parameter [path]");
+    expectString( path, 'Missing or invalid parameter [path]');
 
     const origin = location.origin;
 
@@ -1954,14 +1954,14 @@ class FrontendRouter extends LogBase
 
     if( !includeSearch )
     {
-      x = path.indexOf("?");
+      x = path.indexOf('?');
     }
 
     let y = -1;
 
     if( !includeHash )
     {
-      y = path.indexOf("#");
+      y = path.indexOf('#');
     }
 
     if( -1 === x && -1 === y )
@@ -1991,7 +1991,7 @@ class FrontendRouter extends LogBase
    */
   _ensureOnlyAllowedStateProperties( state )
   {
-    expectObject( state, "Missing or invalid parameter [state]" );
+    expectObject( state, 'Missing or invalid parameter [state]' );
 
     for( const key in state )
     {

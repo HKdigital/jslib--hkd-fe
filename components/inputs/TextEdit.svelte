@@ -7,22 +7,22 @@ import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 
 import BodyText
-  from "@hkd-fe/components/text/BodyText.svelte";
+  from '@hkd-fe/components/text/BodyText.svelte';
 
 // -- Constants
 
 import { SURFACE_NONE }
-  from "@hkd-fe/constants/surfaces.js";
+  from '@hkd-fe/constants/surfaces.js';
 
 import { UPDATE_EVENT }
-  from "@hkd-fe/constants/events.js";
+  from '@hkd-fe/constants/events.js';
 
 // -- Logging
 
-import { getModuleLogger }
-  from "@hkd-base/helpers/log.js";
+// import { getModuleLogger }
+//   from '@hkd-base/helpers/log.js';
 
-const log = getModuleLogger( "TextEdit.svelte" );
+// const log = getModuleLogger( 'TextEdit.svelte' );
 
 
 /* ---------------------------------------------------------------- Internals */
@@ -75,13 +75,13 @@ function doBlur()
   //
   // Get innerText and replace tabs by double space
   //
-  let tmp = editElement.innerText.replaceAll("\\t", "  ");
+  const tmp = editElement.innerText.replaceAll('\\t', '  ');
 
   //
   // Remove newlines if not allowed
   //
   content =
-    allowNewLine ? tmp : tmp.replaceAll("[\\n\\r]+","");
+    allowNewLine ? tmp : tmp.replaceAll('[\\n\\r]+','');
 
   //
   // TESTING:
@@ -124,19 +124,19 @@ function pasteAsPlainText( e )
 {
   e.preventDefault();
 
-  let text = e.clipboardData.getData("text/plain");
+  let text = e.clipboardData.getData('text/plain');
 
   if( !allowNewLine )
   {
     text = text.replace(/[\n\r]/g, '');
   }
 
-  document.execCommand("insertHTML", false, text);
+  document.execCommand('insertHTML', false, text);
 }
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let onColor;
@@ -157,8 +157,8 @@ export let allowNewLine = false;
  *
  * @type {function}
  */
-// eslint-disable-next-line no-unused-vars
-export let parser = null;
+
+// export let parser = null;
 
 /* ----------------------------------------------------------------- Reactive */
 
@@ -198,7 +198,9 @@ $: {
          on:focus={doFocus}
          on:blur={doBlur}
          on:keydown={tryPreventNewline}
-         on:paste={pasteAsPlainText}>
+         on:paste={pasteAsPlainText}
+         role="textbox"
+         tabindex="0">
           {#if !content && !focused}
             <div cc-placeholder>{placeholder}</div>
           {/if}

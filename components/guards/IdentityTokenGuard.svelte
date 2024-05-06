@@ -3,7 +3,7 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { getCurrentPath,
-         redirectToRoute } from "@hkd-fe/stores/router.js";
+         redirectToRoute } from '@hkd-fe/stores/router.js';
 
 // -- Constants
 
@@ -11,21 +11,21 @@ import { getCurrentPath,
 //   from "@src/constants/route-labels.js";
 
 import { ROUTE_NO_ACCESS }
-  from "@src/constants/route-labels.js";
+  from '@src/constants/route-labels.js';
 
 // -- Services
 
-import { BACKEND_SERVICE_NAME } from "@src/constants/service-names.js";
+import { BACKEND_SERVICE_NAME } from '@src/constants/service-names.js';
 
 import InitService
-  from "@hkd-base/services/InitService.js";
+  from '@hkd-base/services/InitService.js';
 
 // -- Logging
 
 import { getModuleLogger }
-  from "@hkd-base/helpers/log.js";
+  from '@hkd-base/helpers/log.js';
 
-const log = getModuleLogger( "IdentityTokenGuard.svelte" );
+const log = getModuleLogger( 'IdentityTokenGuard.svelte' );
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -48,7 +48,7 @@ $: {
     // -> redirect
 
     log.debug(
-      `Condition failed (missing or expired identity token) ` +
+      'Condition failed (missing or expired identity token) ' +
       `at [${getCurrentPath()}]. Redirecting to [${ROUTE_NO_ACCESS}]`);
 
     redirectToRoute( ROUTE_NO_ACCESS ); // TODO routeOptions: returnUrl?

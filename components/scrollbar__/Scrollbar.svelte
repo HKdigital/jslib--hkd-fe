@@ -4,7 +4,7 @@
 
 import Track from './Track.svelte';
 
-import { expectValidSurfaceColor } from "@hkd-fe/helpers/colors.js";
+import { expectValidSurfaceColor } from '@hkd-fe/helpers/colors.js';
 
 export let onColor;
 

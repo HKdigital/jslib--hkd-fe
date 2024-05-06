@@ -4,16 +4,16 @@
 import {
   expectString,
   expectDefined,
-  expectArray } from "@hkd-base/helpers/expect.js";
+  expectArray } from '@hkd-base/helpers/expect.js';
 
-import { clone } from "@hkd-base/helpers/object.js";
+import { clone } from '@hkd-base/helpers/object.js';
 
 /* ---------------------------------------------------------------- Internals */
 
-const selectorTree$ = Symbol("selectorTree");
+const selectorTree$ = Symbol('selectorTree');
 
-const dataByPathSelector$ = Symbol("dataBySelector");
-const separator$ = Symbol("separator");
+const dataByPathSelector$ = Symbol('dataBySelector');
+const separator$ = Symbol('separator');
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -22,9 +22,9 @@ const separator$ = Symbol("separator");
  */
 export default class PathMatcher
 {
-  constructor( separator="/" )
+  constructor( separator='/' )
   {
-    expectString( separator, "Missing or invalid parameter [separator]" );
+    expectString( separator, 'Missing or invalid parameter [separator]' );
 
     this[ selectorTree$ ] = {};
     this[ dataByPathSelector$ ] = {};
@@ -65,7 +65,7 @@ export default class PathMatcher
 
     for( let j = 0, n = pathSelectorArr.length; j < n; j = j + 1 )
     {
-      let key = pathSelectorArr[ j ];
+      const key = pathSelectorArr[ j ];
 
       if( !currentNode[ key ] )
       {
@@ -75,16 +75,16 @@ export default class PathMatcher
       if( -1 !== key.indexOf('**') && '**' !== key )
       {
         throw new Error(
-          "Invalid parameter [pathSelector]. "+
-          "[**] must be a separate part of the path. "+
-          "e.g. [/some/**thing] is invalid.");
+          'Invalid parameter [pathSelector]. '+
+          '[**] must be a separate part of the path. '+
+          'e.g. [/some/**thing] is invalid.');
       }
 
       if( '**' === key && j < n - 1 )
       {
         throw new Error(
-          "Invalid parameter [pathSelector]. "+
-          "[**] should always be the last part of a path selector");
+          'Invalid parameter [pathSelector]. '+
+          '[**] should always be the last part of a path selector');
       }
 
       currentNode = currentNode[ key ];
@@ -177,7 +177,7 @@ export default class PathMatcher
     }
 
     const pathPart = arrPath.shift();
-    let isLastPathPart = !arrPath.length;
+    const isLastPathPart = !arrPath.length;
 
     let selectorComponent;
     let nextNode;
@@ -255,7 +255,7 @@ export default class PathMatcher
 
     for( key in _node )
     {
-      if( ":" === key.charAt(0) )
+      if( ':' === key.charAt(0) )
       {
         nextNode = _node[key];
         break;
@@ -398,7 +398,7 @@ export default class PathMatcher
 
     for( let j = arrPath.length; j >= 0; j = j - 1 )
     {
-      if( "" === arrPath[j] )
+      if( '' === arrPath[j] )
       {
         // remove empty path part
         arrPath.splice(j, 1);

@@ -5,10 +5,10 @@ import { defer }
   from '@hkd-base/helpers/process.js';
 
 import DedupValueStore
-  from "@hkd-base/classes/DedupValueStore.js";
+  from '@hkd-base/classes/DedupValueStore.js';
 
 import DerivedStore
-  from "@hkd-base/classes/DerivedStore.js";
+  from '@hkd-base/classes/DerivedStore.js';
 
 // import Scrollbar from "../scrollbar/Scrollbar.svelte";
 
@@ -26,7 +26,7 @@ const PRIORITY_LOW = 20;
 
 const priority =
   new DerivedStore( [ contentPanelReady ],
-    function derive( storesMap )
+    (( storesMap ) =>
     {
       const value = storesMap.getValueFromStore( 0 );
 
@@ -37,7 +37,7 @@ const priority =
       else {
         return PRIORITY_HIGH;
       }
-    } );
+    }) );
 
 /* ------------------------------------------------------------------ Exports */
 

@@ -5,14 +5,14 @@
 import { fade } from 'svelte/transition';
 
 import { preload }
-  from "@hkd-fe/helpers/image.js";
+  from '@hkd-fe/helpers/image.js';
 
 /* ---------------------------------------------------------------- Internals */
 
-let cssClassNames = "";
+let cssClassNames = '';
 let srcStore;
 
-let style = "";
+let style = '';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -24,7 +24,7 @@ export { cssClassNames as class };
  *
  * @values fill | contain | cover | none
  */
-export let fit = "cover";
+export let fit = 'cover';
 
 /**
  * Position the image inside the containing box
@@ -32,11 +32,11 @@ export let fit = "cover";
  *
  * @values [left | center | right] [top | center | bottom]
  */
-export let position = "center top";
+export let position = 'center top';
 
 export let src;
 
-export let alt = "";
+export let alt = '';
 
 /**
  * Fade in duration in milliseconds
@@ -67,7 +67,7 @@ $: {
   //
   // Add object-fit and object-position to style
   //
-  style = "";
+  style = '';
 
   if( fit )
   {
@@ -83,6 +83,7 @@ $: {
 </script>
 
 {#if $srcStore}
+  <!-- eslint-disable-next-line svelte/valid-compile -->
   <img c-image
        src={$srcStore} {alt}
        class="{cssClassNames}"

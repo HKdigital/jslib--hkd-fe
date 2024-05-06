@@ -1,9 +1,9 @@
 
 /* --------------------------------------------------- Handle mobile rotation */
 
-import { ValueStore, DedupValueStore } from "$hk/stores.js";
+import { ValueStore, DedupValueStore } from '$hk/stores.js';
 
-import MediaQuery from "$hk-fe/classes/MediaQuery.js";
+import MediaQuery from '$hk-fe/classes/MediaQuery.js';
 
 // export const orientationIsLandscape = new DedupValueStore();
 
@@ -72,7 +72,7 @@ export const userChangedOrientation = new ValueStore();
 export const isLandscapeOnMobile = new DedupValueStore();
 
 const looksLikeMobileDevice =
-    ( ("orientation" in window) && navigator.maxTouchPoints > 0 );
+    ( ('orientation' in window) && navigator.maxTouchPoints > 0 );
      /* && window.screenX !== 0 */
 
 function updateOrientationIsLandscape()
@@ -106,7 +106,7 @@ window.addEventListener('DOMContentLoaded', () =>
 {
   updateOrientationIsLandscape();
 
-  const query = "(orientation: landscape)";
+  const query = '(orientation: landscape)';
 
   const mq = new MediaQuery( query );
 

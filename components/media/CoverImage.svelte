@@ -33,32 +33,32 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectStringOrNull } from "@hkd-base/helpers/expect.js";
+import { expectStringOrNull } from '@hkd-base/helpers/expect.js';
 
-import { equals } from "@hkd-base/helpers/compare.js";
+import { equals } from '@hkd-base/helpers/compare.js';
 
-import ObjectBox from "./media-include/ObjectBox.svelte";
+import ObjectBox from './media-include/ObjectBox.svelte';
 
 /* ------------------------------------------------------------------ Exports */
 
 export let src = null;
-export let alt = "";
+export let alt = '';
 
-let classNames = "";
+let classNames = '';
 export { classNames as class };
 
-let customStyle = "";
+let customStyle = '';
 export { customStyle as style };
 
-let objectFit = "cover";
+let objectFit = 'cover';
 export { objectFit as fit };
 
-let objectPosition = "center top";
+let objectPosition = 'center top';
 export { objectPosition as position };
 
 /* -------------------------------------------------------------------- Logic */
 
-let objectStyle = "";
+let objectStyle = '';
 
 $: {
   // Convert fit & position properties to CSS style tag properties
@@ -92,7 +92,7 @@ $: {
   {
     if( src )
     {
-      expectStringOrNull( src, "Invalid property [src]" );
+      expectStringOrNull( src, 'Invalid property [src]' );
 
       if( !equals(src, prevSrc) )
       {

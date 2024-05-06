@@ -1,7 +1,7 @@
 <script>
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 </script>

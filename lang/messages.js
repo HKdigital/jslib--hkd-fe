@@ -1,2 +1,2 @@
 
-export const NO_DATA = "No data";
+export const NO_DATA = 'No data';

@@ -16,31 +16,31 @@ const dispatch = createEventDispatcher();
 import { fade } from 'svelte/transition';
 
 import ValueStore
-  from "@hkd-base/classes/ValueStore.js";
+  from '@hkd-base/classes/ValueStore.js';
 
 import { filedrop }
-  from "@hkd-fe/actions/filedrop.js";
+  from '@hkd-fe/actions/filedrop.js';
 
 import { loadImage }
-  from "@hkd-fe/helpers/image-file.js";
+  from '@hkd-fe/helpers/image-file.js';
 
 import BodyText
-  from "@hkd-fe/components/text/BodyText.svelte";
+  from '@hkd-fe/components/text/BodyText.svelte';
 
 import Image
-  from "@hkd-fe/components/media/Image.svelte";
+  from '@hkd-fe/components/media/Image.svelte';
 
 import TabIcon
-  from "@hkd-fe/components/icons/TabIcon.svelte";
+  from '@hkd-fe/components/icons/TabIcon.svelte';
 
 import DocumentArrowUp
-  from "@hkd-fe/components/icons/hero/solid/DocumentArrowUp.svelte";
+  from '@hkd-fe/components/icons/hero/solid/DocumentArrowUp.svelte';
 
 import ExclamationCircle
-  from "@hkd-fe/components/icons/hero/outline/ExclamationCircle.svelte";
+  from '@hkd-fe/components/icons/hero/outline/ExclamationCircle.svelte';
 
 import EllipsisHorizontal
-  from "@hkd-fe/components/icons/hero/solid/EllipsisHorizontal.svelte";
+  from '@hkd-fe/components/icons/hero/solid/EllipsisHorizontal.svelte';
 
 
 // import InlineIcon
@@ -88,7 +88,7 @@ async function loadPreview( urlOrImageFile )
 
     if( urlOrImageFile !== initialImageUrl )
     {
-      dispatch("drop", { urlOrImageFile, busy } );
+      dispatch('drop', { urlOrImageFile, busy } );
     }
   }
   catch( e )
@@ -105,49 +105,49 @@ async function loadPreview( urlOrImageFile )
 /**
  * CSS class names to add to the element
  */
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let onColor;
 
 export let tabIndex = -1;
 export let disabled = false;
-export let accept = "image/*";
+export let accept = 'image/*';
 
 export let uploadIcon = DocumentArrowUp;
-export let uploadText = "Upload image";
+export let uploadText = 'Upload image';
 
-export let uploadIconClasses = "";
-export let uploadTextClasses = "";
+export let uploadIconClasses = '';
+export let uploadTextClasses = '';
 
 export let overIcon = DocumentArrowUp;
-export let overText = "";
+export let overText = '';
 
-export let overIconClasses = "";
-export let overTextClasses = "";
+export let overIconClasses = '';
+export let overTextClasses = '';
 
 export let overlayIcon = DocumentArrowUp;
-export let overlayText = "";
+export let overlayText = '';
 
-export let overlayIconClasses = "";
-export let overlayTextClasses = "";
+export let overlayIconClasses = '';
+export let overlayTextClasses = '';
 
 export let busyIcon = EllipsisHorizontal;
-export let busyText = "";
+export let busyText = '';
 
-export let busyIconClasses = "";
-export let busyTextClasses = "";
+export let busyIconClasses = '';
+export let busyTextClasses = '';
 
 export let errorIcon = ExclamationCircle;
-export let errorText = "Failed to load image";
+export let errorText = 'Failed to load image';
 
-export let errorIconClasses = "";
-export let errorTextClasses = "";
+export let errorIconClasses = '';
+export let errorTextClasses = '';
 
 export let initialImageUrl = null;
 
-export let fit = "contain";
-export let position = "center center";
+export let fit = 'contain';
+export let position = 'center center';
 
 /* ----------------------------------------------------------------- Reactive */
 

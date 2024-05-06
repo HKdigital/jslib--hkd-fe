@@ -10,7 +10,7 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { windowSize }
-  from "@hkd-fe/stores/window.js";
+  from '@hkd-fe/stores/window.js';
 
 import { WIDTH_RANGE_SMALL,
          WIDTH_RANGE_MEDIUM,
@@ -18,7 +18,7 @@ import { WIDTH_RANGE_SMALL,
          WIDTH_RANGE_XL,
          BREAKPOINTS,
          screenWidthRange }
-  from "@hkd-fe/stores/screen-size.js";
+  from '@hkd-fe/stores/screen-size.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -99,13 +99,13 @@ export let collapse = false;
  *
  * @type {string}
  */
-export let cssClassNames = "";
+export let cssClassNames = '';
 export { cssClassNames as class };
 
 /* ----------------------------------------------------------------- Reactive */
 
-let colorClassesFront = "";
-let colorClassesBackground = "";
+let colorClassesFront = '';
+let colorClassesBackground = '';
 
 $: {
   //
@@ -188,7 +188,7 @@ $: {
         `Invalid value [$screenWidthRange=${$screenWidthRange}]`);
   }
 
-  let tmp = BREAKPOINTS[ columnWidthRange ];
+  const tmp = BREAKPOINTS[ columnWidthRange ];
 
   outerWidth = ($windowSize).width;
 

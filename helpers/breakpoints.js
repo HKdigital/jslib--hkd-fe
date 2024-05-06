@@ -2,7 +2,7 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectPositiveNumber,
-         expectArray } from "@hkd-base/helpers/expect.js";
+         expectArray } from '@hkd-base/helpers/expect.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -43,17 +43,17 @@ export const XL_COLUMN_WIDTH = Math.floor(MEDIUM_COLUMN_WIDTH * 2);
 export function expectValidBreakPoints( breakPoints )
 {
   expectArray( breakPoints,
-    "Missing or invalid parameter [breakPoints]" );
+    'Missing or invalid parameter [breakPoints]' );
 
   const maxColumns = breakPoints.length;
 
-  let lastValue = 0;
+  const lastValue = 0;
 
   for( let j = 0; j < maxColumns; j = j + 1 )
   {
     const value = breakPoints[ j ];
 
-    if( typeof value !== "number"  || value < lastValue || value >= 1 )
+    if( typeof value !== 'number'  || value < lastValue || value >= 1 )
     {
       throw new Error(`Invalid value [${value}] for breakpoint [${j}]`);
     }
@@ -94,16 +94,16 @@ export function calculateNumberOfColumns(
   }={} )
 {
   expectPositiveNumber( availableWidth,
-    "Missing or invalid parameter [availableWidth]" );
+    'Missing or invalid parameter [availableWidth]' );
 
   expectPositiveNumber( maxColumns,
-    "Missing or invalid parameter [maxColumns]" );
+    'Missing or invalid parameter [maxColumns]' );
 
   expectPositiveNumber( referenceFullWidth,
-    "Missing or invalid parameter [referenceFullWidth]" );
+    'Missing or invalid parameter [referenceFullWidth]' );
 
   expectPositiveNumber( referenceMaxColumns,
-    "Missing or invalid parameter [referenceMaxColumns]" );
+    'Missing or invalid parameter [referenceMaxColumns]' );
 
   if( 1 === referenceMaxColumns )
   {
@@ -128,7 +128,7 @@ export function calculateNumberOfColumns(
 
   let numberOfColumns = 1;
 
-  let n = Math.min( maxColumns - 1, breakPoints.length - 1 );
+  const n = Math.min( maxColumns - 1, breakPoints.length - 1 );
 
   for( let j = n; j >= 0; j = j - 1 )
   {

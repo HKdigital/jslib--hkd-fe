@@ -1,19 +1,16 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectNumber }
-  from "@hkd-base/helpers/expect.js";
-
 import Offs
-  from "@hkd-base/classes/Offs.js";
+  from '@hkd-base/classes/Offs.js';
 import MediaQuery
-  from "@hkd-fe/classes/MediaQuery.js";
+  from '@hkd-fe/classes/MediaQuery.js';
 
 import DedupValueStore
-  from "@hkd-base/classes/DedupValueStore.js";
+  from '@hkd-base/classes/DedupValueStore.js';
 
 import DerivedStore
-  from "@hkd-base/classes/DerivedStore.js";
+  from '@hkd-base/classes/DerivedStore.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -33,15 +30,15 @@ const BREAKPOINTS =
 
 const WIDTH_RANGE_LABELS =
   {
-    [ WIDTH_RANGE_SMALL ]: "small",
-    [ WIDTH_RANGE_MEDIUM ]: "medium",
-    [ WIDTH_RANGE_LARGE ]: "large",
-    [ WIDTH_RANGE_XL ]: "xl"
+    [ WIDTH_RANGE_SMALL ]: 'small',
+    [ WIDTH_RANGE_MEDIUM ]: 'medium',
+    [ WIDTH_RANGE_LARGE ]: 'large',
+    [ WIDTH_RANGE_XL ]: 'xl'
   };
 
 let offs;
 
-let screenWidthRange  = new DedupValueStore();
+const screenWidthRange  = new DedupValueStore();
 
 // -----------------------------------------------------------------------------
 
@@ -138,7 +135,7 @@ export { screenWidthRange };
  * Derived store
  * - Contains the label the corresponds with the current screen size
  */
-export let screenWidthRangeLabel =
+export const screenWidthRangeLabel =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );
@@ -152,7 +149,7 @@ export let screenWidthRangeLabel =
  * Derived store
  * - Contains value true if the screen width is small of less
  */
-export let screenWidthSmall =
+export const screenWidthSmall =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );
@@ -166,7 +163,7 @@ export let screenWidthSmall =
  * Derived store
  * - Contains value true if the screen width is medium or less
  */
-export let screenWidthSmallOrMedium =
+export const screenWidthSmallOrMedium =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );
@@ -180,7 +177,7 @@ export let screenWidthSmallOrMedium =
  * Derived store
  * - Contains value true if the screen width is (large or bigger)
  */
-export let screenWidthLargePlus =
+export const screenWidthLargePlus =
   new DerivedStore( [ screenWidthRange ], ( storesMap ) =>
       {
         const value = storesMap.getValueFromStore( 0 );

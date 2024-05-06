@@ -1,2 +1,2 @@
 
-export const UPDATE_EVENT = "update";
+export const UPDATE_EVENT = 'update';

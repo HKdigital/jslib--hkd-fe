@@ -45,20 +45,23 @@
 
 import { expectString,
          expectNotEmptyString,
-         expectBoolean,
-         expectObjectOrNull } from "@hkd-base/helpers/expect.js";
+         expectBoolean }
+  from '@hkd-base/helpers/expect.js';
 
-import { Base } from "@hkd-base/helpers/services.js";
+import { Base }
+  from '@hkd-base/helpers/services.js';
 
 import {
-  STOPPED,
-  STARTING,
-  RUNNING,
-  STOPPING,
-  /* UNAVAILABLE, */
-  /* ERROR */ } from "@hkd-base/helpers/service-states.js";
+    STOPPED,
+    STARTING,
+    RUNNING,
+    STOPPING,
+    /* UNAVAILABLE, */
+    /* ERROR */ }
+  from '@hkd-base/helpers/service-states.js';
 
-import Feed from "@hkd-fe/classes/Feed.js";
+import Feed
+  from '@hkd-fe/classes/Feed.js';
 
 // import MemoryCache from "@hkd-base/classes/MemoryCache.js";
 
@@ -66,9 +69,9 @@ import Feed from "@hkd-fe/classes/Feed.js";
 
 /* ---------------------------------------------------------------- Internals */
 
-const URI_LIVE_FOLLOW = "/live/follow";
+const URI_LIVE_FOLLOW = '/live/follow';
 
-const TOKEN_LESS_FEED = Symbol("tokenLessFeed");
+const TOKEN_LESS_FEED = Symbol('tokenLessFeed');
 
 // const CHECK_TOKEN_EXPIRED_LOOP_INTERVAL = 10000;
 // const TOKEN_EXPIRED_MARGIN_MS = 300000; // 300 seconds = 5 minutes
@@ -107,13 +110,13 @@ class LiveClientService extends Base
       {
         // this.setDependency( BACKEND_SERVICE_NAME );
 
-        const displayConfig = config;
+        // const displayConfig = config;
 
         expectNotEmptyString( config.origin,
-          "Missing or invalid parameter [config.origin]" );
+          'Missing or invalid parameter [config.origin]' );
 
         expectString( config.apiPrefix,
-          "Missing or invalid parameter [config.apiPrefix]" );
+          'Missing or invalid parameter [config.apiPrefix]' );
 
         // -- Store config
 
@@ -157,23 +160,23 @@ class LiveClientService extends Base
     if( token )
     {
       expectNotEmptyString( token,
-        "Invalid value for parameter [token]" );
+        'Invalid value for parameter [token]' );
     }
     else {
       token = TOKEN_LESS_FEED;
     }
 
     expectBoolean( autoReconnect,
-      "Invalid value for parameter [autoReconnect]" );
+      'Invalid value for parameter [autoReconnect]' );
 
     const { origin,
             apiPrefix } = this.config;
 
     expectNotEmptyString( origin,
-      "Missing or invalid parameter [origin]" );
+      'Missing or invalid parameter [origin]' );
 
     expectString( apiPrefix,
-      "Missing or invalid parameter [apiPrefix]" );
+      'Missing or invalid parameter [apiPrefix]' );
 
     if( !processor )
     {
@@ -184,7 +187,7 @@ class LiveClientService extends Base
 
     if( !feed )
     {
-      let url = new URL(`${origin}${apiPrefix}${URI_LIVE_FOLLOW}`);
+      const url = new URL(`${origin}${apiPrefix}${URI_LIVE_FOLLOW}`);
 
       if( TOKEN_LESS_FEED !== token )
       {

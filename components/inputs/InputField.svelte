@@ -14,7 +14,7 @@ const dispatch = createEventDispatcher();
 
 /* ---------------------------------------------------------------- Internals */
 
-let colorClasses = "";
+let colorClasses = '';
 
 let hideLabel = false;
 let hidePlaceholder = true;
@@ -29,13 +29,13 @@ let focused = false;
 
 let initialValueCopied = false;
 
-let previousValue = "";
+let previousValue = '';
 
-let value = "";
+let value = '';
 
-let finalValue = "";
+let finalValue = '';
 
-let errorMessage = "";
+let errorMessage = '';
 
 // -----------------------------------------------------------------------------
 
@@ -70,7 +70,7 @@ function blur()
 /**
  * CSS class names to add to the element
  */
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 /**
@@ -86,14 +86,14 @@ export let onColor = null;
  *
  * @type {string}
  */
-export let label = "";
+export let label = '';
 
 /**
  * Placeholder text
  *
  * @type {string}
  */
-export let placeholder = "";
+export let placeholder = '';
 // export let errorMessage = "";
 
 /**
@@ -101,7 +101,7 @@ export let placeholder = "";
  *
  * @type {string}
  */
-export let initialValue = "";
+export let initialValue = '';
 
 /**
  * Parser function that receives the value of the input element
@@ -110,7 +110,7 @@ export let initialValue = "";
  *
  * @type {function}
  */
-// eslint-disable-next-line no-unused-vars
+
 export let parser = null;
 
 /**
@@ -146,7 +146,7 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 
@@ -183,7 +183,7 @@ $: {
 
   }
   else {
-    placeholderText = "";
+    placeholderText = '';
   }
 }
 
@@ -234,18 +234,19 @@ $: {
 
     if( output.error )
     {
-      if( typeof output.error === "string" )
+      if( typeof output.error === 'string' )
       {
         errorMessage = output.error;
       }
       else if( output.error instanceof Error )
       {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         errorMessage = output.error.message;
       }
       else {
         throw new Error(
-          `Parser returned invalid property [error] ` +
-          `(expected string or Error)`);
+          'Parser returned invalid property [error] ' +
+          '(expected string or Error)');
       }
 
       showErrorMessage = true;
@@ -256,20 +257,20 @@ $: {
 
     if( output.value && output.value !== value )
     {
-      if( typeof output.value === "string" )
+      if( typeof output.value === 'string' )
       {
         value = output.value;
       }
       else {
         throw new Error(
-          `Parser returned invalid property [value] ` +
-          `(expected string)`);
+          'Parser returned invalid property [value] ' +
+          '(expected string)');
       }
     }
 
     previousValue = value;
 
-    if( "finalValue" in output )
+    if( 'finalValue' in output )
     {
       finalValue = output.finalValue;
     }
@@ -277,7 +278,7 @@ $: {
       finalValue = value;
     }
 
-    dispatch( "update", { updatedValue: finalValue } );
+    dispatch( 'update', { updatedValue: finalValue } );
   }
 }
 
@@ -287,7 +288,7 @@ $: {
 // https://medium.com/codex/how-to-style-an-input-field-with-css-only-tips-and-techniques-e6a00e9dcc50
 //
 
-let inputType = "text";
+let inputType = 'text';
 
 export { inputType as type };
 
@@ -296,6 +297,8 @@ export { inputType as type };
 <!-- {focused} -->
 
 <!-- {hideLabel} -->
+
+<!-- eslint-disable-next-line svelte/valid-compile -->
 <label c-input-field
        class="{colorClasses}
               {cssClassNames}"
@@ -303,7 +306,7 @@ export { inputType as type };
        class:x-focused={focused}
        class:x-optional={optional && !finalValue}
        on:click
-       on:keydown={(e)=> { if( e.code === "Enter" ) { dispatch("enter"); } }}>
+       on:keydown={(e)=> { if( e.code === 'Enter' ) { dispatch('enter'); } }}>
 
   {#if label}
     <div cc-label
@@ -312,15 +315,15 @@ export { inputType as type };
 
    <div cc-input-bg></div>
 
-   {#if inputType == "number"}
+   {#if inputType == 'number'}
     <input cc-input type="number" bind:value
            on:focus={setFocus}
            on:blur={blur}>
-  {:else if inputType === "phone"}
+  {:else if inputType === 'phone'}
     <input cc-input type="tel" bind:value
            on:focus={setFocus}
            on:blur={blur}>
-  {:else if inputType === "email"}
+  {:else if inputType === 'email'}
     <input cc-input type="email" bind:value
            on:focus={setFocus}
            on:blur={blur}>
@@ -379,11 +382,6 @@ export { inputType as type };
     justify-self: center;
 
     transition: opacity 0.5s;
-
-    &.x-focused
-    {
-      opacity: 0.5;
-    }
   }
 
   [cc-input]

@@ -7,7 +7,7 @@
 /* ------------------------------------------------------------------ Exports */
 
 export { SURFACE_NONE }
-  from "@hkd-fe/constants/surfaces.js";
+  from '@hkd-fe/constants/surfaces.js';
 
 // ---------------------------------------------------------------------- Method
 
@@ -17,7 +17,7 @@ export { SURFACE_NONE }
  *
  * @param  {string} colorName
  */
-export function expectValidColor( colorName )
+export function expectValidColor( /*colorName*/ )
 {
   // FIXME
 
@@ -49,12 +49,12 @@ export function expectValidSurfaceColor( colorName, allowNone=false )
   //     `Color [${colorName}] is not a valid theme surface color`);
   // }
 
-  if( colorName && colorName.startsWith("surface") )
+  if( colorName && colorName.startsWith('surface') )
   {
     return;
   }
 
-  if( allowNone && "none" === colorName )
+  if( allowNone && 'none' === colorName )
   {
     return;
   }

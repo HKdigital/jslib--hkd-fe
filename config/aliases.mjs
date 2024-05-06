@@ -5,6 +5,6 @@ export async function getCustomAliases(
   } )
 {
   return {
-    "@platform": resolveCurrentLibPath()
+    '@platform': resolveCurrentLibPath()
   };
 }

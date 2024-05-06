@@ -20,11 +20,11 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
       }
     }
 
-    node.addEventListener("click", _tryPreventDefault, true);
+    node.addEventListener('click', _tryPreventDefault, true);
 
     return {
       destroy() {
-        node.removeEventListener("click", _tryPreventDefault, true);
+        node.removeEventListener('click', _tryPreventDefault, true);
       }
     };
   };
@@ -38,7 +38,7 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
   // const dispatch = createEventDispatcher();
 
   import { redirectTo,
-           routePath } from "@hkd-fe/stores/router.js";
+           routePath } from '@hkd-fe/stores/router.js';
 
   /* -------------------------------------------------------------- Internals */
 
@@ -86,7 +86,7 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
   export let routeOptions = null;
 
   /** Specify the `href` attribute. */
-  export let href = "";
+  export let href = '';
 
   /**
    * Set to `true` to disable the link.
@@ -165,11 +165,11 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
     //
     if( outbound )
     {
-      target = "_blank";
+      target = '_blank';
 
       if( rel === undefined )
       {
-        rel = "noopener noreferrer";
+        rel = 'noopener noreferrer';
       }
     }
   }
@@ -178,6 +178,7 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
 
 {#if disabled}
 
+  <!-- eslint-disable-next-line svelte/valid-compile -->
   <span c-link
     {...$$restProps}
     on:mouseover
@@ -197,7 +198,7 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
     use:preventDefaultOnOutbound={outbound}
     on:click={tryRedirect}
     class:active
-    aria-current={active ? "page" : undefined}
+    aria-current={active ? 'page' : undefined}
     {...$$restProps}
     {href}
     {target}
@@ -205,7 +206,7 @@ preventDefaultOnOutbound = ( node, outbound=false ) =>
     on:mouseover
     on:mouseenter
     on:mouseenter={() => {
-      if (rel === "prefetch") prefetch();
+      if (rel === 'prefetch') prefetch();
     }}
     on:mouseout
     on:focus

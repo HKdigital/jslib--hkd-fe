@@ -2,11 +2,11 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import Button from "@hkd-fe/components/buttons/Button.svelte";
+import Button from '@hkd-fe/components/buttons/Button.svelte';
 
 /* ---------------------------------------------------------------- Internals */
 
-let cssClassNames = "";
+let cssClassNames = '';
 
 /* ------------------------------------------------------------------ Exports */
 

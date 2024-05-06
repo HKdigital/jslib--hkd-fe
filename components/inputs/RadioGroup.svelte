@@ -5,26 +5,26 @@ import { createEventDispatcher } from 'svelte';
 const dispatch = createEventDispatcher();
 
 import { expectNumber,
-         expectDefined } from "@hkd-base/helpers/expect.js";
+         expectDefined } from '@hkd-base/helpers/expect.js';
 
-import { arrayToObject } from "@hkd-base/helpers/array.js";
+import { arrayToObject } from '@hkd-base/helpers/array.js';
 
 import BodyText
-  from "@hkd-fe/components/text/BodyText.svelte";
+  from '@hkd-fe/components/text/BodyText.svelte';
 
-import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
+import ListIcon from '@hkd-fe/components/icons/ListIcon.svelte';
 
 import Circle
-  from "@hkd-fe/components/icons/hero/outline/Circle.svelte";
+  from '@hkd-fe/components/icons/hero/outline/Circle.svelte';
 
 import CheckCircle
-  from "@hkd-fe/components/icons/hero/solid/CheckCircle.svelte";
+  from '@hkd-fe/components/icons/hero/solid/CheckCircle.svelte';
 
 // import ChevronRightCircle
 //   from "@hkd-fe/components/icons/hero/solid/ChevronRightCircle.svelte";
 
 import { generateLocalId }
-  from "@hkd-base/helpers/unique.js";
+  from '@hkd-base/helpers/unique.js';
 
 // -- Logging
 
@@ -39,15 +39,15 @@ import { generateLocalId }
  * A "select" event will be dispatched is the value of the radio button has
  * been updated.
  */
-const EVENT_SELECT = "select";
+const EVENT_SELECT = 'select';
 
-const VALUE_DISPLAYVALUE = [ "value", "displayValue" ];
+const VALUE_DISPLAYVALUE = [ 'value', 'displayValue' ];
 
 // let error;
 
-let name = generateLocalId();
+const name = generateLocalId();
 
-let colorClasses = "";
+let colorClasses = '';
 
 let selectedIndex = -1;
 
@@ -60,7 +60,7 @@ let standardizedValues;
  */
 function handleUserSelect( index )
 {
-  expectNumber( index, "Missing or invalid parameter [index]" );
+  expectNumber( index, 'Missing or invalid parameter [index]' );
 
   let details;
 
@@ -75,7 +75,7 @@ function handleUserSelect( index )
     selectedIndex = index;
     details = { index, ...standardizedValues[ index ] };
 
-    if( !("displayValue" in details) )
+    if( !('displayValue' in details) )
     {
       details.displayValue = details.value;
     }
@@ -86,7 +86,7 @@ function handleUserSelect( index )
 
 // -----------------------------------------------------------------------------
 
-let cssClassNames = "";
+let cssClassNames = '';
 
 /* ------------------------------------------------------------------ Exports */
 
@@ -128,7 +128,7 @@ export let selectValue;
 
 selectValue = ( value ) =>
   {
-    expectDefined( value, "Missing or invalid parameter [value]" );
+    expectDefined( value, 'Missing or invalid parameter [value]' );
 
     if( null === value )
     {
@@ -168,7 +168,7 @@ export let selectByIndex;
 
 selectByIndex = ( index=-1 ) =>
   {
-    expectNumber( index, "Missing or invalid parameter [index]" );
+    expectNumber( index, 'Missing or invalid parameter [index]' );
 
     if( selectedIndex !== index )
     {
@@ -238,7 +238,7 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 

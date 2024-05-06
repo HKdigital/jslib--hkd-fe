@@ -2,20 +2,20 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectPositiveNumber } from "@hkd-base/helpers/expect.js";
+import { expectPositiveNumber } from '@hkd-base/helpers/expect.js';
 
 /* ---------------------------------------------------------------- Internals */
 
 // let boxWidth;
 // let boxHeightStyle;
 
-let style = "";
+let style = '';
 
 /* ------------------------------------------------------------------ Exports */
 
 export let aspect = 16 / 9;
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 /* --------------------------------------------------------------- Reactivity */

@@ -5,7 +5,7 @@
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let onColor = null;
@@ -15,7 +15,7 @@ export let center = false;
 
 /* ----------------------------------------------------------------- Reactive */
 
-let colorClasses = "";
+let colorClasses = '';
 
 $: {
   if( onColor )
@@ -23,12 +23,13 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 
 </script>
 
+<!-- eslint-disable-next-line svelte/valid-compile -->
 <div c-heading-text
      class="{colorClasses}
             {cssClassNames}"

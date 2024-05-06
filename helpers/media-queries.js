@@ -2,9 +2,9 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectNotEmptyString,
-         expectObject } from "@hkd-base/helpers/expect.js";
+         expectObject } from '@hkd-base/helpers/expect.js';
 
-import MediaQuery from "@hkd-fe/classes/MediaQuery.js";
+import MediaQuery from '@hkd-fe/classes/MediaQuery.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -42,13 +42,13 @@ export function enableColumnBreakpoint(
   breakPointWidth, numberOfColumns )
 {
   expectNotEmptyString( breakPointWidth,
-    "Missing or invalid parameter [breakPointWidth]");
+    'Missing or invalid parameter [breakPointWidth]');
 
-  if( typeof numberOfColumns !== "number" || numberOfColumns < 2 )
+  if( typeof numberOfColumns !== 'number' || numberOfColumns < 2 )
   {
     throw new Error(
-      `Invalid value for parameter [numberOfColumns]. ` +
-      `Expected number greater than 1`);
+      'Invalid value for parameter [numberOfColumns]. ' +
+      'Expected number greater than 1');
   }
 
   return enableMediaQueryRule(
@@ -71,15 +71,15 @@ export function enableColumnBreakpoint(
  */
 export function enableMediaQueryRule( rule )
 {
-  expectObject( rule, "Invalid parameter [rule]" );
+  expectObject( rule, 'Invalid parameter [rule]' );
 
   const { query, className } = rule;
 
   expectNotEmptyString( query,
-    "Missing or invalid parameter [query]");
+    'Missing or invalid parameter [query]');
 
   expectNotEmptyString( className,
-    "Missing or invalid parameter [className]");
+    'Missing or invalid parameter [className]');
 
   const mq = new MediaQuery( query );
 

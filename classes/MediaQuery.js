@@ -64,7 +64,7 @@
   //       } );
   // }
 
-  const offs$ = Symbol("offs$");
+  const offs$ = Symbol('offs$');
 
   export default class MediaQuery
   {

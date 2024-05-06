@@ -22,6 +22,7 @@
   }
 </script>
 
+<!-- eslint-disable-next-line svelte/valid-compile -->
 <div
   bind:this="{button}"
   class="g-scrollbar-button scroll-button {direction}"

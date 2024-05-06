@@ -2,14 +2,14 @@
 /* ------------------------------------------------------------------ Imports */
 
 import { expectString,
-         expectObject } from "@hkd-base/helpers/expect.js";
+         expectObject } from '@hkd-base/helpers/expect.js';
 
 
 import { BACKGROUND_PANEL,
          TOP_PANEL,
          SUB_TOP_PANEL,
          CONTENT_PANEL,
-         BOTTOM_PANEL } from "@hkd-fe/types/panel-types.js";
+         BOTTOM_PANEL } from '@hkd-fe/types/panel-types.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -34,16 +34,16 @@ const PANEL_NAMES =
  */
 export function expectValidRoute( route )
 {
-  expectObject( route, "Invalid route" );
+  expectObject( route, 'Invalid route' );
 
   const routeLabel = route.label;
 
   expectString( routeLabel,
-    "Invalid route, missing or invalid property [label]" );
+    'Invalid route, missing or invalid property [label]' );
 
   // == Check layout
 
-  let layout = route.layout;
+  const layout = route.layout;
 
   expectObject( layout,
     `Invalid route [${routeLabel}]. Missing or invalid property [layout]` );
@@ -54,7 +54,7 @@ export function expectValidRoute( route )
 
   // == Check panels
 
-  let panels = route.panels;
+  const panels = route.panels;
 
   expectObject( panels,
     `Invalid route [${routeLabel}]. Missing or invalid property [panels]` );
@@ -64,7 +64,7 @@ export function expectValidRoute( route )
     if( !PANEL_NAMES.has( panelName ) )
     {
       const allowedPanelNames =
-        Array.from( PANEL_NAMES.values() ).join(", ");
+        Array.from( PANEL_NAMES.values() ).join(', ');
 
       throw new Error(
         `Invalid route [${routeLabel}]. Invalid panel name [${panelName}], ` +
@@ -94,10 +94,10 @@ export function expectValidRoute( route )
 function expectValidPanel( { routeLabel, panelName, panel } )
 {
   expectString( routeLabel,
-    "Missing or invalid parameter [routeLabel]." );
+    'Missing or invalid parameter [routeLabel].' );
 
   expectString( panelName,
-    "Missing or invalid parameter [panelName]." );
+    'Missing or invalid parameter [panelName].' );
 
   expectObject( panel,
     `Invalid panel [${panelName}] in route [${routeLabel}].` );

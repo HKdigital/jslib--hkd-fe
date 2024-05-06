@@ -9,7 +9,7 @@ let lineClampStyle;
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let onColor = null;
@@ -26,7 +26,7 @@ export let lineClamp = 0;
 
 /* ----------------------------------------------------------------- Reactive */
 
-let colorClasses = "";
+let colorClasses = '';
 
 $: {
   if( onColor )
@@ -34,7 +34,7 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 
@@ -50,18 +50,19 @@ $: {
       window.getComputedStyle(element).lineHeight;
 
     lineClampStyle =
-      `overflow-y: hidden; display: -webkit-box;` +
+      'overflow-y: hidden; display: -webkit-box;' +
       `-webkit-line-clamp: ${lineClamp};` +
-      `-webkit-box-orient: vertical;` +
+      '-webkit-box-orient: vertical;' +
       `max-height: calc(${lineClamp} * ${lineHeight})`;
   }
   else {
-    lineClampStyle = "";
+    lineClampStyle = '';
   }
 }
 
 </script>
 
+<!-- eslint-disable-next-line svelte/valid-compile -->
 <div c-body-text
      bind:this={element}
      style={lineClampStyle}

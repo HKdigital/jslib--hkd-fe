@@ -39,13 +39,13 @@ import { onDestroy } from 'svelte';
 
 
 import { expectPositiveNumber }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 import { equals }
-  from "@hkd-base/helpers/compare.js";
+  from '@hkd-base/helpers/compare.js';
 
 import Panel
-  from "@hkd-fe/components/layout/Panel.svelte";
+  from '@hkd-fe/components/layout/Panel.svelte';
 
 // import Scrollbar
 //   from "@hkd-fe/components/scrollbar/Scrollbar.svelte";
@@ -54,7 +54,7 @@ import Panel
 //   from "$src/views/special-panels/PleaseRotateScreen.svelte";
 
 import { routeStateStore }
-  from "@hkd-fe/stores/router.js";
+  from '@hkd-fe/stores/router.js';
 
 // import { isLandscapeOnMobile }
 //   from "$skills-fe/stores/screen-orientation.js";
@@ -67,16 +67,16 @@ import { backgroundPanelReady,
          contentPanelReady,
          superBottomPanelReady,
          bottomPanelReady }
-  from "@hkd-fe/stores/app-layout.js";
+  from '@hkd-fe/stores/app-layout.js';
 
 import Offs
-  from "@hkd-base/classes/Offs.js";
+  from '@hkd-base/classes/Offs.js';
 
 import ValueStore
-  from "@hkd-base/classes/ValueStore.js";
+  from '@hkd-base/classes/ValueStore.js';
 
 import { SURFACE_1 }
-  from "@hkd-fe/constants/surfaces.js";
+  from '@hkd-fe/constants/surfaces.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -89,7 +89,7 @@ history.scrollRestoration = 'manual';
 
 // --
 
-let currentRoute = new ValueStore();
+const currentRoute = new ValueStore();
 let currentRouteReady = true;
 
 let readyTimeoutMs = 500;
@@ -101,17 +101,17 @@ let backgroundPanelParams;
 let topPanelParams;
 let subTopPanelParams;
 let contentPanelParams;
-let superBottomPanelParams;
+// let superBottomPanelParams;
 let bottomPanelParams;
 
-let layoutBgClassNames = "";
+let layoutBgClassNames = '';
 
-let backgroundPanelBgClassNames = "";
-let topPanelBgClassNames = "";
-let subTopPanelBgClassNames = "";
-let contentPanelBgClassNames = "";
-let superBottomPanelBgClassNames = "";
-let bottomPanelBgClassNames = "";
+let backgroundPanelBgClassNames = '';
+let topPanelBgClassNames = '';
+let subTopPanelBgClassNames = '';
+let contentPanelBgClassNames = '';
+// let superBottomPanelBgClassNames = '';
+let bottomPanelBgClassNames = '';
 
 let bgColorLayout;
 
@@ -120,7 +120,7 @@ let bgColorTopPanel;
 let bgColorSubTopPanel;
 let bgColorContentPanel;
 let bgColorBottomPanel;
-let bgColorSuperBottomPanel;
+// let bgColorSuperBottomPanel;
 
 let onColorLayout;
 
@@ -129,16 +129,16 @@ let onColorTopPanel;
 let onColorSubTopPanel;
 let onColorContentPanel;
 let onColorBottomPanel;
-let onColorSuperBottomPanel;
+// let onColorSuperBottomPanel;
 
-let layoutCssClassNames = "";
+let layoutCssClassNames = '';
 
-let backgroundPanelCssClassNames = "";
-let topPanelCssClassNames = "";
-let subTopPanelCssClassNames = "";
-let contentPanelCssClassNames = "";
-let superBottomPanelCssClassNames = "";
-let bottomPanelCssClassNames = "";
+let backgroundPanelCssClassNames = '';
+let topPanelCssClassNames = '';
+let subTopPanelCssClassNames = '';
+let contentPanelCssClassNames = '';
+// let superBottomPanelCssClassNames = '';
+let bottomPanelCssClassNames = '';
 
 let contentPanelElement;
 let contentPanelOuterElem;
@@ -199,7 +199,7 @@ function handleRouteUpdate( route )
       bgColorBackgroundPanel = null;
       onColorBackgroundPanel = null;
 
-      backgroundPanelCssClassNames = "";
+      backgroundPanelCssClassNames = '';
     }
 
     // -- Top panel
@@ -219,7 +219,7 @@ function handleRouteUpdate( route )
       bgColorTopPanel = null;
       onColorTopPanel = null;
 
-      topPanelCssClassNames = "";
+      topPanelCssClassNames = '';
     }
 
     // -- Sub top panel
@@ -239,7 +239,7 @@ function handleRouteUpdate( route )
       bgColorSubTopPanel = null;
       onColorSubTopPanel = null;
 
-      subTopPanelCssClassNames = "";
+      subTopPanelCssClassNames = '';
     }
 
     // -- Content panel
@@ -259,28 +259,28 @@ function handleRouteUpdate( route )
       bgColorContentPanel = null;
       onColorContentPanel = null;
 
-      contentPanelCssClassNames = "";
+      contentPanelCssClassNames = '';
     }
 
     // -- Super bottom panel
 
-    superBottomPanelParams = currentRoutePanels.superBottomPanel;
+    // superBottomPanelParams = currentRoutePanels.superBottomPanel;
 
-    if( superBottomPanelParams )
-    {
-      bgColorSuperBottomPanel = superBottomPanelParams.backgroundColor;
+    // if( superBottomPanelParams )
+    // {
+    //   bgColorSuperBottomPanel = superBottomPanelParams.backgroundColor;
 
-      onColorSuperBottomPanel =
-        superBottomPanelParams.onColor || bgColorSuperBottomPanel;
+    //   // onColorSuperBottomPanel =
+    //   //   superBottomPanelParams.onColor || bgColorSuperBottomPanel;
 
-      superBottomPanelCssClassNames = superBottomPanelParams.classNames;
-    }
-    else {
-      bgColorSuperBottomPanel = null;
-      onColorSuperBottomPanel = null;
+    //   // superBottomPanelCssClassNames = superBottomPanelParams.classNames;
+    // }
+    // else {
+    //   bgColorSuperBottomPanel = null;
+    //   // onColorSuperBottomPanel = null;
 
-      superBottomPanelCssClassNames = "";
-    }
+    //   // superBottomPanelCssClassNames = '';
+    // }
 
     // -- Bottom panel
 
@@ -299,14 +299,14 @@ function handleRouteUpdate( route )
       bgColorBottomPanel = null;
       onColorBottomPanel = null;
 
-      bottomPanelCssClassNames = "";
+      bottomPanelCssClassNames = '';
     }
   }
 }
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let onColor = SURFACE_1;
@@ -336,11 +336,11 @@ $: {
   //
   if( !currentRouteReady )
   {
-    const LABEL = "currentRouteReady";
+    const LABEL = 'currentRouteReady';
 
     offs.tryUnregister( LABEL );
 
-    let pathOnStart = $currentRoute.path;
+    const pathOnStart = $currentRoute.path;
 
     backgroundPanelReady.set( false );
     topPanelReady.set( false );
@@ -391,20 +391,20 @@ $: {
   {
     // console.log("layoutParams", layoutParams);
 
-    if( "readyTimeoutMs" in layoutParams )
+    if( 'readyTimeoutMs' in layoutParams )
     {
       readyTimeoutMs = layoutParams.readyTimeoutMs;
 
       expectPositiveNumber( readyTimeoutMs,
-        "Invalid value for layout parameter [readyTimeoutMs]" );
+        'Invalid value for layout parameter [readyTimeoutMs]' );
     }
 
-    if( "aspect" in layoutParams )
+    if( 'aspect' in layoutParams )
     {
       layoutAspect = layoutParams.aspect; // e.g. 16 / 9
 
       expectPositiveNumber( layoutAspect,
-        "Invalid value for layout parameter [aspect]" );
+        'Invalid value for layout parameter [aspect]' );
     }
     else if( layoutAspect )
     {
@@ -510,7 +510,7 @@ $: {
       `g-bg-${bgColorLayout}`;
   }
   else {
-    layoutBgClassNames = "";
+    layoutBgClassNames = '';
   }
 }
 
@@ -529,7 +529,7 @@ $: {
         `g-bg-${bgColorBackgroundPanel}`;
     }
     else {
-      backgroundPanelBgClassNames = "";
+      backgroundPanelBgClassNames = '';
     }
   }
 }
@@ -549,7 +549,7 @@ $: {
         `g-bg-${bgColorBackgroundPanel}`;
     }
     else {
-      topPanelBgClassNames = "";
+      topPanelBgClassNames = '';
     }
   }
 }
@@ -569,7 +569,7 @@ $: {
         `g-bg-${bgColorBackgroundPanel}`;
     }
     else {
-      subTopPanelBgClassNames = "";
+      subTopPanelBgClassNames = '';
     }
   }
 }
@@ -589,30 +589,30 @@ $: {
         `g-bg-${bgColorBackgroundPanel}`;
     }
     else {
-      contentPanelBgClassNames = "";
+      contentPanelBgClassNames = '';
     }
   }
 }
 
 // -----------------------------------------------------------------------------
 
-$: {
-  //
-  // Update superBottomPanel background CSS
-  //
+// $: {
+//   //
+//   // Update superBottomPanel background CSS
+//   //
 
-  if( superBottomPanelParams )
-  {
-    if( bgColorBackgroundPanel )
-    {
-      superBottomPanelBgClassNames =
-        `g-bg-${bgColorBackgroundPanel}`;
-    }
-    else {
-      superBottomPanelBgClassNames = "";
-    }
-  }
-}
+//   if( superBottomPanelParams )
+//   {
+//     if( bgColorBackgroundPanel )
+//     {
+//       superBottomPanelBgClassNames =
+//         `g-bg-${bgColorBackgroundPanel}`;
+//     }
+//     else {
+//       superBottomPanelBgClassNames = '';
+//     }
+//   }
+// }
 
 // -----------------------------------------------------------------------------
 
@@ -629,7 +629,7 @@ $: {
         `g-bg-${bgColorBottomPanel}`;
     }
     else {
-      bottomPanelBgClassNames = "";
+      bottomPanelBgClassNames = '';
     }
 
   }
@@ -663,7 +663,7 @@ $: {
       contentPanelOuterElem.style.paddingTop = `${topPanelHeight}px`;
     }
     else {
-      contentPanelOuterElem.style.paddingTop = "";
+      contentPanelOuterElem.style.paddingTop = '';
     }
   }
 }
@@ -681,7 +681,7 @@ $: {
       contentPanelOuterElem.style.paddingBottom = `${bottomPanelHeight}px`;
     }
     else {
-      contentPanelOuterElem.style.paddingBottom = "";
+      contentPanelOuterElem.style.paddingBottom = '';
     }
   }
 }
@@ -699,7 +699,7 @@ $: {
 let bodyHeight;
 
 import { windowSize }
-  from "@hkd-fe/stores/window.js";
+  from '@hkd-fe/stores/window.js';
 
 $: {
   bodyHeight = ($windowSize).height;

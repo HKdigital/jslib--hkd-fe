@@ -5,18 +5,18 @@
 // -- Routing
 
 import { redirectToRoute }
-  from "@hkd-fe/stores/router.js";
+  from '@hkd-fe/stores/router.js';
 
 // -- Stores
 
 import { screenWidthSmall }
-  from "@hkd-fe/stores/screen-size.js";
+  from '@hkd-fe/stores/screen-size.js';
 
 /* ---------------------------------------------------------------- Internals */
 
-let cssClassNames = "";
+let cssClassNames = '';
 
-let colorClasses = "";
+let colorClasses = '';
 
 // -----------------------------------------------------------------------------
 
@@ -41,11 +41,11 @@ function preventClickOnDisabled( node )
     }
   };
 
-  node.addEventListener("click", handleClick, true);
+  node.addEventListener('click', handleClick, true);
 
   return {
     destroy() {
-      node.removeEventListener("click", handleClick, true);
+      node.removeEventListener('click', handleClick, true);
     }
   };
 }
@@ -76,11 +76,11 @@ function tryRedirect( node )
     }
   };
 
-  node.addEventListener("click", handleClick, true);
+  node.addEventListener('click', handleClick, true);
 
   return {
     destroy() {
-      node.removeEventListener("click", handleClick, true);
+      node.removeEventListener('click', handleClick, true);
     }
   };
 }
@@ -121,7 +121,7 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 
@@ -139,7 +139,10 @@ $: {
      class:x-width-max-content={!inline && responsive && !$screenWidthSmall}
      use:preventClickOnDisabled
      use:tryRedirect
-     on:click>
+     on:click
+     on:keypress
+     role="button"
+     tabindex="0">
   <div cc-button-inner><slot></slot></div>
 </div>
 

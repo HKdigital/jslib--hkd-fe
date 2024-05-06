@@ -2,13 +2,13 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import ListIcon from "@hkd-fe/components/icons/ListIcon.svelte";
+import ListIcon from '@hkd-fe/components/icons/ListIcon.svelte';
 
 import PlusSmall
-  from "@hkd-fe/components/icons/hero/solid/PlusSmall.svelte";
+  from '@hkd-fe/components/icons/hero/solid/PlusSmall.svelte';
 
 import Button
-  from "@hkd-fe/components/buttons/Button.svelte";
+  from '@hkd-fe/components/buttons/Button.svelte';
 
 // // -- Constants
 
@@ -17,11 +17,11 @@ import Button
 
 /* ---------------------------------------------------------------- Internals */
 
-let colorClasses = "";
+let colorClasses = '';
 
 /* ------------------------------------------------------------------ Exports */
 
-let cssClassNames = "";
+let cssClassNames = '';
 export { cssClassNames as class };
 
 export let icon = PlusSmall;
@@ -48,7 +48,7 @@ $: {
     colorClasses = `x-on-${onColor}`;
   }
   else {
-    colorClasses = "";
+    colorClasses = '';
   }
 }
 

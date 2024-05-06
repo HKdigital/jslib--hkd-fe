@@ -16,22 +16,22 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import { expectString } from "@hkd-base/helpers/expect.js";
+import { expectString } from '@hkd-base/helpers/expect.js';
 
 /* ---------------------------------------------------------------- Internals */
 
 let objectBoxElem;
-let widthAndHeightChecked = false;
+const widthAndHeightChecked = false;
 
 /* ------------------------------------------------------------------ Exports */
 
-let classNames = "";
+let classNames = '';
 export { classNames as class };
 
-let customStyle = "";
+let customStyle = '';
 export { customStyle as style };
 
-$: expectString( customStyle, "Invalid value for property [style]" );
+$: expectString( customStyle, 'Invalid value for property [style]' );
 
 /* -------------------------------------------------------------------- Logic */
 
@@ -44,12 +44,12 @@ $: {
 
     if( !width )
     {
-      throw new Error("ObjectBox [width] should not be 0");
+      throw new Error('ObjectBox [width] should not be 0');
     }
 
     if( !height )
     {
-      throw new Error("ObjectBox [height] should not be 0");
+      throw new Error('ObjectBox [height] should not be 0');
     }
   }
 }

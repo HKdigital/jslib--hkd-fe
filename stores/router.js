@@ -78,10 +78,10 @@
 /* ------------------------------------------------------------------ Imports */
 
 import router
-  from "@hkd-fe/classes/FrontendRouter.js";
+  from '@hkd-fe/classes/FrontendRouter.js';
 
 import { expectNotEmptyString }
-  from "@hkd-base/helpers/expect.js";
+  from '@hkd-base/helpers/expect.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -158,7 +158,7 @@ export const {
 export function getRouteParameterValue( key )
 {
   expectNotEmptyString( key,
-    "Missing or invalid parameter [key]" );
+    'Missing or invalid parameter [key]' );
 
   const { route } = routeStateStore.get();
 

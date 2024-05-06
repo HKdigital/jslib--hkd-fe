@@ -1,9 +1,9 @@
 
 /* ------------------------------------------------------------------ Imports */
 
-import DedupValueStore from "@hkd-base/classes/DedupValueStore.js";
+import DedupValueStore from '@hkd-base/classes/DedupValueStore.js';
 
-import { debounce } from "@hkd-base/helpers/function.js";
+import { debounce } from '@hkd-base/helpers/function.js';
 
 /* ---------------------------------------------------------------- Internals */
 
@@ -39,10 +39,10 @@ window.addEventListener('DOMContentLoaded', () =>
     {
       if( hasSubscribers )
       {
-        window.addEventListener( "resize", debounced );
+        window.addEventListener( 'resize', debounced );
       }
       else {
-        window.removeEventListener( "resize", debounced );
+        window.removeEventListener( 'resize', debounced );
       }
     } );
   } );
