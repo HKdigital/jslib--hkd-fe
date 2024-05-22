@@ -233,7 +233,7 @@ export default class Form extends LogBase
 
       const detail = event.detail;
 
-      // console.log( "formPropertyUpdate", {key, ...detail } );
+      // console.log( 'formPropertyUpdate', {key, ...detail } );
 
       expectObject( detail,
         'Missing or invalid parameter [event.detail]' );
@@ -289,7 +289,7 @@ export default class Form extends LogBase
             /*finalValue*/ } = this._parseProperty( key, updatedValue );
 
     // this.log.debug(
-    //   "updateHandler",
+    //   "setValue",
     //   { key, updatedValue, value, error, finalValue, values: this._values } );
 
     // == Store value
@@ -404,7 +404,7 @@ export default class Form extends LogBase
 
   /**
    * Get all form data
-   * - Returns if all the form data is valid
+   * - Returns all form data if all the form data is valid
    * - Returns final values of the form data (e.g. trims strings)
    *
    * @returns {object} (complete) form valid and form data
@@ -438,10 +438,12 @@ export default class Form extends LogBase
 
     if( error )
     {
-      // This should not happen
-      throw new Error(
-        'Cannot export form data, validation failed', { cause: error } );
+      // throw new Error(
+      //   'Cannot export form data, validation failed', { cause: error } );
+
+      return { valid: false, formData, error };
     }
+
     return { valid, formData };
   }
 
@@ -609,7 +611,7 @@ export default class Form extends LogBase
     const { error } =
       this._schema.validate( values, { abortEarly: true } );
 
-    // this.log.debug("_updateFormValid", error );
+    this.log.debug('_updateFormValid', error );
 
     if( !error )
     {

@@ -350,23 +350,14 @@ export { inputType as type };
   :global( [c-input-field] )
   {
     display: grid;
-    /*background-color: blue;*/
   }
 
-  [cc-label]
-  {
-    z-index: 1;
-
-    grid-row: 1;
-    opacity: 1;
-    transition: opacity 0.5s;
-  }
 
   [cc-input-bg]
   {
     z-index: 1;
 
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 1;
 
     background-color: transparent;
@@ -376,19 +367,20 @@ export { inputType as type };
   {
     z-index: 2;
 
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 1;
 
-    justify-self: center;
+    // justify-self: center;
+    justify-self: start;
 
-    transition: opacity 0.5s;
+    transition: opacity 0.4s;
   }
 
   [cc-input]
   {
     z-index: 3;
 
-    grid-row: 2;
+    grid-row: 1;
     grid-column: 1;
 
     font-family: inherit;
@@ -405,6 +397,29 @@ export { inputType as type };
     border-color: aqua;
 
     background-color: transparent;
+  }
+
+
+  [cc-label]
+  {
+    z-index: 4;
+
+    grid-row: 1;
+    grid-column: 1;
+
+    // justify-self: start;
+
+    justify-self: end;
+    margin-right: 16px;
+
+    align-self: top;
+
+    height: fit-content;
+    transform:translateY(-50%);
+
+    opacity: 1;
+    transition-delay: 0.4s;
+    transition: opacity 0s;
   }
 
   // [cc-error]
