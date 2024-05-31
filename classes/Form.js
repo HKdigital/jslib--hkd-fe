@@ -611,7 +611,7 @@ export default class Form extends LogBase
     const { error } =
       this._schema.validate( values, { abortEarly: true } );
 
-    this.log.debug('_updateFormValid', error );
+    // this.log.debug('_updateFormValid', error );
 
     if( !error )
     {
